@@ -8,8 +8,13 @@
 
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow) {
+    // TODO -> get ip & port from cmd line arg
+    std::string defaultIP = "127.0.0.1";
+    int defaultPort = 80; // ?
 
-    pacman::WebPacManServer server;
+    pacman::WebPacManServer server = {
+        defaultIP, defaultPort
+    };
 
     server.start();
 
