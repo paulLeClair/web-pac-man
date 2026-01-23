@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <thread>
+#include <BS_thread_pool.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
 #include <boost/asio/ip/tcp.hpp>
@@ -18,28 +20,39 @@ using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace pacman {
     class Session;
 
-    class WebPacManServer {
+    class WebPacManServer : public std::enable_shared_from_this<WebPacManServer> {
 public:
-        WebPacManServer(const std::string &ipAddress, int port);
+        WebPacManServer(const std::string &ipAddress, int port,
+            int threadCount = std::thread::hardware_concurrency());
 
         ~WebPacManServer();
 
         bool start();
 
 private:
-        net::io_context io_context{1};
+        BS::thread_pool<> gameLogicThreadPool;
+
+        net::io_context io_context;
 
         tcp::acceptor acceptor;
 
-        std::string ipAddress;
+        net::ip::address ipAddress;
         int port;
 
-        /**
-         * The server will just create 1 socket per active session
-         */
+        tcp::endpoint endpoint;
+
         std::vector<std::unique_ptr<Session>> sessions;
 
-        void listenForSessions();
+        std::jthread gameTickerThread;
+        void gameTickerThreadKernel(std::stop_token stoken);
+
+        void acceptSessions();
+
+        void beginListening();
+
+        void asyncAcceptHandler(beast::error_code ec, tcp::socket socket);
+
+
     };
 
 } // pacman

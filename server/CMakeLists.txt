@@ -14,6 +14,19 @@ set(server_code
         WebPacManServer/WebPacManServer.cpp
         WebPacManServer/Session/Session.cpp
         WebPacManServer/Session/Session.hpp
+        WebPacManServer/Session/Defines.hpp
+        WebPacManServer/Session/Game/Game.hpp
+        WebPacManServer/Session/Game/Player/Player.cpp
+        WebPacManServer/Session/Game/Player/Player.hpp
+        WebPacManServer/Session/Game/Ghost/Ghost.hpp
+        WebPacManServer/Session/Game/Ghost/Blinky/Blinky.cpp
+        WebPacManServer/Session/Game/Ghost/Blinky/Blinky.hpp
+        WebPacManServer/Session/Game/Ghost/Clyde/Clyde.cpp
+        WebPacManServer/Session/Game/Ghost/Clyde/Clyde.hpp
+        WebPacManServer/Session/Game/Ghost/Inky/Inky.cpp
+        WebPacManServer/Session/Game/Ghost/Inky/Inky.hpp
+        WebPacManServer/Session/Game/Ghost/Pinky/Pinky.cpp
+        WebPacManServer/Session/Game/Ghost/Pinky/Pinky.hpp
 )
 
 add_executable(pacman_server WIN32 ${server_code})
@@ -31,6 +44,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(pacman_server Boost::dynamic_linking)
 target_link_libraries(pacman_server ws2_32)
 
+# BarackShoshany Thread Pool (maybe unused? including pre-emptively)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 FetchContent_Declare(
         bshoshany_thread_pool
