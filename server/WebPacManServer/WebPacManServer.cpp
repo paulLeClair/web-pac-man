@@ -14,15 +14,9 @@ namespace pacman {
     ipAddress(boost::asio::ip::address::from_string(ip)),
     port(port),
     io_context(threadCount / 2),
-    endpoint({
-            ipAddress,
-            static_cast<const uint8_t>(static_cast<uint8_t>(port))
-        }),
-    acceptor(tcp::acceptor{ // NOLINT
-        io_context,
-            endpoint
-    }) {
-
+    endpoint(ipAddress,
+            static_cast<const uint8_t>(static_cast<uint8_t>(port))),
+    acceptor(io_context) {
     }
 
     WebPacManServer::~WebPacManServer()

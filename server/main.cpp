@@ -12,11 +12,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine,
     std::string defaultIP = "127.0.0.1";
     int defaultPort = 80; // ?
 
-    pacman::WebPacManServer server = {
-        defaultIP, defaultPort
-    };
+    const auto server = std::make_shared<pacman::WebPacManServer>(defaultIP, defaultPort);
 
-    server.start();
+    server->start();
 
     return 0;
 }
