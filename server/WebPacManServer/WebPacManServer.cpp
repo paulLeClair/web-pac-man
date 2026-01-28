@@ -29,15 +29,29 @@ namespace pacman {
         gameTickerThread.join();
     }
 
-    bool WebPacManServer::start()
+    bool WebPacManServer::run()
     {
-        const auto &wtf = [&](std::stop_token stoken)
+        const auto &gameTickerFunction = [&](std::stop_token stoken)
         {
             gameTickerThreadKernel(stoken);
         };
-        gameTickerThread = std::jthread(wtf);
+        gameTickerThread = std::jthread(gameTickerFunction);
 
         acceptSessions();
+
+        // TODO -> start running the IO service at this point so the server actually runs
+        std::vector<std::thread> serverThreads = {};
+        size_t ioThreadCount = gameLogicThreadPool.get_thread_count() * 2 - 1;
+        serverThreads.reserve(ioThreadCount);
+        for (uint32_t i = 0; i < ioThreadCount; i++)
+        {
+            serverThreads.emplace_back([&]
+            {
+                io_context.run();
+            });
+        }
+        io_context.run();
+
         return true;
     }
 

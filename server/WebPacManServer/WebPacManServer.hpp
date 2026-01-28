@@ -27,7 +27,7 @@ public:
 
         ~WebPacManServer();
 
-        bool start();
+        bool run();
 
 private:
         BS::thread_pool<> gameLogicThreadPool;
