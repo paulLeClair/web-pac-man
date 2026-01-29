@@ -28,10 +28,10 @@ namespace pacman
 
             // TODO -> BUILD GAME STATE SNAPSHOT AND PUT IT IN GAMESTATEBUFFER
 
-            ws.async_write(
-                gameStateBuffer.data(),
-                beast::bind_front_handler(&Session::asyncWriteGameStateHandler, shared_from_this())
-            );
+            // ws.async_write(
+            //     gameStateBuffer.data(),
+            //     beast::bind_front_handler(&Session::asyncWriteGameStateHandler, shared_from_this())
+            // );
         }
 
     void Session::asyncRunHandler()
@@ -50,6 +50,7 @@ namespace pacman
         if (ec)
         {
             // TODO -> log!
+            return;
         }
 
         readUserInputs();

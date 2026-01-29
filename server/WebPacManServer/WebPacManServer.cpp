@@ -41,7 +41,7 @@ namespace pacman {
 
         // TODO -> start running the IO service at this point so the server actually runs
         std::vector<std::thread> serverThreads = {};
-        size_t ioThreadCount = gameLogicThreadPool.get_thread_count() * 2 - 1;
+        size_t ioThreadCount = gameLogicThreadPool.get_thread_count() - 1;
         serverThreads.reserve(ioThreadCount);
         for (uint32_t i = 0; i < ioThreadCount; i++)
         {
@@ -60,31 +60,47 @@ namespace pacman {
     {
         beast::error_code ec;
 
-        acceptor.open(endpoint.protocol(), ec);
+        auto result = acceptor.open(endpoint.protocol(), ec);
         if (ec)
         {
             //TODO -> log failure!
             return;
         }
+        if (result)
+        {
+            return;
+        }
 
-        acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
+        result = acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
         if (ec)
         {
             // TODO -> log failure!
             return;
         }
+        if (result)
+        {
+            return;
+        }
 
-        acceptor.bind(endpoint, ec);
+        result = acceptor.bind(endpoint, ec);
         if (ec)
         {
             // TODO -> log failure!
             return;
         }
+        if (result)
+        {
+            return;
+        }
 
-        acceptor.listen(boost::asio::socket_base::max_listen_connections, ec);
+        result = acceptor.listen(boost::asio::socket_base::max_listen_connections, ec);
         if (ec)
         {
             // TODO -> log failure!
+            return;
+        }
+        if (result)
+        {
             return;
         }
 
@@ -108,7 +124,7 @@ namespace pacman {
         else
         {
             // we can start a new session
-            sessions.emplace_back(std::make_unique<Session>(
+            sessions.emplace_back(std::make_shared<Session>(
                 std::move(socket)
             ));
             sessions.back()->run();

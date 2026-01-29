@@ -41,7 +41,7 @@ private:
 
         tcp::endpoint endpoint;
 
-        std::vector<std::unique_ptr<Session>> sessions;
+        std::vector<std::shared_ptr<Session>> sessions;
 
         std::jthread gameTickerThread;
         void gameTickerThreadKernel(std::stop_token stoken);
