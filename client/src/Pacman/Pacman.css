@@ -1,0 +1,39 @@
+.pacman-chomp {
+    animation: pacmanchomp 0.18s steps(3) infinite;
+}
+
+@keyframes pacmanchomp {
+    100% {
+        background-position-x: -36px;
+    }
+}
+
+.orientation-right {
+    transform: rotate(0deg);
+}
+
+.orientation-down {
+    transform: rotate(90deg);
+}
+
+.orientation-left {
+    transform: rotate(180deg);
+}
+
+.orientation-up {
+    transform: rotate(270deg);
+}
+
+.pacman {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    z-index: auto;
+
+    /*these have to be 12 to line up with our sprite sheet, but they
+    should be dynamically scaled based off the board image size */
+    width: 12px;
+    height: 12px;
+
+    background: url("/assets/Pacman/pacman-sprite-sheet.png");
+}
