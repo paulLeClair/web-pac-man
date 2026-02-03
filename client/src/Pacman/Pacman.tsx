@@ -1,5 +1,6 @@
 import {Component, createSignal} from 'solid-js';
 import './Pacman.css'
+import {Direction, EntityState} from "../App";
 
 enum Orientation {
   UP = "orientation-up",
@@ -7,21 +8,31 @@ enum Orientation {
   LEFT = "orientation-left",
   RIGHT = "orientation-right"
 }
-const Pacman: Component = () => {
-  const [xPixel, setPixelPositionX] = createSignal(0)
-  const [yPixel, setPixelPositionY] = createSignal(0)
 
-  const [orientation, setOrientation] = createSignal(Orientation.UP)
+export interface PacmanState extends EntityState {
+  isChomping: boolean
+}
 
-  const [isChomping, setIsChomping] = createSignal(true)
+export interface PacmanProps {
+  pacmanStateAccessor: () => PacmanState
+}
 
+const Pacman: Component<PacmanProps> = (props) => {
   const positionStyles = {
-    top: xPixel().toString() + "px",
-    left: yPixel().toString() + "px"
+    top: props.pacmanStateAccessor().y.toString() + "px",
+    left: props.pacmanStateAccessor().x.toString() + "px"
   }
 
-  let pacmanClassesString = "pacman " + orientation();
-  if (isChomping()) {
+  let pacmanOrientation = Orientation.UP;
+  switch (props.pacmanStateAccessor().orientation) {
+    case Direction.UP: pacmanOrientation = Orientation.UP; break;
+    case Direction.DOWN: pacmanOrientation = Orientation.DOWN; break;
+    case Direction.LEFT: pacmanOrientation = Orientation.LEFT; break;
+    case Direction.RIGHT: pacmanOrientation = Orientation.RIGHT; break;
+  }
+
+  let pacmanClassesString = "pacman " + pacmanOrientation;
+  if (props.pacmanStateAccessor().isChomping) {
     pacmanClassesString += " pacman-chomp"
   }
 

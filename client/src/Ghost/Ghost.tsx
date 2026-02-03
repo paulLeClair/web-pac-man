@@ -1,5 +1,6 @@
 import {Component, createSignal} from 'solid-js';
 import './Ghost.css'
+import {Direction, EntityState} from "../App";
 
 export enum GhostName {
     UNKNOWN = "unknown",
@@ -16,31 +17,36 @@ enum Orientation {
     RIGHT = "ghost-orientation-right"
 }
 
+export interface GhostState extends EntityState {
+    isDead: boolean
+}
+
 interface GhostProps {
-    ghostName: GhostName
+    ghostName: GhostName,
+    ghostStateAccessor: () => GhostState,
+    isScatteringAccessor: () => boolean
 }
 
 const Ghost: Component<GhostProps> = (props) => {
     const [ghostName, setGhostName] = createSignal(GhostName.UNKNOWN)
 
-    const [xPixel, setPixelPositionX] = createSignal(0)
-    const [yPixel, setPixelPositionY] = createSignal(0)
-
-    const [orientation, setOrientation] = createSignal(Orientation.DOWN)
-
-    // these are todo for the moment
-    const [isScattering, setIsScattering] = createSignal(false)
-    const [isDead, setIsDead] = createSignal(false)
-
     const positionStyles = {
-        left: xPixel().toString() + "px",
-        top: yPixel().toString() + "px",
+        left: props.ghostStateAccessor().x.toString() + "px",
+        top: props.ghostStateAccessor().y.toString() + "px",
     }
 
     setGhostName(props.ghostName)
 
+    let ghostOrientationClass = Orientation.UP;
+    switch (props.ghostStateAccessor().orientation) {
+        case Direction.UP: ghostOrientationClass = Orientation.UP; break;
+        case Direction.DOWN: ghostOrientationClass = Orientation.DOWN; break;
+        case Direction.LEFT: ghostOrientationClass = Orientation.LEFT; break;
+        case Direction.RIGHT: ghostOrientationClass = Orientation.RIGHT; break;
+    }
+
   return (
-      <div class={"ghost " + ghostName() + " " + orientation()} style={positionStyles}>
+      <div class={"ghost " + ghostName() + " " + ghostOrientationClass} style={positionStyles}>
 
       </div>
   );
