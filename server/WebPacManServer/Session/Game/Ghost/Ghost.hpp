@@ -24,10 +24,10 @@ enum class GhostOrientation : int32_t
 
 struct Ghost : Entity
 {
-    GhostName ghostName;
+    GhostName ghostName = GhostName::CLYDE;
 
-    bool isDead;
+    bool isDead = false;
 
-    GhostOrientation orientation;
+    GhostOrientation orientation = GhostOrientation::UP;
 
 };

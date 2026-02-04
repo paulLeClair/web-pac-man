@@ -8,7 +8,7 @@
 
 namespace pacman {
 
-struct Pacman : Entity
+struct Pacman final : Entity
 {
     // these match up with the client-side stuff
     enum class PacmanOrientation : int32_t
@@ -19,10 +19,9 @@ struct Pacman : Entity
          RIGHT
     };
 
-    bool isChomping;
-    PacmanOrientation orientation;
-
-
+    bool isChomping = false;
+    PacmanOrientation orientation = PacmanOrientation::LEFT;
+    InputDirection bufferedInput = DOWN;
 };
 
 } // pacman

@@ -8,7 +8,7 @@
 
 namespace pacman {
 
-struct Inky : Ghost {
+struct Inky final : Ghost {
 
 };
 

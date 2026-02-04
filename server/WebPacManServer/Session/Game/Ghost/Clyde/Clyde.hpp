@@ -8,7 +8,7 @@
 
 namespace pacman {
 
-struct Clyde : Ghost {
+struct Clyde final : Ghost {
 
 };
 

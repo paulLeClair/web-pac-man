@@ -15,11 +15,15 @@ namespace pacman
     enum class IncomingPacketType : int32_t
     {
         UserInputPress,
-        UserInputRelease,
+        UserInputRelease, // maybe unused
         GameModeComplete
     };
 
-
+    enum class OutgoingPacketType : uint8_t
+    {
+        GameStateUpdate = 0x70,
+        GameStateTransition = 0x80,
+    };
 
     class Session : public std::enable_shared_from_this<Session>
     {
@@ -31,7 +35,7 @@ namespace pacman
         boost::uuids::uuid sessionId;
         websocket::stream<beast::tcp_stream> ws;
         beast::flat_buffer incomingClientMessageBuffer = beast::flat_buffer();
-        beast::flat_buffer gameStateBuffer = beast::flat_buffer();
+        beast::flat_buffer gameStateFlatBuffer = beast::flat_buffer();
 
         // i'll try and tailor this to use boost asio strands, which should hopefully in conjunction with the
         // thread pool allow for a fully multithreaded C++ server
@@ -50,6 +54,10 @@ namespace pacman
 
     private:
         Game game;
+        std::mutex mutex = std::mutex();
+
+        // this is used to store the serialized game state data that is sent to the client
+        std::vector<uint8_t> gameStateMessageData;
 
         void asyncRunHandler();
         void listenToClient();

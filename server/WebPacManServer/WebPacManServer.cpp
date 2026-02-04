@@ -31,11 +31,7 @@ namespace pacman {
 
     bool WebPacManServer::run()
     {
-        const auto &gameTickerFunction = [&](std::stop_token stoken)
-        {
-            gameTickerThreadKernel(stoken);
-        };
-        gameTickerThread = std::jthread(gameTickerFunction);
+
 
         acceptSessions();
 
@@ -50,8 +46,16 @@ namespace pacman {
                 io_context.run();
             });
         }
+
+        const auto &gameTickerFunction = [&](std::stop_token stoken)
+        {
+            gameTickerThreadKernel(stoken);
+        };
+        gameTickerThread = std::jthread(gameTickerFunction);
+
         io_context.run();
 
+        gameTickerThread.join();
         return true;
     }
 
@@ -134,9 +138,9 @@ namespace pacman {
     }
 
 
-    void WebPacManServer::gameTickerThreadKernel(std::stop_token stoken)
+    void WebPacManServer::gameTickerThreadKernel(std::stop_token stoken) //NOLINT
     {
-        static constexpr int DEFAULT_TICK_INTERVAL_IN_MS = 15;
+        static constexpr int DEFAULT_TICK_INTERVAL_IN_MS = 30;
         while (!stoken.stop_requested())
         {
             for (auto &session : sessions)
@@ -145,6 +149,7 @@ namespace pacman {
 
             }
 
+            // TODO -> replace this ugly sleeping with a condition variable for more efficient waiting
             std::this_thread::sleep_for(std::chrono::milliseconds(DEFAULT_TICK_INTERVAL_IN_MS));
         }
     }

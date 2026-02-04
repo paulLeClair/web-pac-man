@@ -26,7 +26,7 @@ public:
     Pacman player;
 
     // NOTE: i'm fairly certain boost asio should sync this, but we may need a lock
-    std::unordered_set<InputDirection> heldInputs = {};
+    InputDirection lastBufferedInput = {};
 
     Blinky blinky;
     Pinky pinky;
@@ -36,7 +36,17 @@ public:
     void tick()
     {
 
+        player.bufferedInput = lastBufferedInput;
+        player.update();
+
+        blinky.update();
+        pinky.update();
+        inky.update();
+        clyde.update();
+
+        // TODO -> timer/score etc
     }
+
 };
 
 } // pacman

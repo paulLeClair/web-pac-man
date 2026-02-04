@@ -107,6 +107,8 @@ const App: Component<AppProps> = (props) => {
     function handleGameStateUpdate(messageBufferView: Uint8Array<ArrayBuffer>) {
         if (!(messageBufferView[0] === IncomingPacketType.GameStateUpdate)) return;
 
+        console.log("Game state update received")
+
         // TODO -> game mode implementation; we have a field in our state update but it's not yet used
 
         // after this we just follow the standardized game state data format:
@@ -152,16 +154,11 @@ const App: Component<AppProps> = (props) => {
             isDead: gameState.clydeIsDead
         })
 
-
     }
 
     // TODO -> use props to get server ip
     const ws = createWS("ws://127.0.0.1:80")
     ws.binaryType = "arraybuffer"
-    const state = createWSState(ws)
-    const states = ["Connecting", "Connected", "Disconnecting", "Disconnected"];
-
-    ws.send("Hello from client!") // TODO -> break off a little handshake procedure for init;
 
     // TODO -> take into account game mode for different layouts and animations;
     // some of these can be client-side and use the websocket for synchronization

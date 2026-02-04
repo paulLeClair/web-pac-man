@@ -5,6 +5,7 @@
 #include "Session.hpp"
 
 #include "../../protobuf/gen/game_state.pb.h"
+#include "../../protobuf/gen/user_inputs.pb.h"
 
 namespace pacman
 {
@@ -26,6 +27,7 @@ namespace pacman
 
     void Session::gameTick()
     {
+            std::lock_guard guard(mutex);
             game.tick();
 
             // TODO -> BUILD GAME STATE SNAPSHOT AND PUT IT IN GAMESTATEBUFFER
@@ -61,18 +63,21 @@ namespace pacman
             gameState.set_clydepositionx(game.clyde.pos.x);
             gameState.set_clydepositiony(game.clyde.pos.y);
 
-            std::vector<uint8_t> data(gameState.ByteSizeLong());
-            if (const auto serializeGameStateSuccess = gameState.SerializeToArray(data.data(), data.size()); !serializeGameStateSuccess)
+            gameStateMessageData.resize(gameState.ByteSizeLong() + 1);
+            gameStateMessageData[0] = static_cast<uint8_t>(OutgoingPacketType::GameStateUpdate);
+            if (const auto serializeGameStateSuccess = gameState.SerializeToArray(gameStateMessageData.data() + 1, gameStateMessageData.size() - 1); !serializeGameStateSuccess)
             {
                 // TODO -> log error!
                 return;
             }
 
-            gameStateBuffer.clear();
-            boost::asio::buffer_copy(gameStateBuffer.data(), boost::asio::buffer(data));
+            const auto mutableBuffer = gameStateFlatBuffer.prepare(gameStateMessageData.size());
+            boost::asio::buffer_copy(mutableBuffer, boost::asio::buffer(gameStateMessageData));
+            gameStateFlatBuffer.commit(gameStateMessageData.size());
 
+            ws.binary(true);
             ws.async_write(
-                gameStateBuffer.data(),
+                gameStateFlatBuffer.data(),
                 beast::bind_front_handler(&Session::asyncWriteGameStateHandler, shared_from_this())
             );
         }
@@ -161,6 +166,7 @@ namespace pacman
 
     void Session::asyncWriteGameStateHandler(beast::error_code ec, std::size_t bytes_transferred)
     {
+        std::lock_guard lock(mutex);
         boost::ignore_unused(bytes_transferred);
 
         if (ec)
@@ -169,46 +175,40 @@ namespace pacman
             return;
         }
 
-        // clear gamestate buffer
-        gameStateBuffer.consume(gameStateBuffer.size());
+        // clear gamestate buffer (does this need sync?)
+        gameStateFlatBuffer.consume(gameStateFlatBuffer.size());
 
         // after we write game state, we can just drop the async call
     }
 
     void Session::handleTextMessage()
     {
-        // TODO -> these don't serve any purpose atow
+        // these don't do much atow
+        incomingClientMessageBuffer.consume(incomingClientMessageBuffer.size());
     }
 
     void Session::handleBinaryMessage()
     {
         const auto incomingData = incomingClientMessageBuffer.data();
-        if (incomingData.size() < 8)
-        {
-            // TODO -> log!
-            return;
-        }
 
-        // DEBUG/TESTING:
-        std::cout << "User Input received: ";
-        int32_t incomingPacketType;
-        int32_t inputDirection;
-        std::cout << "dir=" << inputDirection;
+        auto inputMessage = UserInputMessage();
+        inputMessage.ParseFromArray(incomingData.data(), static_cast<int32_t>(incomingData.size()));
+        //TODO -> input sanitization
 
-        // the first 4 bytes are dedicated to marking packet type
+        const int32_t incomingPacketType = inputMessage.incomingpackettype();
+        int32_t inputDirection = inputMessage.direction();
+
         switch (incomingPacketType)
         {
         case static_cast<int32_t>(IncomingPacketType::UserInputPress):
             {
-                // the next 4 bytes are the direction released
-                std::cout << " pressed; ";
-                game.heldInputs.insert(static_cast<InputDirection>(inputDirection));
+                std::lock_guard guard(mutex);
+                game.lastBufferedInput = static_cast<InputDirection>(inputDirection);
                 break;
             }
-            case static_cast<int32_t>(IncomingPacketType::UserInputRelease):
+            case static_cast<int32_t>(IncomingPacketType::UserInputRelease): // NOLINT
             {
-                std::cout << " released; ";
-                game.heldInputs.erase(static_cast<InputDirection>(inputDirection));
+                // TODO -> maybe not needed
                 break;
             }
         case static_cast<int32_t>(IncomingPacketType::GameModeComplete):
@@ -219,13 +219,6 @@ namespace pacman
         default: /* TODO -> log!*/ ;
         }
 
-        // DEBUG: print all held inputs
-        std::cout << "held inputs: {";
-        for (const auto &input : game.heldInputs)
-        {
-            std::cout << std::to_string(input) << ", ";
-        }
-        std::cout << "}" << std::endl;
-
+        incomingClientMessageBuffer.consume(incomingClientMessageBuffer.size());
     }
 } // pacman

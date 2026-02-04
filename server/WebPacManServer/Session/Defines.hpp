@@ -35,9 +35,13 @@ enum InputDirection
 
 struct Entity
 {
-    Position pos;
+    virtual ~Entity() = default;
+    Position pos = {0,0};
 
-    uint32_t currentGridCellX, currentGridCellY;
+    virtual void update()
+    {
+
+    }
 };
 
 // TODO -> formalize a minimalistic and efficient map data structure

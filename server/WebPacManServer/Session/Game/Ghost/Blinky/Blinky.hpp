@@ -8,7 +8,7 @@
 
 namespace pacman {
 
-struct Blinky : Ghost {
+struct Blinky final : Ghost {
 };
 
 } // pacman
