@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <unordered_set>
+
 #include "../Defines.hpp"
 #include "Ghost/Blinky/Blinky.hpp"
 #include "Ghost/Clyde/Clyde.hpp"
@@ -15,13 +17,16 @@ namespace pacman {
 
 class Game {
 public:
-
-    // game state
-    CurrentGameState currentGameState = CurrentGameState::START_SCREEN;
+    CurrentGameMode currentGameState = CurrentGameMode::START_SCREEN;
     Items items;
     MapGrid mapGrid;
 
+    bool ghostsAreScattering = false;
+
     Pacman player;
+
+    // NOTE: i'm fairly certain boost asio should sync this, but we may need a lock
+    std::unordered_set<InputDirection> heldInputs = {};
 
     Blinky blinky;
     Pinky pinky;

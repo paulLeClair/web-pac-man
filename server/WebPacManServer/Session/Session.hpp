@@ -12,17 +12,26 @@
 
 namespace pacman
 {
+    enum class IncomingPacketType : int32_t
+    {
+        UserInputPress,
+        UserInputRelease,
+        GameModeComplete
+    };
+
+
+
     class Session : public std::enable_shared_from_this<Session>
     {
     public:
-        explicit Session(tcp::socket &&socket);
+        explicit Session(tcp::socket&& socket);
 
         ~Session() = default;
 
         boost::uuids::uuid sessionId;
         websocket::stream<beast::tcp_stream> ws;
-        beast::flat_buffer userInputBuffer = beast::flat_buffer();
-        beast::flat_buffer gameStateBuffer= beast::flat_buffer();
+        beast::flat_buffer incomingClientMessageBuffer = beast::flat_buffer();
+        beast::flat_buffer gameStateBuffer = beast::flat_buffer();
 
         // i'll try and tailor this to use boost asio strands, which should hopefully in conjunction with the
         // thread pool allow for a fully multithreaded C++ server
@@ -39,15 +48,17 @@ namespace pacman
         // lag from game updates when scaling up to large numbers of sessions)
         void gameTick();
 
-
     private:
         Game game;
 
         void asyncRunHandler();
-        void readUserInputs();
+        void listenToClient();
         void asyncAcceptHandler(beast::error_code ec);
-        void asyncReadUserInputHandler(beast::error_code ec, std::size_t bytes_transferred);
+        void asyncListenToClientHandler(beast::error_code ec, std::size_t bytes_transferred);
         void asyncTestEchoInputHandler(beast::error_code ec, std::size_t bytes_transferred);
         void asyncWriteGameStateHandler(beast::error_code ec, std::size_t bytes_transferred);
+
+        void handleTextMessage();
+        void handleBinaryMessage();
     };
 } // pacman

@@ -8,8 +8,7 @@
 
 namespace pacman {
 
-class Blinky : public Ghost {
-
+struct Blinky : Ghost {
 };
 
 } // pacman

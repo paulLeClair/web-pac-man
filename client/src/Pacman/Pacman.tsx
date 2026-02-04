@@ -38,7 +38,7 @@ const Pacman: Component<PacmanProps> = (props) => {
 
   // for some things we'll have to mix in some inline styles I think
   return (
-    <div class={pacmanClassesString}  style={positionStyles}></div>
+    <div class={pacmanClassesString}  style={positionStyles}/>
   );
 };
 

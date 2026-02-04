@@ -46,9 +46,7 @@ const Ghost: Component<GhostProps> = (props) => {
     }
 
   return (
-      <div class={"ghost " + ghostName() + " " + ghostOrientationClass} style={positionStyles}>
-
-      </div>
+      <div class={"ghost " + ghostName() + " " + ghostOrientationClass} style={positionStyles}/>
   );
 };
 

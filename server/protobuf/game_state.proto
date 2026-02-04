@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+// simple flat data structure for communicating game state
+// (This is duplicated from clientside; obviously this would be better broken off and shared b/w them)
+message GameStateMessage {
+  int32 currentMode = 1;
+
+  double pacmanPositionX = 2;
+  double pacmanPositionY = 3;
+  int32 pacmanOrientation = 4;
+  bool pacmanIsChomping = 5;
+
+  bool ghostsAreScattering = 6;
+
+  double pinkyPositionX = 7;
+  double pinkyPositionY = 8;
+  int32 pinkyOrientation = 9;
+  bool pinkyIsDead = 10;
+
+  double inkyPositionX = 11;
+  double inkyPositionY = 12;
+  int32 inkyOrientation = 13;
+  bool inkyIsDead = 14;
+
+  double blinkyPositionX = 15;
+  double blinkyPositionY = 16;
+  int32 blinkyOrientation = 17;
+  bool blinkyIsDead = 18;
+
+  double clydePositionX = 19;
+  double clydePositionY = 20;
+  int32 clydeOrientation = 21;
+  bool clydeIsDead = 22;
+
+}

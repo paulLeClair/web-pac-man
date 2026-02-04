@@ -4,7 +4,9 @@ import Board from "./Board/Board";
 import Pacman, {PacmanState} from "./Pacman/Pacman";
 import Ghost, {GhostState} from "./Ghost/Ghost";
 import {GhostName} from "./Ghost/Ghost";
-import {GameStateMessage} from "./protobuf/gen/game_state_pb.d";
+import {GameStateMessage} from "./protobuf/gen/game_state";
+import {createKeyHold, useKeyDownEvent, KbdKey} from "@solid-primitives/keyboard";
+import {UserInputMessage} from "./protobuf/gen/user_inputs";
 
 // TODO -> move this to a defines file probably
 
@@ -16,8 +18,8 @@ interface AppProps {
 export enum Direction {
     UP = 0,
     DOWN = 1,
-    LEFT = 3,
-    RIGHT = 4
+    LEFT = 2,
+    RIGHT = 3
 }
 
 enum GameMode {
@@ -65,9 +67,9 @@ enum IncomingPacketType {
 }
 
 enum OutgoingPacketType {
-    UserInputPress,
-    UserInputRelease,
-    GameModeComplete
+    UserInputPress = 0x101,
+    UserInputRelease = 0x102, // maybe unused/unnecessary
+    GameModeComplete = 0x103,
 }
 
 const App: Component<AppProps> = (props) => {
@@ -108,46 +110,46 @@ const App: Component<AppProps> = (props) => {
         // TODO -> game mode implementation; we have a field in our state update but it's not yet used
 
         // after this we just follow the standardized game state data format:
-        const gameState = GameStateMessage.deserializeBinary(messageBufferView.slice(1));
+        const gameState = GameStateMessage.fromBinary(messageBufferView.slice(1));
 
         // we should be more efficient and granular with our updates to avoid unnecessary re-renders;
         // for prototyping I'll keep it naive just to ensure that the data is being passed properly.
         // after that's working, we should diff each of these so we can avoid not setting them unnecessarily
         setPacmanState({
-            x: gameState.getPacmanpositionx(),
-            y: gameState.getPacmanpositiony(),
-            orientation: gameState.getPacmanorientation(),
-            isChomping: gameState.getPacmanischomping()
+            x: gameState.pacmanPositionX,
+            y: gameState.pacmanPositionY,
+            orientation: gameState.pacmanOrientation,
+            isChomping: gameState.pacmanIsChomping
         })
 
-        setGhostsScattering(gameState.getGhostsarescattering())
+        setGhostsScattering(gameState.ghostsAreScattering)
 
         setPinkyState({
-            x: gameState.getPinkypositionx(),
-            y: gameState.getPinkypositiony(),
-            orientation: gameState.getPinkyorientation(),
-            isDead: gameState.getPinkyisdead()
+            x: gameState.pinkyPositionX,
+            y: gameState.pinkyPositionY,
+            orientation: gameState.pinkyOrientation,
+            isDead: gameState.pinkyIsDead
         })
 
         setBlinkyState({
-            x: gameState.getBlinkypositionx(),
-            y: gameState.getBlinkypositiony(),
-            orientation: gameState.getBlinkyorientation(),
-            isDead: gameState.getBlinkyisdead()
+            x: gameState.blinkyPositionX,
+            y: gameState.blinkyPositionY,
+            orientation: gameState.blinkyOrientation,
+            isDead: gameState.blinkyIsDead
         })
 
         setInkyState({
-            x: gameState.getInkypositionx(),
-            y: gameState.getInkypositiony(),
-            orientation: gameState.getInkyorientation(),
-            isDead: gameState.getInkyisdead()
+            x: gameState.inkyPositionX,
+            y: gameState.inkyPositionY,
+            orientation: gameState.inkyOrientation,
+            isDead: gameState.inkyIsDead
         })
 
         setClydeState({
-            x: gameState.getClydepositionx(),
-            y: gameState.getClydepositiony(),
-            orientation: gameState.getClydeorientation(),
-            isDead: gameState.getClydeisdead()
+            x: gameState.clydePositionX,
+            y: gameState.clydePositionY,
+            orientation: gameState.clydeOrientation,
+            isDead: gameState.clydeIsDead
         })
 
 
@@ -170,6 +172,34 @@ const App: Component<AppProps> = (props) => {
         else {
             handleBinaryMessage(event);
         }
+    })
+
+    const keyDownEvent = useKeyDownEvent();
+    const upKeyHeld = createKeyHold("ArrowUp", {preventDefault: true});
+    const downKeyHeld = createKeyHold("ArrowDown", {preventDefault: true});
+    const leftKeyHeld = createKeyHold("ArrowLeft", {preventDefault: true});
+    const rightKeyHeld = createKeyHold("ArrowRight", {preventDefault: true});
+
+    function sendUserInputPacket(dir: Direction, type: OutgoingPacketType) {
+        let outgoingMessage = UserInputMessage.create({
+            incomingPacketType: type,
+            direction: dir,
+        });
+        ws.send(UserInputMessage.toBinary(outgoingMessage));
+    }
+
+    createEffect(() => {
+        const e = keyDownEvent();
+        if (e) {
+            switch (e.key) {
+                case "ArrowUp": !upKeyHeld() ? sendUserInputPacket(Direction.UP, OutgoingPacketType.UserInputPress) : 0; break;
+                case "ArrowDown": !downKeyHeld() ? sendUserInputPacket(Direction.DOWN, OutgoingPacketType.UserInputPress) : 0; break;
+                case "ArrowLeft": !leftKeyHeld() ? sendUserInputPacket(Direction.LEFT, OutgoingPacketType.UserInputPress) : 0; break;
+                case "ArrowRight": !rightKeyHeld() ? sendUserInputPacket(Direction.RIGHT, OutgoingPacketType.UserInputPress) : 0; break;
+            }
+        }
+
+        e?.preventDefault()
     })
 
     return (

@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include "../Ghost.hpp"
+
 namespace pacman {
 
-class Clyde {
+struct Clyde : Ghost {
 
 };
 

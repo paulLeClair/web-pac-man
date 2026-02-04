@@ -33,4 +33,18 @@ Your app is ready to be deployed!
 
 You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
 
+## Protobuf Generation 
+
+### Win32
+To generate the client-side Protobuf files, run this command in PowerShell from the project root,
+not the client root:
+
+~~~~Powershell
+.\client\node_modules\.bin\protoc `
+  --proto_path=client\src\protobuf `
+  --plugin=protoc-gen-ts=.\client\node_modules\.bin\protoc-gen-ts.cmd `
+  --ts_out=client\src\protobuf\gen `
+  client\src\protobuf\*.proto
+~~~~
+
 ## This project was created with the [Solid CLI](https://github.com/solidjs-community/solid-cli)

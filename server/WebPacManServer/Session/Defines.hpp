@@ -8,7 +8,7 @@
 #include <vector>
 
 // hopefully this file won't get too unwieldy but I'll just try and shove all the game entity defs in here
-enum class CurrentGameState
+enum class CurrentGameMode
 {
     START_SCREEN, // "attract" mode which can be interrupted to initiate gameplay
     GAMEPLAY,
@@ -22,21 +22,20 @@ enum class CurrentGameState
  */
 struct Position
 {
-    uint32_t x, y;
+    float x, y;
 };
 
-/**
- * Velocities in terms of screen pixels, using same coordinate system as positions
- */
-struct Velocity
+enum InputDirection
 {
-    uint32_t x, y;
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
 };
 
 struct Entity
 {
     Position pos;
-    Velocity vel;
 
     uint32_t currentGridCellX, currentGridCellY;
 };

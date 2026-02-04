@@ -10,7 +10,18 @@ namespace pacman {
 
 struct Pacman : Entity
 {
-    // we need to be able to queue different directions for movement
+    // these match up with the client-side stuff
+    enum class PacmanOrientation : int32_t
+    {
+        UP,
+         DOWN,
+         LEFT,
+         RIGHT
+    };
+
+    bool isChomping;
+    PacmanOrientation orientation;
+
 
 };
 

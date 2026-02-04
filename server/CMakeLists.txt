@@ -27,9 +27,12 @@ set(server_code
         WebPacManServer/Session/Game/Ghost/Inky/Inky.hpp
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.cpp
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.hpp
+        protobuf/gen/game_state.pb.h
+       protobuf/gen/game_state.pb.cc
 )
 
 add_executable(pacman_server WIN32 ${server_code})
+#find_package(Protobuf CONFIG REQUIRED)
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
@@ -41,10 +44,14 @@ message(STATUS "Boost found: " ${BOOST_FOUND})
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-target_link_libraries(pacman_server Boost::dynamic_linking)
-target_link_libraries(pacman_server ws2_32)
+set(protobuf_VERSION "v33.5") # Ensure this matches the protoc version used
+FetchContent_Declare(
+        protobuf
+        GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+        GIT_TAG ${protobuf_VERSION}
+)
+FetchContent_MakeAvailable(protobuf)
 
-# BarackShoshany Thread Pool (maybe unused? including pre-emptively)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 FetchContent_Declare(
         bshoshany_thread_pool
@@ -58,4 +65,4 @@ FetchContent_MakeAvailable(bshoshany_thread_pool)
 add_library(BS_thread_pool INTERFACE)
 target_include_directories(BS_thread_pool INTERFACE ${bshoshany_thread_pool_SOURCE_DIR}/include)
 
-target_link_libraries(pacman_server BS_thread_pool)
+target_link_libraries(pacman_server PUBLIC Boost::dynamic_linking libprotobuf ws2_32 BS_thread_pool)
