@@ -1,6 +1,6 @@
 import {Component, createMemo, createSignal} from 'solid-js';
 import './Pacman.css'
-import {Direction, EntityState, TopOfBoardPadding} from "../App";
+import {Direction, EntityState, SideOfBoardPadding, TopOfBoardPadding} from "../App";
 
 enum Orientation {
   UP = "orientation-up",
@@ -14,15 +14,16 @@ export interface PacmanState extends EntityState {
 }
 
 export interface PacmanProps {
-  pacmanStateAccessor: () => PacmanState
+  pacmanStateAccessor: () => PacmanState,
+  scaleFactor: number
 }
 
 const Pacman: Component<PacmanProps> = (props) => {
   const positionStyles = createMemo(() => {
     const s = props.pacmanStateAccessor();
     return {
-      top: `${s.y + TopOfBoardPadding + 6}px`,
-      left: `${s.x}px`,
+      top: `${props.scaleFactor * (s.y + TopOfBoardPadding)}px`,
+      left: `${props.scaleFactor * (s.x + SideOfBoardPadding)}px`,
     };
   });
 

@@ -25,11 +25,11 @@ struct Position
 
 enum class Direction : int32_t
 {
-    NONE,
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
+    NONE = 0,
+    UP = 1,
+    DOWN = 2,
+    LEFT = 3,
+    RIGHT = 4,
 };
 
 struct Entity
@@ -54,18 +54,11 @@ struct Entity
     {
         if (!targetCell) return;
 
-        param += std::min(speed, 1.0f);
+        param = std::min(param + speed, 1.0f);
 
-        float deltaX = 0.0f, deltaY = 0.0f;
-
-        switch (orientation)
-        {
-            case Direction::UP: deltaY = -1 * param * (targetCell->pixelY - currentCell->pixelY); break;
-            case Direction::DOWN: deltaY = param * (targetCell->pixelY - currentCell->pixelY); break;
-            case Direction::LEFT: deltaX = -1 * param * (targetCell->pixelX - currentCell->pixelX); break;
-            case Direction::RIGHT: deltaX = param * (targetCell->pixelX - currentCell->pixelX); break;
-            default: break;
-        }
+        // float deltaX = 0.0f, deltaY = 0.0f;
+        const float deltaX  = param * (targetCell->pixelX - currentCell->pixelX);
+        const float deltaY  = param * (targetCell->pixelY - currentCell->pixelY);
 
         pos.x = currentCell->pixelX + deltaX;
         pos.y = currentCell->pixelY + deltaY;
@@ -73,7 +66,7 @@ struct Entity
         if (param == 1.0f)
         {
             currentCell = targetCell;
-
+            param = 0.0f;
             targetCell = obtainNextTarget();
         }
     }

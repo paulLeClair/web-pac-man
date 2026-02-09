@@ -40,12 +40,17 @@ public:
             while (file >> x >> y >> type)
             {
                 auto tileType = type != 'I' ? TileType::OPEN : TileType::INTERSECTION;
+
+                // subtract one from each coordinate for 0-indexing
+                x--;
+                y--;
+
                 int packedCoordinates = x << 16 | y;
                 validTileCoordinates.insert(packedCoordinates);
                 tileTypes[packedCoordinates] = tileType;
 
-                const float pixelPositionX = x * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS + 0.5 * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
-                const float pixelPositionY = y * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS + 0.5 * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+                const float pixelPositionX = x * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+                const float pixelPositionY = y * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
                 mazeCells.emplace_back(x, y, tileType, pixelPositionX, pixelPositionY);
                 cellIndices[packedCoordinates] = mazeCells.size() - 1;
             }

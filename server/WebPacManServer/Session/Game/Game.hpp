@@ -19,13 +19,14 @@ public:
     explicit Game(const std::string &fileName) : maze(std::make_unique<MazeFile>(fileName))
     {
         // testing/debug
-        auto startPos = maze->getCell(21, 19);
+        auto startPos = maze->getCell(1, 1);
 
         // init player etc
         player.mazeFile = maze.get();
         player.isChomping = false;
         player.pos = {startPos->pixelX, startPos->pixelY}; // todo -> player starting position
         player.currentCell = startPos;
+        player.targetCell = nullptr;
         player.orientation = Direction::LEFT;
         player.bufferedInput = Direction::NONE;
 
@@ -51,6 +52,7 @@ public:
     void tick()
     {
         player.bufferedInput = lastBufferedInput;
+        lastBufferedInput = Direction::NONE; // only process an input once
         player.update();
 
         blinky.update();

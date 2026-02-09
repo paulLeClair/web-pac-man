@@ -21,6 +21,7 @@ struct Pacman final : Entity
 
 private:
     MazeCell *getMazeCellIfWalkable(int x, int y) const;
+    MazeCell* getNextWalkableCellByOrientation();
 };
 
 } // pacman

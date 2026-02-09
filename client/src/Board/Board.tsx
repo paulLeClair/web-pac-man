@@ -17,12 +17,12 @@ const Board: Component<BoardProps> = (props) => {
   return (
     <section class="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col items-center justify-center px-6 py-10">
       <div class="mt-8 flex items-center justify-center">
-        <div class="relative aspect-28/36 w-[min(90vw,calc(80vh*28/36))] max-w-[400px]">
-          <div class="absolute inset-0 rounded-3xl bg-slate-900/70 ring-1 ring-slate-700 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.9)]" />
+        <div class="relative aspect-28/36 w-[min(90vw,calc(80vh*28/36))] max-w-[224px]">
+          <div class="absolute inset-0 3xl bg-slate-900/70 ring-1 ring-slate-700 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.9)]" />
           <img
             src={BOARD_IMG}
             alt="Pac-Man board"
-            class="absolute inset-0 h-full w-full rounded-3xl object-contain"
+            class="absolute inset-0 h-full w-full 3xl object-contain"
           />
           {props.children}
         </div>

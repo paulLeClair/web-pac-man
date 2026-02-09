@@ -16,13 +16,15 @@ interface AppProps {
 }
 
 export enum Direction {
-    UP = 0,
-    DOWN = 1,
-    LEFT = 2,
-    RIGHT = 3
+    NONE = 0,
+    UP = 1,
+    DOWN = 2,
+    LEFT = 3,
+    RIGHT = 4
 }
 
-export const TopOfBoardPadding = 23; // probably should get this from server but its ok for now
+export const TopOfBoardPadding = 24; // probably should get this from server but its ok for now
+export const SideOfBoardPadding = 6;
 
 enum GameMode {
     Unknown = 0,
@@ -199,7 +201,7 @@ const App: Component<AppProps> = (props) => {
         <div>
             {/*  TODO -> scoreboard etc*/}
             <Board>
-                <Pacman pacmanStateAccessor={pacmanState} />
+                <Pacman pacmanStateAccessor={pacmanState} scaleFactor={1.0} />
                 <Ghost ghostName={GhostName.PINKY} ghostStateAccessor={pinkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.INKY} ghostStateAccessor={inkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.BLINKY} ghostStateAccessor={blinkyState} isScatteringAccessor={ghostsScattering}/>
