@@ -10,18 +10,17 @@ namespace pacman {
 
 struct Pacman final : Entity
 {
-    // these match up with the client-side stuff
-    enum class PacmanOrientation : int32_t
-    {
-        UP,
-         DOWN,
-         LEFT,
-         RIGHT
-    };
+    MazeFile *mazeFile;
 
     bool isChomping = false;
-    PacmanOrientation orientation = PacmanOrientation::LEFT;
-    InputDirection bufferedInput = DOWN;
+    Direction bufferedInput = Direction::DOWN;
+
+    ~Pacman() override = default;
+    MazeCell* obtainNextTarget() override;
+    void update() override;
+
+private:
+    MazeCell *getMazeCellIfWalkable(int x, int y) const;
 };
 
 } // pacman

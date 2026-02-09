@@ -22,6 +22,8 @@ export enum Direction {
     RIGHT = 3
 }
 
+export const TopOfBoardPadding = 23; // probably should get this from server but its ok for now
+
 enum GameMode {
     Unknown = 0,
     // Loading/Attract mode
@@ -49,30 +51,20 @@ export interface EntityState {
     orientation: Direction
 }
 
-interface GameState {
-    currentMode: GameMode,
-
-    // these will be nullable, which means no change occurred from last tick
-    pacmanState: PacmanState,
-    ghostsScattering: boolean,
-    pinkyState: GhostState,
-    inkyState: GhostState,
-    blinkyState: GhostState,
-    clydeState: GhostState
-}
-
-enum IncomingPacketType {
+enum IncomingPacketType { // incoming from client's perspective
     GameModeTransitionRequest = 0x80,
     GameStateUpdate = 0x70,
 }
 
-enum OutgoingPacketType {
+enum OutgoingPacketType { // outgoing from client's perspective
     UserInputPress = 0x101,
     UserInputRelease = 0x102, // maybe unused/unnecessary
     GameModeComplete = 0x103,
 }
 
 const App: Component<AppProps> = (props) => {
+    // TODO -> game modes once basic mechanics are in place
+
     // i guess state will be top-down, where the app holds onto the actual signals which we pass along via props
     const [pacmanState, setPacmanState] = createSignal<PacmanState>({x: 0, y: 0, orientation: Direction.UP, isChomping: true})
     const [ghostsScattering, setGhostsScattering] = createSignal(false)
@@ -87,7 +79,7 @@ const App: Component<AppProps> = (props) => {
         // we also would want to send back a "finished" message and wait for the next state to be sent from the server
     }
 
-    function handleBinaryMessage(event: MessageEvent<ArrayBuffer>) {
+    function handleIncomingBinaryMessage(event: MessageEvent<ArrayBuffer>) {
         // for now, we'll assume all incoming messsages are game state updates until it makes sense to add cutscenes
         if (event.data.byteLength === 0) return;
 
@@ -107,7 +99,7 @@ const App: Component<AppProps> = (props) => {
     function handleGameStateUpdate(messageBufferView: Uint8Array<ArrayBuffer>) {
         if (!(messageBufferView[0] === IncomingPacketType.GameStateUpdate)) return;
 
-        console.log("Game state update received")
+        // TODO -> probably we want to be syncing this with a requestAnimationFrame() somehow
 
         // TODO -> game mode implementation; we have a field in our state update but it's not yet used
 
@@ -117,6 +109,10 @@ const App: Component<AppProps> = (props) => {
         // we should be more efficient and granular with our updates to avoid unnecessary re-renders;
         // for prototyping I'll keep it naive just to ensure that the data is being passed properly.
         // after that's working, we should diff each of these so we can avoid not setting them unnecessarily
+
+        // TODO -> we'll need to convert from game-native coordinates to whatever the game board's
+        // size actually is on the client side; that way the entirety of game logic can be serverside
+
         setPacmanState({
             x: gameState.pacmanPositionX,
             y: gameState.pacmanPositionY,
@@ -167,7 +163,7 @@ const App: Component<AppProps> = (props) => {
             handleStringMessage(event);
         }
         else {
-            handleBinaryMessage(event);
+            handleIncomingBinaryMessage(event);
         }
     })
 

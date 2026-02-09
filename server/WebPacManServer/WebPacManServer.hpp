@@ -22,7 +22,7 @@ namespace pacman {
 
     class WebPacManServer : public std::enable_shared_from_this<WebPacManServer> {
 public:
-        WebPacManServer(const std::string &ipAddress, int port,
+        WebPacManServer(const std::string &ipAddress, int port, const std::string &mazeFilePath,
             int threadCount = std::thread::hardware_concurrency());
 
         ~WebPacManServer();
@@ -30,6 +30,8 @@ public:
         bool run();
 
 private:
+        std::string mazeFilePath;
+
         BS::thread_pool<> gameLogicThreadPool;
 
         net::io_context io_context;

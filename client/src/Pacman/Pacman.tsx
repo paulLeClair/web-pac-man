@@ -1,6 +1,6 @@
-import {Component, createSignal} from 'solid-js';
+import {Component, createMemo, createSignal} from 'solid-js';
 import './Pacman.css'
-import {Direction, EntityState} from "../App";
+import {Direction, EntityState, TopOfBoardPadding} from "../App";
 
 enum Orientation {
   UP = "orientation-up",
@@ -18,27 +18,34 @@ export interface PacmanProps {
 }
 
 const Pacman: Component<PacmanProps> = (props) => {
-  const positionStyles = {
-    top: props.pacmanStateAccessor().y.toString() + "px",
-    left: props.pacmanStateAccessor().x.toString() + "px"
-  }
+  const positionStyles = createMemo(() => {
+    const s = props.pacmanStateAccessor();
+    return {
+      top: `${s.y + TopOfBoardPadding + 6}px`,
+      left: `${s.x}px`,
+    };
+  });
 
-  let pacmanOrientation = Orientation.UP;
-  switch (props.pacmanStateAccessor().orientation) {
-    case Direction.UP: pacmanOrientation = Orientation.UP; break;
-    case Direction.DOWN: pacmanOrientation = Orientation.DOWN; break;
-    case Direction.LEFT: pacmanOrientation = Orientation.LEFT; break;
-    case Direction.RIGHT: pacmanOrientation = Orientation.RIGHT; break;
-  }
+  const pacmanOrientation = createMemo(() => {
+    switch (props.pacmanStateAccessor().orientation) {
+      case Direction.UP: return Orientation.UP;
+      case Direction.DOWN: return Orientation.DOWN;
+      case Direction.LEFT: return Orientation.LEFT;
+      case Direction.RIGHT: return Orientation.RIGHT;
+      default: return Orientation.UP;
+    }
+  });
 
-  let pacmanClassesString = "pacman " + pacmanOrientation;
-  if (props.pacmanStateAccessor().isChomping) {
-    pacmanClassesString += " pacman-chomp"
-  }
+  const pacmanClassesString = createMemo(() => {
+    const s = props.pacmanStateAccessor();
+    let cls = `pacman ${pacmanOrientation()}`;
+    if (s.isChomping) cls += " pacman-chomp";
+    return cls;
+  });
 
   // for some things we'll have to mix in some inline styles I think
   return (
-    <div class={pacmanClassesString}  style={positionStyles}/>
+    <div class={pacmanClassesString()}  style={positionStyles()}/>
   );
 };
 

@@ -9,8 +9,9 @@
 #include <boost/asio/strand.hpp>
 
 namespace pacman {
-    WebPacManServer::WebPacManServer(const std::string &ip, const int port, const int threadCount)
+    WebPacManServer::WebPacManServer(const std::string &ip, const int port,const std::string &mazeFilePath,const int threadCount)
     : gameLogicThreadPool(threadCount / 2), // i guess default for now is 50% of threads go to game logic
+    mazeFilePath(mazeFilePath),
     ipAddress(boost::asio::ip::address::from_string(ip)),
     port(port),
     io_context(threadCount / 2),
@@ -47,7 +48,7 @@ namespace pacman {
             });
         }
 
-        const auto &gameTickerFunction = [&](std::stop_token stoken)
+        const auto &gameTickerFunction = [&](const std::stop_token& stoken)
         {
             gameTickerThreadKernel(stoken);
         };
@@ -129,7 +130,8 @@ namespace pacman {
         {
             // we can start a new session
             sessions.emplace_back(std::make_shared<Session>(
-                std::move(socket)
+                std::move(socket),
+                mazeFilePath
             ));
             sessions.back()->run();
         }
@@ -143,10 +145,12 @@ namespace pacman {
         static constexpr int DEFAULT_TICK_INTERVAL_IN_MS = 30;
         while (!stoken.stop_requested())
         {
-            for (auto &session : sessions)
+            for (const auto &session : sessions)
             {
-                auto result = gameLogicThreadPool.submit_task([&]{ session->gameTick(); }); // NOLINT
-
+                // this thread pool for triggering async writes seems to cause issues; for now i'll just
+                // have the ticker thread tick on its own
+                // auto result = gameLogicThreadPool.submit_task([&]{ session->gameTick(); }); // NOLINT
+                session->gameTick();
             }
 
             // TODO -> replace this ugly sleeping with a condition variable for more efficient waiting

@@ -28,13 +28,18 @@ set(server_code
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.cpp
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.hpp
         protobuf/gen/game_state.pb.h
-       protobuf/gen/game_state.pb.cc
+        protobuf/gen/game_state.pb.cc
         protobuf/gen/user_inputs.pb.h
         protobuf/gen/user_inputs.pb.cc
+        WebPacManServer/Session/Game/Maze/Maze.hpp
 )
 
-add_executable(pacman_server WIN32 ${server_code})
-#find_package(Protobuf CONFIG REQUIRED)
+
+
+add_executable(pacman_server ${server_code})
+if (WIN32)
+    set_target_properties(pacman_server PROPERTIES WIN32_EXECUTABLE ON)
+endif ()
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)

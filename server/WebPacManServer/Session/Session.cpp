@@ -9,7 +9,7 @@
 
 namespace pacman
 {
-    Session::Session(tcp::socket &&socket) : sessionId(boost::uuids::uuid()), ws(std::move(socket))
+    Session::Session(tcp::socket &&socket, const std::string &mapFilePath) : sessionId(boost::uuids::uuid()), ws(std::move(socket)), game(mapFilePath)
     {
 
     }
@@ -30,7 +30,6 @@ namespace pacman
             std::lock_guard guard(mutex);
             game.tick();
 
-            // TODO -> BUILD GAME STATE SNAPSHOT AND PUT IT IN GAMESTATEBUFFER
             GameStateMessage gameState;
 
             // for now naive flat update of all state
@@ -166,7 +165,6 @@ namespace pacman
 
     void Session::asyncWriteGameStateHandler(beast::error_code ec, std::size_t bytes_transferred)
     {
-        std::lock_guard lock(mutex);
         boost::ignore_unused(bytes_transferred);
 
         if (ec)
@@ -202,8 +200,7 @@ namespace pacman
         {
         case static_cast<int32_t>(IncomingPacketType::UserInputPress):
             {
-                std::lock_guard guard(mutex);
-                game.lastBufferedInput = static_cast<InputDirection>(inputDirection);
+                game.lastBufferedInput = static_cast<Direction>(inputDirection);
                 break;
             }
             case static_cast<int32_t>(IncomingPacketType::UserInputRelease): // NOLINT

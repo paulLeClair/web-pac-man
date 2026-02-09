@@ -14,9 +14,9 @@ namespace pacman
 {
     enum class IncomingPacketType : int32_t
     {
-        UserInputPress,
-        UserInputRelease, // maybe unused
-        GameModeComplete
+        UserInputPress = 0x101,
+        UserInputRelease = 0x102, // maybe unused
+        GameModeComplete = 0x103,
     };
 
     enum class OutgoingPacketType : uint8_t
@@ -28,7 +28,7 @@ namespace pacman
     class Session : public std::enable_shared_from_this<Session>
     {
     public:
-        explicit Session(tcp::socket&& socket);
+        explicit Session(tcp::socket&& socket, const std::string &mapFilePath);
 
         ~Session() = default;
 
@@ -37,26 +37,15 @@ namespace pacman
         beast::flat_buffer incomingClientMessageBuffer = beast::flat_buffer();
         beast::flat_buffer gameStateFlatBuffer = beast::flat_buffer();
 
-        // i'll try and tailor this to use boost asio strands, which should hopefully in conjunction with the
-        // thread pool allow for a fully multithreaded C++ server
-
-        // one thing we have to reconcile is that we need to tie in ticking each session's game at a
-        // reasonable rate with the async input reads and async game state writes...
-
-
-        // triggers the session to begin
         void run();
 
-        // for now my only idea for a semi-clean design is to spin up a server thread that
-        // runs updates for all sessions (using a thread pool to hopefully mitigate
-        // lag from game updates when scaling up to large numbers of sessions)
         void gameTick();
 
     private:
         Game game;
         std::mutex mutex = std::mutex();
 
-        // this is used to store the serialized game state data that is sent to the client
+        // this is used to store the serialized game state data sent to the client
         std::vector<uint8_t> gameStateMessageData;
 
         void asyncRunHandler();
