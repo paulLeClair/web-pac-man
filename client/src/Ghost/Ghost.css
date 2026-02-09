@@ -1,0 +1,94 @@
+.ghost {
+    background: url('/assets/Ghost/ghosts-sprite-sheet.png'); /*set this to the ghost sprite sheet*/
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    z-index: auto;
+
+    /*these have to be 12 to line up with our sprite sheet, but they
+    should be dynamically scaled based off the board image size */
+    width: 17px;
+    height: 17px;
+}
+
+.scattering {
+    background-position-y: 76px;
+}
+
+.dead {
+    background-position-y: 76px;
+}
+
+/* these classes should set the overall offsets into the sprite sheet */
+.pinky {
+    background-position-y: -19px;
+
+}
+
+.inky {
+    background-position-y: -38px;
+}
+
+.clyde {
+    background-position-y: -57px;
+
+}
+
+.blinky {
+    background-position-y: 0;
+}
+
+/* ghost-specific orientations are not about rotation like pacman but instead we use a different sprite animation */
+.ghost-orientation-up {
+    animation: ghostMovingUp 0.18s steps(2) infinite;
+}
+
+.ghost-orientation-down {
+    animation: ghostMovingDown 0.18s steps(2) infinite;
+}
+
+.ghost-orientation-left {
+    animation: ghostMovingLeft 0.18s steps(2) infinite;
+}
+
+.ghost-orientation-right {
+    animation: ghostMovingRight 0.18s steps(2) infinite;
+}
+
+@keyframes ghostMovingLeft {
+    0% {
+        background-position-x: -36px;
+    }
+    100% {
+        background-position-x: -70px;
+    }
+}
+
+@keyframes ghostMovingRight {
+    0% {
+        background-position-x: -2px;
+    }
+    100% {
+        background-position-x: -36px;
+    }
+}
+
+@keyframes ghostMovingUp {
+    0% {
+        background-position-x: -70px;
+    }
+    100% {
+        background-position-x: -104px;
+    }
+
+}
+
+@keyframes ghostMovingDown {
+    0% {
+        background-position-x: -104px;
+    }
+    100% {
+        background-position-x: -138px;
+    }
+
+}

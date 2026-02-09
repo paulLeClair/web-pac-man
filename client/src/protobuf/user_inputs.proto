@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message UserInputMessage {
+  int32 incomingPacketType = 1;
+  int32 direction = 2;
+}
