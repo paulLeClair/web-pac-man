@@ -36,7 +36,6 @@ namespace pacman {
 
         acceptSessions();
 
-        // TODO -> start running the IO service at this point so the server actually runs
         std::vector<std::thread> serverThreads = {};
         size_t ioThreadCount = gameLogicThreadPool.get_thread_count() - 1;
         serverThreads.reserve(ioThreadCount);
@@ -147,9 +146,6 @@ namespace pacman {
         {
             for (const auto &session : sessions)
             {
-                // this thread pool for triggering async writes seems to cause issues; for now i'll just
-                // have the ticker thread tick on its own
-                // auto result = gameLogicThreadPool.submit_task([&]{ session->gameTick(); }); // NOLINT
                 session->gameTick();
             }
 
