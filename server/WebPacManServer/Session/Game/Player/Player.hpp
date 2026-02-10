@@ -20,7 +20,7 @@ struct Pacman final : Entity
     void update() override;
 
 private:
-    MazeCell *getMazeCellIfWalkable(int x, int y) const;
+    [[nodiscard]] MazeCell *getMazeCellIfWalkable(int x, int y) const;
     MazeCell* getNextWalkableCellByOrientation();
 };
 
