@@ -18,10 +18,12 @@ enum class TileType : unsigned char {
 
 struct MazeCell
 {
-    int gridX,gridY;
-    TileType type;
-    float pixelX, pixelY;
+    int gridX = 0,gridY = 0;
+    TileType type = TileType::UNKNOWN;
+    float pixelX = 0, pixelY = 0;
 };
+
+static constexpr uint32_t NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS = 8;
 
 class MazeFile
 {
@@ -77,7 +79,6 @@ public:
     }
 
 private:
-    static constexpr uint32_t NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS = 8;
 
     std::vector<MazeCell> mazeCells = {};
 

@@ -214,7 +214,6 @@ namespace pacman
             {
                 game.lastBufferedInput = static_cast<Direction>(inputDirection);
 
-                //
                 if (game.player.targetCell && isOppositeDirection(game.lastBufferedInput, game.player.orientation))
                 {
                     game.player.reverseDirection();

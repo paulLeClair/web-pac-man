@@ -9,6 +9,13 @@
 namespace pacman {
 
 struct Blinky final : Ghost {
+    Blinky() = default;
+    ~Blinky() override = default;
+
+    MazeCell* obtainNextTarget() override
+    {
+        return getClosestNeighborToTargetCell(player->currentCell);
+    }
 };
 
 } // pacman

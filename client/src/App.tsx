@@ -24,7 +24,7 @@ export enum Direction {
 }
 
 export const TopOfBoardPadding = 24; // probably should get this from server but its ok for now
-export const SideOfBoardPadding = 6;
+export const SideOfBoardPadding = 4;
 
 enum GameMode {
     Unknown = 0,
@@ -201,11 +201,11 @@ const App: Component<AppProps> = (props) => {
         <div>
             {/*  TODO -> scoreboard etc*/}
             <Board>
-                <Pacman pacmanStateAccessor={pacmanState} scaleFactor={1.0} />
                 <Ghost ghostName={GhostName.PINKY} ghostStateAccessor={pinkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.INKY} ghostStateAccessor={inkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.BLINKY} ghostStateAccessor={blinkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.CLYDE} ghostStateAccessor={clydeState} isScatteringAccessor={ghostsScattering}/>
+                <Pacman pacmanStateAccessor={pacmanState} scaleFactor={1.0} />
             </Board>
             {/* TODO -> lives and what not */}
         </div>

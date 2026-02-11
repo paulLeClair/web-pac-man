@@ -1,6 +1,6 @@
-import {Component, createSignal} from 'solid-js';
+import {Component, createMemo, createSignal} from 'solid-js';
 import './Ghost.css'
-import {Direction, EntityState} from "../App";
+import {Direction, EntityState, SideOfBoardPadding, TopOfBoardPadding} from "../App";
 
 export enum GhostName {
     UNKNOWN = "unknown",
@@ -10,7 +10,7 @@ export enum GhostName {
     CLYDE = "clyde"
 }
 
-enum Orientation {
+enum GhostOrientation {
     UP = "ghost-orientation-up",
     DOWN = "ghost-orientation-down",
     LEFT = "ghost-orientation-left",
@@ -29,24 +29,34 @@ interface GhostProps {
 
 const Ghost: Component<GhostProps> = (props) => {
     const [ghostName, setGhostName] = createSignal(GhostName.UNKNOWN)
-
-    const positionStyles = {
-        left: props.ghostStateAccessor().x.toString() + "px",
-        top: props.ghostStateAccessor().y.toString() + "px",
-    }
-
     setGhostName(props.ghostName)
 
-    let ghostOrientationClass = Orientation.UP;
-    switch (props.ghostStateAccessor().orientation) {
-        case Direction.UP: ghostOrientationClass = Orientation.UP; break;
-        case Direction.DOWN: ghostOrientationClass = Orientation.DOWN; break;
-        case Direction.LEFT: ghostOrientationClass = Orientation.LEFT; break;
-        case Direction.RIGHT: ghostOrientationClass = Orientation.RIGHT; break;
-    }
+    const positionStyles = createMemo(() => {
+        const s = props.ghostStateAccessor();
+        return {
+          top: `${s.y + TopOfBoardPadding}px`,
+          left: `${s.x + SideOfBoardPadding}px`,
+        };
+    });
+
+    const ghostOrientation = createMemo(() => {
+        switch (props.ghostStateAccessor().orientation) {
+            case Direction.UP: return GhostOrientation.UP;
+            case Direction.DOWN: return GhostOrientation.DOWN;
+            case Direction.LEFT: return GhostOrientation.LEFT;
+            case Direction.RIGHT: return GhostOrientation.RIGHT;
+        }
+        return GhostOrientation.UP;
+    })
+
+    const ghostClassesString = createMemo(() => {
+        const s = props.ghostStateAccessor()
+        // TODO -> wire in animations for being scattered and being dead
+        return `ghost ${ghostName()} ${ghostOrientation()}`;
+    })
 
   return (
-      <div class={"ghost " + ghostName() + " " + ghostOrientationClass} style={positionStyles}/>
+      <div class={ghostClassesString()} style={positionStyles()}/>
   );
 };
 

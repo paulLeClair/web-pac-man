@@ -1,4 +1,4 @@
-import {Component, createMemo, createSignal} from 'solid-js';
+import {Component, createMemo} from 'solid-js';
 import './Pacman.css'
 import {Direction, EntityState, SideOfBoardPadding, TopOfBoardPadding} from "../App";
 
