@@ -70,6 +70,8 @@ struct Entity
             targetCell = obtainNextTarget();
         }
     }
+
+
 };
 
 struct Items

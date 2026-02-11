@@ -52,7 +52,6 @@ public:
     void tick()
     {
         player.bufferedInput = lastBufferedInput;
-        lastBufferedInput = Direction::NONE; // only process an input once
         player.update();
 
         blinky.update();

@@ -56,6 +56,13 @@ namespace pacman
         void asyncWriteGameStateHandler(beast::error_code ec, std::size_t bytes_transferred);
 
         void handleTextMessage();
+        /**
+         *
+         * @param direction1 a direction
+         * @param direction2 a direction
+         * @return whether direction1 is the opposite direction of direction2
+         */
+        static bool isOppositeDirection(Direction direction1, Direction direction2);
         void handleBinaryMessage();
     };
 } // pacman

@@ -185,6 +185,18 @@ namespace pacman
         incomingClientMessageBuffer.consume(incomingClientMessageBuffer.size());
     }
 
+    bool Session::isOppositeDirection(Direction direction1, Direction direction2)
+    {
+        switch (direction1)
+        {
+            case Direction::UP: return direction2 == Direction::DOWN;
+            case Direction::DOWN: return direction2 == Direction::UP;
+            case Direction::LEFT: return direction2 == Direction::RIGHT;
+            case Direction::RIGHT: return direction2 == Direction::LEFT;
+            default: return false;
+        }
+    }
+
     void Session::handleBinaryMessage()
     {
         const auto incomingData = incomingClientMessageBuffer.data();
@@ -201,6 +213,13 @@ namespace pacman
         case static_cast<int32_t>(IncomingPacketType::UserInputPress):
             {
                 game.lastBufferedInput = static_cast<Direction>(inputDirection);
+
+                //
+                if (game.player.targetCell && isOppositeDirection(game.lastBufferedInput, game.player.orientation))
+                {
+                    game.player.reverseDirection();
+                }
+
                 break;
             }
             case static_cast<int32_t>(IncomingPacketType::UserInputRelease): // NOLINT
