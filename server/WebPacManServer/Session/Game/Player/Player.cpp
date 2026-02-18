@@ -90,7 +90,7 @@ namespace pacman
     void Pacman::update()
     {
         // set the target cell if we're stationary at an intersection
-        if (!targetCell && mazeFile->getTileType(currentCell->gridX, currentCell->gridY) == TileType::INTERSECTION)
+        if (!targetCell || mazeFile->getTileType(currentCell->gridX, currentCell->gridY) == TileType::INTERSECTION)
         {
             switch (bufferedInput)
             {

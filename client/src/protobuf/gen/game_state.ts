@@ -104,6 +104,12 @@ export interface GameStateMessage {
      * @generated from protobuf field: bool clydeIsDead = 22
      */
     clydeIsDead: boolean;
+    /**
+     * @generated from protobuf field: map<uint32, uint32> items = 23
+     */
+    items: {
+        [key: number]: number;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GameStateMessage$Type extends MessageType<GameStateMessage> {
@@ -130,7 +136,8 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
             { no: 19, name: "clydePositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 20, name: "clydePositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 21, name: "clydeOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 22, name: "clydeIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 22, name: "clydeIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 23, name: "items", kind: "map", K: 13 /*ScalarType.UINT32*/, V: { kind: "scalar", T: 13 /*ScalarType.UINT32*/ } }
         ]);
     }
     create(value?: PartialMessage<GameStateMessage>): GameStateMessage {
@@ -157,6 +164,7 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         message.clydePositionY = 0;
         message.clydeOrientation = 0;
         message.clydeIsDead = false;
+        message.items = {};
         if (value !== undefined)
             reflectionMergePartial<GameStateMessage>(this, message, value);
         return message;
@@ -232,6 +240,9 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
                 case /* bool clydeIsDead */ 22:
                     message.clydeIsDead = reader.bool();
                     break;
+                case /* map<uint32, uint32> items */ 23:
+                    this.binaryReadMap23(message.items, reader, options);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -242,6 +253,22 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
             }
         }
         return message;
+    }
+    private binaryReadMap23(map: GameStateMessage["items"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof GameStateMessage["items"] | undefined, val: GameStateMessage["items"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.uint32();
+                    break;
+                case 2:
+                    val = reader.uint32();
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for GameStateMessage.items");
+            }
+        }
+        map[key ?? 0] = val ?? 0;
     }
     internalBinaryWrite(message: GameStateMessage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 currentMode = 1; */
@@ -310,6 +337,9 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         /* bool clydeIsDead = 22; */
         if (message.clydeIsDead !== false)
             writer.tag(22, WireType.Varint).bool(message.clydeIsDead);
+        /* map<uint32, uint32> items = 23; */
+        for (let k of globalThis.Object.keys(message.items))
+            writer.tag(23, WireType.LengthDelimited).fork().tag(1, WireType.Varint).uint32(parseInt(k)).tag(2, WireType.Varint).uint32(message.items[k as any]).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

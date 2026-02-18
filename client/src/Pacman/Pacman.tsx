@@ -22,8 +22,8 @@ const Pacman: Component<PacmanProps> = (props) => {
   const positionStyles = createMemo(() => {
     const s = props.pacmanStateAccessor();
     return {
-      top: `${props.scaleFactor * (s.y + TopOfBoardPadding)}px`,
-      left: `${props.scaleFactor * (s.x + SideOfBoardPadding)}px`,
+      top: `${props.scaleFactor * (s.y + TopOfBoardPadding + 1)}px`,
+      left: `${props.scaleFactor * (s.x + SideOfBoardPadding + 2)}px`,
     };
   });
 

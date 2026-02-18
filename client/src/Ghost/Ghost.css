@@ -5,10 +5,8 @@
     margin: 0;
     z-index: auto;
 
-    /*these have to be 12 to line up with our sprite sheet, but they
-    should be dynamically scaled based off the board image size */
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
 }
 
 .scattering {

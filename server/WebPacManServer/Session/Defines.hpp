@@ -15,6 +15,21 @@ enum class CurrentGameMode
     INTERMISSION_3 // level 9
 };
 
+enum class ItemType : uint32_t
+{
+    UNKNOWN = 0,
+    DOT = 10,
+    ENERGIZER = 50,
+    CHERRY = 100,
+    STRAWBERRY = 300,
+    ORANGE = 500,
+    APPLE = 700,
+    MELON = 1000,
+    GALAXIAN = 2000,
+    BELL = 3000,
+    KEY = 5000
+};
+
 /**
  * "World-space" positions, with the bottom left of the screen as the origin
  */
@@ -71,10 +86,5 @@ struct Entity
         }
     }
 
-
-};
-
-struct Items
-{
 
 };

@@ -24,6 +24,24 @@ PROTOBUF_PRAGMA_INIT_SEG
 namespace _pb = ::google::protobuf;
 namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
+template <typename>
+PROTOBUF_CONSTEXPR GameStateMessage_ItemsEntry_DoNotUse::GameStateMessage_ItemsEntry_DoNotUse(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : GameStateMessage_ItemsEntry_DoNotUse::MapEntry(GameStateMessage_ItemsEntry_DoNotUse_class_data_.base()){}
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : GameStateMessage_ItemsEntry_DoNotUse::MapEntry() {
+}
+#endif  // PROTOBUF_CUSTOM_VTABLE
+struct GameStateMessage_ItemsEntry_DoNotUseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GameStateMessage_ItemsEntry_DoNotUseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GameStateMessage_ItemsEntry_DoNotUseDefaultTypeInternal() {}
+  union {
+    GameStateMessage_ItemsEntry_DoNotUse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GameStateMessage_ItemsEntry_DoNotUseDefaultTypeInternal _GameStateMessage_ItemsEntry_DoNotUse_default_instance_;
 
 inline constexpr GameStateMessage::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -49,7 +67,8 @@ inline constexpr GameStateMessage::Impl_::Impl_(
         clydepositiony_{0},
         blinkyisdead_{false},
         clydeisdead_{false},
-        clydeorientation_{0} {}
+        clydeorientation_{0},
+        items_{} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR GameStateMessage::GameStateMessage(::_pbi::ConstantInitialized)
@@ -78,8 +97,15 @@ const ::uint32_t
     TableStruct_game_5fstate_2eproto::offsets[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
         protodesc_cold) = {
         0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage_ItemsEntry_DoNotUse, _impl_._has_bits_),
+        5, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage_ItemsEntry_DoNotUse, _impl_.key_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage_ItemsEntry_DoNotUse, _impl_.value_),
+        0,
+        1,
+        0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_._has_bits_),
-        25, // hasbit index offset
+        26, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.currentmode_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanpositionx_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanpositiony_),
@@ -102,6 +128,7 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydepositiony_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydeorientation_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydeisdead_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.items_),
         1,
         0,
         3,
@@ -124,18 +151,21 @@ const ::uint32_t
         18,
         21,
         20,
+        22,
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-        {0, sizeof(::GameStateMessage)},
+        {0, sizeof(::GameStateMessage_ItemsEntry_DoNotUse)},
+        {7, sizeof(::GameStateMessage)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
+    &::_GameStateMessage_ItemsEntry_DoNotUse_default_instance_._instance,
     &::_GameStateMessage_default_instance_._instance,
 };
 const char descriptor_table_protodef_game_5fstate_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\020game_state.proto\"\247\004\n\020GameStateMessage\022"
+    "\n\020game_state.proto\"\202\005\n\020GameStateMessage\022"
     "\023\n\013currentMode\030\001 \001(\005\022\027\n\017pacmanPositionX\030"
     "\002 \001(\001\022\027\n\017pacmanPositionY\030\003 \001(\001\022\031\n\021pacman"
     "Orientation\030\004 \001(\005\022\030\n\020pacmanIsChomping\030\005 "
@@ -149,24 +179,120 @@ const char descriptor_table_protodef_game_5fstate_2eproto[] ABSL_ATTRIBUTE_SECTI
     "ientation\030\021 \001(\005\022\024\n\014blinkyIsDead\030\022 \001(\010\022\026\n"
     "\016clydePositionX\030\023 \001(\001\022\026\n\016clydePositionY\030"
     "\024 \001(\001\022\030\n\020clydeOrientation\030\025 \001(\005\022\023\n\013clyde"
-    "IsDead\030\026 \001(\010b\006proto3"
+    "IsDead\030\026 \001(\010\022+\n\005items\030\027 \003(\0132\034.GameStateM"
+    "essage.ItemsEntry\032,\n\nItemsEntry\022\013\n\003key\030\001"
+    " \001(\r\022\r\n\005value\030\002 \001(\r:\0028\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_game_5fstate_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_game_5fstate_2eproto = {
     false,
     false,
-    580,
+    671,
     descriptor_table_protodef_game_5fstate_2eproto,
     "game_state.proto",
     &descriptor_table_game_5fstate_2eproto_once,
     nullptr,
     0,
-    1,
+    2,
     schemas,
     file_default_instances,
     TableStruct_game_5fstate_2eproto::offsets,
     file_level_enum_descriptors_game_5fstate_2eproto,
     file_level_service_descriptors_game_5fstate_2eproto,
+};
+// ===================================================================
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+GameStateMessage_ItemsEntry_DoNotUse::GameStateMessage_ItemsEntry_DoNotUse()
+    : SuperType(GameStateMessage_ItemsEntry_DoNotUse_class_data_.base()) {}
+GameStateMessage_ItemsEntry_DoNotUse::GameStateMessage_ItemsEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+    : SuperType(arena, GameStateMessage_ItemsEntry_DoNotUse_class_data_.base()) {}
+#else   // PROTOBUF_CUSTOM_VTABLE
+GameStateMessage_ItemsEntry_DoNotUse::GameStateMessage_ItemsEntry_DoNotUse() : SuperType() {}
+GameStateMessage_ItemsEntry_DoNotUse::GameStateMessage_ItemsEntry_DoNotUse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena) : SuperType(arena) {}
+#endif  // PROTOBUF_CUSTOM_VTABLE
+inline void* PROTOBUF_NONNULL GameStateMessage_ItemsEntry_DoNotUse::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) GameStateMessage_ItemsEntry_DoNotUse(arena);
+}
+constexpr auto GameStateMessage_ItemsEntry_DoNotUse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(GameStateMessage_ItemsEntry_DoNotUse),
+                                            alignof(GameStateMessage_ItemsEntry_DoNotUse));
+}
+constexpr auto GameStateMessage_ItemsEntry_DoNotUse::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_GameStateMessage_ItemsEntry_DoNotUse_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &GameStateMessage_ItemsEntry_DoNotUse::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<GameStateMessage_ItemsEntry_DoNotUse>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &GameStateMessage_ItemsEntry_DoNotUse::SharedDtor,
+          static_cast<void (::google::protobuf::MessageLite::*)()>(&GameStateMessage_ItemsEntry_DoNotUse::ClearImpl),
+              ::google::protobuf::Message::ByteSizeLongImpl, ::google::protobuf::Message::_InternalSerializeImpl
+              ,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(GameStateMessage_ItemsEntry_DoNotUse, _impl_._cached_size_),
+          false,
+      },
+      &GameStateMessage_ItemsEntry_DoNotUse::kDescriptorMethods,
+      &descriptor_table_game_5fstate_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull GameStateMessage_ItemsEntry_DoNotUse_class_data_ =
+        GameStateMessage_ItemsEntry_DoNotUse::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+GameStateMessage_ItemsEntry_DoNotUse::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&GameStateMessage_ItemsEntry_DoNotUse_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(GameStateMessage_ItemsEntry_DoNotUse_class_data_.tc_table);
+  return GameStateMessage_ItemsEntry_DoNotUse_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<1, 2, 0, 0, 2>
+GameStateMessage_ItemsEntry_DoNotUse::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(GameStateMessage_ItemsEntry_DoNotUse, _impl_._has_bits_),
+    0, // no _extensions_
+    2, 8,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967292,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    2,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    GameStateMessage_ItemsEntry_DoNotUse_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::DiscardEverythingFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::GameStateMessage_ItemsEntry_DoNotUse>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // uint32 value = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(GameStateMessage_ItemsEntry_DoNotUse, _impl_.value_), 1>(),
+     {16, 1, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage_ItemsEntry_DoNotUse, _impl_.value_)}},
+    // uint32 key = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(GameStateMessage_ItemsEntry_DoNotUse, _impl_.key_), 0>(),
+     {8, 0, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage_ItemsEntry_DoNotUse, _impl_.key_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // uint32 key = 1;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage_ItemsEntry_DoNotUse, _impl_.key_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // uint32 value = 2;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage_ItemsEntry_DoNotUse, _impl_.value_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+  }},
+  // no aux_entries
+  {{
+  }},
 };
 // ===================================================================
 
@@ -187,21 +313,42 @@ GameStateMessage::GameStateMessage(::google::protobuf::Arena* PROTOBUF_NULLABLE 
   SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:GameStateMessage)
 }
+PROTOBUF_NDEBUG_INLINE GameStateMessage::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::GameStateMessage& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        items_{visibility, arena, from.items_} {}
+
 GameStateMessage::GameStateMessage(
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const GameStateMessage& from)
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const GameStateMessage& from)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, GameStateMessage_class_data_.base()),
+    : ::google::protobuf::Message(arena, GameStateMessage_class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena),
+    : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(from._impl_) {
+  GameStateMessage* const _this = this;
+  (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, pacmanpositionx_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, pacmanpositionx_),
+           offsetof(Impl_, clydeorientation_) -
+               offsetof(Impl_, pacmanpositionx_) +
+               sizeof(Impl_::clydeorientation_));
+
+  // @@protoc_insertion_point(copy_constructor:GameStateMessage)
 }
 PROTOBUF_NDEBUG_INLINE GameStateMessage::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-      : _cached_size_{0} {}
+      : _cached_size_{0},
+        items_{visibility, arena} {}
 
 inline void GameStateMessage::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -232,8 +379,20 @@ inline void* PROTOBUF_NONNULL GameStateMessage::PlacementNew_(
   return ::new (mem) GameStateMessage(arena);
 }
 constexpr auto GameStateMessage::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(GameStateMessage),
-                                            alignof(GameStateMessage));
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.items_) +
+          decltype(GameStateMessage::_impl_.items_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(GameStateMessage), alignof(GameStateMessage), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&GameStateMessage::PlacementNew_,
+                                 sizeof(GameStateMessage),
+                                 alignof(GameStateMessage));
+  }
 }
 constexpr auto GameStateMessage::InternalGenerateClassData_() {
   return ::google::protobuf::internal::ClassDataFull{
@@ -269,18 +428,18 @@ GameStateMessage::GetClassData() const {
   return GameStateMessage_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<5, 22, 0, 0, 2>
+const ::_pbi::TcParseTable<5, 23, 1, 0, 2>
 GameStateMessage::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_._has_bits_),
     0, // no _extensions_
-    22, 248,  // max_field_number, fast_idx_mask
+    23, 248,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4290772992,  // skipmap
+    4286578688,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    22,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
+    23,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
     GameStateMessage_class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
@@ -433,8 +592,13 @@ GameStateMessage::_table_ = {
     {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeorientation_), _Internal::kHasBitsOffset + 21, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // bool clydeIsDead = 22;
     {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeisdead_), _Internal::kHasBitsOffset + 20, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // map<uint32, uint32> items = 23;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.items_), _Internal::kHasBitsOffset + 22, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMap)},
   }},
-  // no aux_entries
+  {{
+      {::_pbi::TcParser::GetMapAuxInfo(
+          0, 0, 13, 13, 0)},
+  }},
   {{
   }},
 };
@@ -456,10 +620,13 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
         reinterpret_cast<char*>(&_impl_.blinkyorientation_) -
         reinterpret_cast<char*>(&_impl_.pinkyisdead_)) + sizeof(_impl_.blinkyorientation_));
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x003f0000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x007f0000U)) {
     ::memset(&_impl_.blinkypositiony_, 0, static_cast<::size_t>(
         reinterpret_cast<char*>(&_impl_.clydeorientation_) -
         reinterpret_cast<char*>(&_impl_.blinkypositiony_)) + sizeof(_impl_.clydeorientation_));
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+      _impl_.items_.Clear();
+    }
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -682,6 +849,29 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
     }
   }
 
+  // map<uint32, uint32> items = 23;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+    if (!this_._internal_items().empty()) {
+      using MapType = ::google::protobuf::Map<::uint32_t, ::uint32_t>;
+      using WireHelper = _pbi::MapEntryFuncs<::uint32_t, ::uint32_t,
+                                     _pbi::WireFormatLite::TYPE_UINT32,
+                                     _pbi::WireFormatLite::TYPE_UINT32>;
+      const auto& field = this_._internal_items();
+
+      if (stream->IsSerializationDeterministic() && field.size() > 1) {
+        for (const auto& entry : ::google::protobuf::internal::MapSorterFlat<MapType>(field)) {
+          target = WireHelper::InternalSerialize(
+              23, entry.first, entry.second, target, stream);
+        }
+      } else {
+        for (const auto& entry : field) {
+          target = WireHelper::InternalSerialize(
+              23, entry.first, entry.second, target, stream);
+        }
+      }
+    }
+  }
+
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
     target =
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -812,7 +1002,7 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
       }
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x003f0000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x007f0000U)) {
     // double blinkyPositionY = 16;
     if (CheckHasBit(cached_has_bits, 0x00010000U)) {
       if (::absl::bit_cast<::uint64_t>(this_._internal_blinkypositiony()) != 0) {
@@ -848,6 +1038,16 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
       if (this_._internal_clydeorientation() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_clydeorientation());
+      }
+    }
+    // map<uint32, uint32> items = 23;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+      total_size +=
+          2 * ::google::protobuf::internal::FromIntSize(this_._internal_items_size());
+      for (const auto& entry : this_._internal_items()) {
+        total_size += _pbi::MapEntryFuncs<::uint32_t, ::uint32_t,
+                                       _pbi::WireFormatLite::TYPE_UINT32,
+                                       _pbi::WireFormatLite::TYPE_UINT32>::ByteSizeLong(entry.first, entry.second);
       }
     }
   }
@@ -953,7 +1153,7 @@ void GameStateMessage::MergeImpl(::google::protobuf::MessageLite& to_msg,
       }
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x003f0000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x007f0000U)) {
     if (CheckHasBit(cached_has_bits, 0x00010000U)) {
       if (::absl::bit_cast<::uint64_t>(from._internal_blinkypositiony()) != 0) {
         _this->_impl_.blinkypositiony_ = from._impl_.blinkypositiony_;
@@ -984,6 +1184,9 @@ void GameStateMessage::MergeImpl(::google::protobuf::MessageLite& to_msg,
         _this->_impl_.clydeorientation_ = from._impl_.clydeorientation_;
       }
     }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+      _this->_impl_.items_.MergeFrom(from._impl_.items_);
+    }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
@@ -1008,6 +1211,7 @@ void GameStateMessage::InternalSwap(GameStateMessage* PROTOBUF_RESTRICT PROTOBUF
       - PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanpositionx_)>(
           reinterpret_cast<char*>(&_impl_.pacmanpositionx_),
           reinterpret_cast<char*>(&other->_impl_.pacmanpositionx_));
+  _impl_.items_.InternalSwap(&other->_impl_.items_);
 }
 
 ::google::protobuf::Metadata GameStateMessage::GetMetadata() const {

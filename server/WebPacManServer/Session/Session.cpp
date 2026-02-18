@@ -62,6 +62,19 @@ namespace pacman
             gameState.set_clydepositionx(game.clyde.pos.x);
             gameState.set_clydepositiony(game.clyde.pos.y);
 
+            gameState.clear_items();
+            auto itemsHandle = gameState.mutable_items();
+            for (auto &[packedCoords, type] : game.items)
+            {
+                const uint32_t pixelwiseX = (packedCoords >> 16) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+                const uint32_t pixelwiseY = ((packedCoords << 16) >> 16) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+
+                uint32_t pixelwisePackedCoords = pixelwiseX << 16 | pixelwiseY;
+                itemsHandle->insert(std::make_pair(
+                    pixelwisePackedCoords,
+                    static_cast<uint32_t>(type)));
+            }
+
             gameStateMessageData.resize(gameState.ByteSizeLong() + 1);
             gameStateMessageData[0] = static_cast<uint8_t>(OutgoingPacketType::GameStateUpdate);
             if (const auto serializeGameStateSuccess = gameState.SerializeToArray(gameStateMessageData.data() + 1, gameStateMessageData.size() - 1); !serializeGameStateSuccess)

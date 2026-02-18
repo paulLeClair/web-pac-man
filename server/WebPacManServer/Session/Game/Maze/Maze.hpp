@@ -78,6 +78,11 @@ public:
         return &mazeCells[cellIndices[x << 16 | y]];
     }
 
+    [[nodiscard]] const std::vector<MazeCell> &getAllValidCells() const
+    {
+        return mazeCells;
+    }
+
 private:
 
     std::vector<MazeCell> mazeCells = {};

@@ -34,8 +34,8 @@ const Ghost: Component<GhostProps> = (props) => {
     const positionStyles = createMemo(() => {
         const s = props.ghostStateAccessor();
         return {
-          top: `${s.y + TopOfBoardPadding}px`,
-          left: `${s.x + SideOfBoardPadding}px`,
+          top: `${s.y + TopOfBoardPadding - 2}px`,
+          left: `${s.x + SideOfBoardPadding - 2}px`,
         };
     });
 

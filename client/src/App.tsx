@@ -1,4 +1,4 @@
-import {Component, createEffect, createSignal, on} from 'solid-js';
+import {Component, createEffect, createSignal, mapArray, on} from 'solid-js';
 import {createWS, createWSState} from "@solid-primitives/websocket";
 import Board from "./Board/Board";
 import Pacman, {PacmanState} from "./Pacman/Pacman";
@@ -74,6 +74,7 @@ const App: Component<AppProps> = (props) => {
     const [inkyState, setInkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
     const [blinkyState, setBlinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
     const [clydeState, setClydeState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
+    const [itemsState, setItemsState] = createSignal<Map<number, number>>(new Map())
 
     function handleStringMessage(event: MessageEvent<string>) {
         // this should be used to transition between cutscenes/states, which should change what the user is seeing in the frontend;
@@ -152,6 +153,11 @@ const App: Component<AppProps> = (props) => {
             isDead: gameState.clydeIsDead
         })
 
+        const itemsMap = new Map<number, number>();
+        for (const [packedCoords, type] of Object.entries(gameState.items ?? {})) {
+            itemsMap.set(Number(packedCoords), type)
+        }
+        setItemsState(itemsMap)
     }
 
     // TODO -> use props to get server ip
@@ -200,7 +206,7 @@ const App: Component<AppProps> = (props) => {
     return (
         <div>
             {/*  TODO -> scoreboard etc*/}
-            <Board>
+            <Board itemsAccessor={itemsState}>
                 <Ghost ghostName={GhostName.PINKY} ghostStateAccessor={pinkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.INKY} ghostStateAccessor={inkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.BLINKY} ghostStateAccessor={blinkyState} isScatteringAccessor={ghostsScattering}/>
@@ -211,7 +217,5 @@ const App: Component<AppProps> = (props) => {
         </div>
     );
 };
-
-
 
 export default App;

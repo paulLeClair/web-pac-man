@@ -1,0 +1,67 @@
+/*
+    This will mainly consist of item styles for now I suppose
+ */
+
+.dot {
+    background: url('/assets/Board/dot_sprite.png');
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    z-index: auto;
+    width: 8px;
+    height: 8px;
+}
+
+.energizer {
+    background: url('/assets/Board/energizer_sprite.png');
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    z-index: auto;
+    width: 12px;
+    height: 12px;
+}
+
+.special-item {
+    background: url('/assets/Board/special_items_spritesheet.png');
+
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    z-index: auto;
+
+    width: 16px;
+    height: 16px;
+}
+
+.cherry {
+
+}
+
+.strawberry {
+    background-position-x: -16px;
+}
+
+.orange {
+    background-position-x: -32px;
+}
+
+.apple {
+    background-position-x: -48px;
+}
+
+.melon {
+    background-position-x: -64px;
+}
+
+.galaxian {
+    background-position-x: -80px;
+}
+
+.bell {
+    background-position-x: -96px;
+}
+
+.key {
+    background-position-x: -112px;
+}

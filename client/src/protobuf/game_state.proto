@@ -31,4 +31,5 @@ message GameStateMessage {
   int32 clydeOrientation = 21;
   bool clydeIsDead = 22;
 
+  map<uint32, uint32> items = 23;
 }

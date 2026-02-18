@@ -13,6 +13,7 @@
 
 #include "WebPacManServer/Session/Session.hpp"
 
+// convenience function to enable usage of CommandLineToArgvW
 std::wstring s2ws(const std::string& str)
 {
     using convert_typeX = std::codecvt_utf8<wchar_t>;
