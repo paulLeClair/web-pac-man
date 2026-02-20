@@ -32,7 +32,6 @@ set(server_code
         protobuf/gen/user_inputs.pb.h
         protobuf/gen/user_inputs.pb.cc
         WebPacManServer/Session/Game/Maze/Maze.hpp
-        WebPacManServer/Session/Game/Items/Items.hpp
 )
 
 

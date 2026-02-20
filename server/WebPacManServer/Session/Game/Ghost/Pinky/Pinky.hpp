@@ -17,6 +17,11 @@ struct Pinky final : Ghost {
 
     MazeCell *obtainNextTarget() override
     {
+        if (const auto scatterCellOrNull = scatterIfNecessary())
+        {
+            return getClosestNeighborToTargetCell(scatterCellOrNull);
+        }
+
         // pinky targeting logic
         switch (player->orientation)
         {
@@ -68,6 +73,13 @@ struct Pinky final : Ghost {
         return getClosestNeighborToTargetCell(&potentiallyUnwalkableTargetCell);
     }
 
+protected:
+    MazeCell* getScatterCell() override
+    {
+        if (!mazeFile) return nullptr;
+
+        return mazeFile->getCell(25, 1);
+    }
 };
 
 } // pacman

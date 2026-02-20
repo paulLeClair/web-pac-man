@@ -32,6 +32,7 @@ struct Ghost : Entity
 
     GhostName ghostName = GhostName::CLYDE;
 
+    bool isScattering = false;
     bool isDead = false;
 
     pacman::Pacman *player = nullptr;
@@ -53,7 +54,6 @@ struct Ghost : Entity
 
         const auto *preUpdateCurrentCell = currentCell;
         Entity::update();
-
         if (currentCell != preUpdateCurrentCell)
         {
             previousCell = currentCell;
@@ -154,5 +154,13 @@ protected:
                 }
             default: return nullptr;
         }
+    }
+
+    virtual MazeCell *getScatterCell() = 0;
+
+    MazeCell *scatterIfNecessary()
+    {
+        if (!isScattering) return nullptr;
+        return getScatterCell();
     }
 };

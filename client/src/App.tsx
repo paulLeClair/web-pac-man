@@ -102,62 +102,62 @@ const App: Component<AppProps> = (props) => {
     function handleGameStateUpdate(messageBufferView: Uint8Array<ArrayBuffer>) {
         if (!(messageBufferView[0] === IncomingPacketType.GameStateUpdate)) return;
 
-        // TODO -> probably we want to be syncing this with a requestAnimationFrame() somehow
+        requestAnimationFrame(() => {
+            // TODO -> game mode implementation; we have a field in our state update but it's not yet used
 
-        // TODO -> game mode implementation; we have a field in our state update but it's not yet used
+            // after this we just follow the standardized game state data format:
+            const gameState = GameStateMessage.fromBinary(messageBufferView.slice(1));
 
-        // after this we just follow the standardized game state data format:
-        const gameState = GameStateMessage.fromBinary(messageBufferView.slice(1));
+            // we should be more efficient and granular with our updates to avoid unnecessary re-renders;
+            // for prototyping I'll keep it naive just to ensure that the data is being passed properly.
+            // after that's working, we should diff each of these so we can avoid not setting them unnecessarily
 
-        // we should be more efficient and granular with our updates to avoid unnecessary re-renders;
-        // for prototyping I'll keep it naive just to ensure that the data is being passed properly.
-        // after that's working, we should diff each of these so we can avoid not setting them unnecessarily
+            // TODO -> we'll need to convert from game-native coordinates to whatever the game board's
+            // size actually is on the client side; that way the entirety of game logic can be serverside
 
-        // TODO -> we'll need to convert from game-native coordinates to whatever the game board's
-        // size actually is on the client side; that way the entirety of game logic can be serverside
+            setPacmanState({
+                x: gameState.pacmanPositionX,
+                y: gameState.pacmanPositionY,
+                orientation: gameState.pacmanOrientation,
+                isChomping: gameState.pacmanIsChomping
+            })
 
-        setPacmanState({
-            x: gameState.pacmanPositionX,
-            y: gameState.pacmanPositionY,
-            orientation: gameState.pacmanOrientation,
-            isChomping: gameState.pacmanIsChomping
+            setGhostsScattering(gameState.ghostsAreScattering)
+
+            setPinkyState({
+                x: gameState.pinkyPositionX,
+                y: gameState.pinkyPositionY,
+                orientation: gameState.pinkyOrientation,
+                isDead: gameState.pinkyIsDead
+            })
+
+            setBlinkyState({
+                x: gameState.blinkyPositionX,
+                y: gameState.blinkyPositionY,
+                orientation: gameState.blinkyOrientation,
+                isDead: gameState.blinkyIsDead
+            })
+
+            setInkyState({
+                x: gameState.inkyPositionX,
+                y: gameState.inkyPositionY,
+                orientation: gameState.inkyOrientation,
+                isDead: gameState.inkyIsDead
+            })
+
+            setClydeState({
+                x: gameState.clydePositionX,
+                y: gameState.clydePositionY,
+                orientation: gameState.clydeOrientation,
+                isDead: gameState.clydeIsDead
+            })
+
+            const itemsMap = new Map<number, number>();
+            for (const [packedCoords, type] of Object.entries(gameState.items ?? {})) {
+                itemsMap.set(Number(packedCoords), type)
+            }
+            setItemsState(itemsMap)
         })
-
-        setGhostsScattering(gameState.ghostsAreScattering)
-
-        setPinkyState({
-            x: gameState.pinkyPositionX,
-            y: gameState.pinkyPositionY,
-            orientation: gameState.pinkyOrientation,
-            isDead: gameState.pinkyIsDead
-        })
-
-        setBlinkyState({
-            x: gameState.blinkyPositionX,
-            y: gameState.blinkyPositionY,
-            orientation: gameState.blinkyOrientation,
-            isDead: gameState.blinkyIsDead
-        })
-
-        setInkyState({
-            x: gameState.inkyPositionX,
-            y: gameState.inkyPositionY,
-            orientation: gameState.inkyOrientation,
-            isDead: gameState.inkyIsDead
-        })
-
-        setClydeState({
-            x: gameState.clydePositionX,
-            y: gameState.clydePositionY,
-            orientation: gameState.clydeOrientation,
-            isDead: gameState.clydeIsDead
-        })
-
-        const itemsMap = new Map<number, number>();
-        for (const [packedCoords, type] of Object.entries(gameState.items ?? {})) {
-            itemsMap.set(Number(packedCoords), type)
-        }
-        setItemsState(itemsMap)
     }
 
     // TODO -> use props to get server ip

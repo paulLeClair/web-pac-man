@@ -1,15 +1,6 @@
-import {type Component, createMemo, createSignal, JSX} from 'solid-js';
+import {type Component, createMemo, JSX} from 'solid-js';
 import './Board.css'
-import {types} from "protobufjs";
 import {SideOfBoardPadding, TopOfBoardPadding} from "../App";
-
-
-// we'll probably just have a few different resolution pics of the game board and choose one
-// based off the user's screen
-
-const DEFAULT_TILE_SIZE_IN_PIXELS = 8;
-const BOARD_WIDTH_IN_TILES = 28;
-const BOARD_HEIGHT_IN_TILES = 36;
 
 const BOARD_IMG = "/assets/Board/pacmaze-resized.jpg"
 

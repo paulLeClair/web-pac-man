@@ -20,6 +20,11 @@ struct Inky final : Ghost {
     // inky's is the weirdest...
     MazeCell *obtainNextTarget() override
     {
+        if (const auto scatterCellOrNull = scatterIfNecessary())
+        {
+            return getClosestNeighborToTargetCell(scatterCellOrNull);
+        }
+
         // TODO -> inky draws a line two tiles ahead of pacman and doubles it
         MazeCell pacmanOffsetCell;
         switch (player->orientation)
@@ -85,6 +90,13 @@ struct Inky final : Ghost {
         );
 
         return getClosestNeighborToTargetCell(&potentiallyUnwalkableTargetCell);
+    }
+
+protected:
+    MazeCell* getScatterCell() override
+    {
+        if (!mazeFile) return nullptr;
+        return mazeFile->getCell(24, 27); // verify this
     }
 };
 

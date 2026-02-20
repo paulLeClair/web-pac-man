@@ -13,6 +13,11 @@ namespace pacman {
 
         MazeCell* obtainNextTarget() override
         {
+            if (const auto scatterCellOrNull = scatterIfNecessary())
+            {
+                return getClosestNeighborToTargetCell(scatterCellOrNull);
+            }
+
             if (pacmanIsMoreThanEightTilesAway())
             {
                 return getClosestNeighborToTargetCell(player->currentCell);
@@ -22,6 +27,13 @@ namespace pacman {
 
         Clyde() = default;
         ~Clyde() override = default;
+
+    protected:
+        MazeCell* getScatterCell() override
+        {
+            if (!mazeFile) return nullptr;
+            return mazeFile->getCell(0, 27);
+        }
 
     private:
         bool pacmanIsMoreThanEightTilesAway() const

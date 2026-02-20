@@ -14,8 +14,27 @@ struct Blinky final : Ghost {
 
     MazeCell* obtainNextTarget() override
     {
+         if (const auto scatterCellOrNull = scatterIfNecessary())
+        {
+            return getClosestNeighborToTargetCell(scatterCellOrNull);
+        }
+
         return getClosestNeighborToTargetCell(player->currentCell);
     }
+
+
+protected:
+    MazeCell* getScatterCell() override
+    {
+        if (!mazeFile)
+        {
+            return nullptr;
+        }
+
+        return mazeFile->getCell(0, 0);
+    }
+
+
 };
 
 } // pacman

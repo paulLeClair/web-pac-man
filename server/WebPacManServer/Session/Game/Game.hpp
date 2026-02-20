@@ -38,6 +38,7 @@ public:
     std::unique_ptr<MazeFile> maze;
 
     bool ghostsAreScattering = false;
+    uint32_t scatterCountdown = 0;
 
     Pacman player;
 
@@ -49,33 +50,71 @@ public:
     Inky inky;
     Clyde clyde;
 
-
     void tick()
     {
+        static constexpr auto scatterTimeout = 180;
+
         player.bufferedInput = lastBufferedInput;
         player.update();
 
-        if (items.contains(player.currentCell->gridX << 16 | player.currentCell->gridY))
+        if (ghostsAreScattering)
         {
-            score += static_cast<uint32_t>(items.at(player.currentCell->gridX << 16 | player.currentCell->gridY));
+            scatterCountdown--;
+            if (scatterCountdown == 0)
+            {
+                blinky.isScattering = false;
+                pinky.isScattering = false;
+                inky.isScattering = false;
+                clyde.isScattering = false;
+                ghostsAreScattering = false;
+
+                // temp until ghost jail is added
+                blinky.isDead = false;
+                inky.isDead = false;
+                clyde.isDead = false;
+                pinky.isDead = false;
+
+                ghostsAreScattering = false;
+
+            }
+        }
+
+        if (const uint32_t packedPlayerCoords = player.currentCell->gridX << 16 | player.currentCell->gridY;
+            items.contains(packedPlayerCoords))
+        {
+            auto obtainedItemType = items.at(packedPlayerCoords);
+            score += static_cast<uint32_t>(obtainedItemType); // item type enum holds score directly
+
+            if (obtainedItemType == ItemType::ENERGIZER)
+            {
+                // activate scattering effect
+                ghostsAreScattering = true;
+                blinky.isScattering = true;
+                pinky.isScattering = true;
+                inky.isScattering = true;
+                clyde.isScattering = true;
+
+                scatterCountdown = scatterTimeout;
+            }
+
+            if (!items.erase(packedPlayerCoords))
+            {
+                // TODO -> log error...
+                return;
+            }
         }
         // TODO -> display score
 
-        blinky.update();
-        pinky.update();
-        inky.update();
-        clyde.update();
 
-        if (ghostsAreCollidingWithPacman())
-        {
-            // restart the game i guess
-            setupGameEntities();
-        }
+        // todo-> make a general "update_ghost_state()" instead to reduce code duplication
+        update_pinky_state();
+        update_blinky_state();
+        update_inky_state();
+        update_clyde_state();
 
         // TODO -> timer/score etc
     }
 
-private:
     MazeCell *pacmanStartCell;
     MazeCell* pinkyStartCell;
     MazeCell* inkyStartCell;
@@ -83,6 +122,7 @@ private:
     MazeCell* blinkyStartCell;
 
 
+private:
     void setupGameEntities()
     {
         player.isChomping = false;
@@ -97,22 +137,26 @@ private:
         pinky.mazeFile = maze.get();
         pinky.currentCell = pinkyStartCell;
         pinky.targetCell = nullptr;
+        pinky.isDead = false;
 
         inky.player = &player;
         inky.mazeFile = maze.get();
         inky.currentCell = inkyStartCell;
         inky.targetCell = nullptr;
+        inky.isDead = false;
 
         blinky.player = &player;
         blinky.mazeFile = maze.get();
         blinky.currentCell = blinkyStartCell;
         blinky.targetCell = nullptr;
+        blinky.isDead = false;
 
         clyde.player = &player;
         clyde.mazeFile = maze.get();
         clyde.currentCell = clydeStartCell;
         clyde.clydeScatterCell = clydeStartCell;
         clyde.targetCell = nullptr;
+        clyde.isDead = false;
 
         initializeItems();
     }
@@ -163,18 +207,120 @@ private:
                 }
                 items.insert({packedCoords, ItemType::DOT});
             }
-            // break; // TESTING
         }
 
     }
 
-    [[nodiscard]] bool ghostsAreCollidingWithPacman() const
+    void update_pinky_state()
     {
-        // TODO -> compare actual current interpolated positions, not just cell
-        return player.currentCell == clyde.currentCell
-            || player.currentCell == pinky.currentCell
-            || player.currentCell == inky.currentCell
-            || player.currentCell == blinky.currentCell;
+        pinky.update();
+        if (pinkyIsCollidingWithPacman())
+        {
+            if (ghostsAreScattering)
+            {
+                // TODO -> increase speed and set target cell as entrance to the ghost jail
+                pinky.isDead = true;
+            }
+            else
+            {
+                // restart the game i guess
+                setupGameEntities();
+            }
+        }
+    }
+
+    void update_blinky_state()
+    {
+        blinky.update();
+        if (blinkyIsCollidingWithPacman())
+        {
+            if (ghostsAreScattering)
+            {
+                // TODO -> increase speed and set target cell as entrance to the ghost jail
+                blinky.isDead = true;
+            }
+            else
+            {
+                // restart the game i guess
+                setupGameEntities();
+            }
+        }
+    }
+
+    void update_inky_state()
+    {
+        inky.update();
+        if (inkyIsCollidingWithPacman())
+        {
+            if (ghostsAreScattering)
+            {
+                // TODO -> increase speed and set target cell as entrance to the ghost jail
+                inky.isDead = true;
+            }
+            else
+            {
+                // restart the game i guess
+                setupGameEntities();
+            }
+        }
+    }
+
+    void update_clyde_state()
+    {
+        clyde.update();
+        if (clydeIsCollidingWithPacman())
+        {
+            if (ghostsAreScattering)
+            {
+                // TODO -> increase speed and set target cell as entrance to the ghost jail
+                clyde.isDead = true;
+            }
+            else
+            {
+                // restart the game i guess
+                setupGameEntities();
+            }
+        }
+    }
+
+    [[nodiscard]] bool pinkyIsCollidingWithPacman() const
+    {
+        return pinky.currentCell == player.currentCell;
+    }
+
+    [[nodiscard]] bool blinkyIsCollidingWithPacman() const
+    {
+        return blinky.currentCell == player.currentCell;
+    }
+
+    [[nodiscard]] bool inkyIsCollidingWithPacman() const
+    {
+        return inky.currentCell == player.currentCell;
+    }
+
+    [[nodiscard]] bool clydeIsCollidingWithPacman() const
+    {
+        return clyde.currentCell == player.currentCell;
+    }
+
+    bool ghostIsCollidingWithPacman(const Ghost &ghost) const // unused for now
+    {
+        float currentPlayerPosX = player.currentCell->gridX;
+        float currentPlayerPosY = player.currentCell->gridY;
+        if (player.targetCell)
+        {
+            currentPlayerPosX  = player.currentCell->gridX + player.param * player.targetCell->gridX;
+            currentPlayerPosY = player.currentCell->gridY + player.param * player.targetCell->gridY;
+        }
+        float currentGhostPosX = ghost.currentCell->gridX;
+        float currentGhostPosY = ghost.currentCell->gridY;
+        if ( ghost.targetCell)
+        {
+            currentGhostPosX = ghost.currentCell->gridX + ghost.param * ghost.targetCell->gridX;
+            currentGhostPosY = ghost.currentCell->gridY + ghost.param * ghost.targetCell->gridY;
+        }
+
+        return currentGhostPosX == currentPlayerPosX && currentGhostPosY == currentPlayerPosY;
     }
 };
 

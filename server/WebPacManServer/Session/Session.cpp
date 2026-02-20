@@ -30,9 +30,9 @@ namespace pacman
             std::lock_guard guard(mutex);
             game.tick();
 
+            // for now naive flat update of all state variables at once
             GameStateMessage gameState;
 
-            // for now naive flat update of all state
             gameState.set_ghostsarescattering(game.ghostsAreScattering);
 
             // player update
@@ -63,7 +63,7 @@ namespace pacman
             gameState.set_clydepositiony(game.clyde.pos.y);
 
             gameState.clear_items();
-            auto itemsHandle = gameState.mutable_items();
+            const auto itemsHandle = gameState.mutable_items();
             for (auto &[packedCoords, type] : game.items)
             {
                 const uint32_t pixelwiseX = (packedCoords >> 16) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;

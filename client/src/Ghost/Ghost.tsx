@@ -17,6 +17,13 @@ enum GhostOrientation {
     RIGHT = "ghost-orientation-right"
 }
 
+enum DeadGhostOrientation {
+    UP = "dead-orientation-up",
+    DOWN = "dead-orientation-down",
+    LEFT = "dead-orientation-left",
+    RIGHT = "dead-orientation-right"
+}
+
 export interface GhostState extends EntityState {
     isDead: boolean
 }
@@ -41,18 +48,28 @@ const Ghost: Component<GhostProps> = (props) => {
 
     const ghostOrientation = createMemo(() => {
         switch (props.ghostStateAccessor().orientation) {
-            case Direction.UP: return GhostOrientation.UP;
-            case Direction.DOWN: return GhostOrientation.DOWN;
-            case Direction.LEFT: return GhostOrientation.LEFT;
-            case Direction.RIGHT: return GhostOrientation.RIGHT;
+            case Direction.UP: return props.ghostStateAccessor().isDead
+                ? DeadGhostOrientation.UP : GhostOrientation.UP;
+            case Direction.DOWN: return props.ghostStateAccessor().isDead
+                ? DeadGhostOrientation.DOWN : GhostOrientation.DOWN;
+            case Direction.LEFT: return props.ghostStateAccessor().isDead
+                ? DeadGhostOrientation.LEFT : GhostOrientation.LEFT;
+            case Direction.RIGHT: return props.ghostStateAccessor().isDead
+                ? DeadGhostOrientation.RIGHT : GhostOrientation.RIGHT;
         }
         return GhostOrientation.UP;
+    })
+
+    const isScattering = createMemo(() => {
+        if (props.ghostStateAccessor().isDead) return "dead"
+        if (props.isScatteringAccessor()) return "ghost-scattering-initial"
+        return ""
     })
 
     const ghostClassesString = createMemo(() => {
         const s = props.ghostStateAccessor()
         // TODO -> wire in animations for being scattered and being dead
-        return `ghost ${ghostName()} ${ghostOrientation()}`;
+        return `ghost ${isScattering().length ? isScattering() : ghostName()} ${isScattering() == "ghost-scattering-initial" ? "" : ghostOrientation()}`;
     })
 
   return (
