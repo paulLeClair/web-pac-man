@@ -20,10 +20,9 @@ struct MazeCell
 {
     int gridX = 0,gridY = 0;
     TileType type = TileType::UNKNOWN;
-    float pixelX = 0, pixelY = 0;
 };
 
-static constexpr uint32_t NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS = 8;
+static constexpr float NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS = 8;
 
 class MazeFile
 {
@@ -51,9 +50,7 @@ public:
                 validTileCoordinates.insert(packedCoordinates);
                 tileTypes[packedCoordinates] = tileType;
 
-                const float pixelPositionX = x * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
-                const float pixelPositionY = y * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
-                mazeCells.emplace_back(x, y, tileType, pixelPositionX, pixelPositionY);
+                mazeCells.emplace_back(x, y, tileType);
                 cellIndices[packedCoordinates] = mazeCells.size() - 1;
             }
         }
@@ -81,6 +78,24 @@ public:
     [[nodiscard]] const std::vector<MazeCell> &getAllValidCells() const
     {
         return mazeCells;
+    }
+
+    const MazeCell* getGhostJailEntryCell()
+    {
+        // just hardcoding this for now
+        return &mazeCells[cellIndices[12 << 16 | 10]];
+    }
+
+    static const MazeCell *getGhostJailLeftBounceCell()
+    {
+        static auto jailLeftBounceCell = MazeCell(11, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
+    }
+
+    static const MazeCell *getGhostJailRightBounceCell()
+    {
+        static auto jailRightBounceCell = MazeCell(14, 13, TileType::INTERSECTION);
+        return &jailRightBounceCell;
     }
 
 private:

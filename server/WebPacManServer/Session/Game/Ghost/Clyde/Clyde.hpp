@@ -9,10 +9,23 @@
 namespace pacman {
 
     struct Clyde final : Ghost {
+        Clyde() : Ghost(nullptr) {}
+
+        explicit Clyde(MazeFile *maze) : Ghost(maze) {}
+
         MazeCell *clydeScatterCell = nullptr;
 
         MazeCell* obtainNextTarget() override
         {
+            if (isDead && !inJail)
+            {
+                return goToJail();
+            }
+            if (inJail)
+            {
+                return bounceInJailUntilRespawn();
+            }
+
             if (const auto scatterCellOrNull = scatterIfNecessary())
             {
                 return getClosestNeighborToTargetCell(scatterCellOrNull);
@@ -25,7 +38,6 @@ namespace pacman {
             return getClosestNeighborToTargetCell(clydeScatterCell);
         }
 
-        Clyde() = default;
         ~Clyde() override = default;
 
     protected:

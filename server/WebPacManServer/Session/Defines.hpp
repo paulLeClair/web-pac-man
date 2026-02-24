@@ -54,7 +54,7 @@ struct Entity
     Direction orientation = Direction::NONE;
 
     // for now lets try a simple static speed
-    const float speed = 0.08f;
+    float speed = 0.08f;
 
     float param = 0.0f;
     MazeCell *currentCell = nullptr;
@@ -71,12 +71,11 @@ struct Entity
 
         param = std::min(param + speed, 1.0f);
 
-        // float deltaX = 0.0f, deltaY = 0.0f;
-        const float deltaX  = param * (targetCell->pixelX - currentCell->pixelX);
-        const float deltaY  = param * (targetCell->pixelY - currentCell->pixelY);
+        const float pixelDeltaX = param * static_cast<float>(targetCell->gridX - currentCell->gridX) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+        const float pixelDeltaY = param * static_cast<float>(targetCell->gridY - currentCell->gridY) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
 
-        pos.x = currentCell->pixelX + deltaX;
-        pos.y = currentCell->pixelY + deltaY;
+        pos.x = static_cast<float>(currentCell->gridX) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS + pixelDeltaX;
+        pos.y = static_cast<float>(currentCell->gridY) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS + pixelDeltaY;
 
         if (param == 1.0f)
         {

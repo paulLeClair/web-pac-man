@@ -11,7 +11,8 @@
 namespace pacman {
 
 struct Inky final : Ghost {
-    Inky() = default;
+    Inky() : Ghost(nullptr) {};
+    explicit Inky(MazeFile *maze) : Ghost(maze) {}
     ~Inky() override = default;
 
     // note, this is most likely not good to plug in as the target cell; we should use it to choose a walkable cell
@@ -20,6 +21,14 @@ struct Inky final : Ghost {
     // inky's is the weirdest...
     MazeCell *obtainNextTarget() override
     {
+        if (isDead && !inJail)
+        {
+            return goToJail();
+        }
+        if (inJail)
+        {
+            return bounceInJailUntilRespawn();
+        }
         if (const auto scatterCellOrNull = scatterIfNecessary())
         {
             return getClosestNeighborToTargetCell(scatterCellOrNull);
@@ -34,9 +43,7 @@ struct Inky final : Ghost {
                     pacmanOffsetCell = MazeCell(
                         player->currentCell->gridX,
                         player->currentCell->gridY - 2,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
 
                     break;
@@ -46,9 +53,7 @@ struct Inky final : Ghost {
                     pacmanOffsetCell = MazeCell(
                         player->currentCell->gridX,
                         player->currentCell->gridY + 2,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
                     break;
                 }
@@ -57,9 +62,7 @@ struct Inky final : Ghost {
                     pacmanOffsetCell = MazeCell(
                         player->currentCell->gridX + 2,
                         player->currentCell->gridY,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
                     break;
                 }
@@ -68,9 +71,7 @@ struct Inky final : Ghost {
                     pacmanOffsetCell = MazeCell(
                         player->currentCell->gridX - 2,
                         player->currentCell->gridY,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
                     break;
                 }
@@ -84,9 +85,7 @@ struct Inky final : Ghost {
         potentiallyUnwalkableTargetCell = MazeCell(
             currentCell->gridX + 2 * (pacmanOffsetCell.gridX - currentCell->gridX),
             currentCell->gridY + 2 * (pacmanOffsetCell.gridY - currentCell->gridY),
-            TileType::OPEN,
-            0,
-            0
+            TileType::OPEN
         );
 
         return getClosestNeighborToTargetCell(&potentiallyUnwalkableTargetCell);

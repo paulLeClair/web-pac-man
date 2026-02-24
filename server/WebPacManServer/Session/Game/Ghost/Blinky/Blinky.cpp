@@ -5,4 +5,7 @@
 #include "Blinky.hpp"
 
 namespace pacman {
+    Blinky::Blinky() : Ghost(nullptr)
+    {
+    }
 } // pacman

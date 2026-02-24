@@ -28,12 +28,15 @@ enum class GhostOrientation : int32_t
 
 struct Ghost : Entity
 {
+    explicit Ghost(MazeFile *mazeFile) : mazeFile(mazeFile) {}
+
     MazeFile *mazeFile = nullptr;
 
     GhostName ghostName = GhostName::CLYDE;
 
     bool isScattering = false;
     bool isDead = false;
+    bool inJail = false;
 
     pacman::Pacman *player = nullptr;
 
@@ -68,6 +71,23 @@ struct Ghost : Entity
         return nullptr;
     }
 
+    void setNormalSpeed()
+    {
+        static constexpr float DEFAULT_NORMAL_SPEED = 0.15;
+        speed = DEFAULT_NORMAL_SPEED;
+    }
+
+    void setSlowSpeed()
+    {
+        static constexpr float DEFAULT_SLOW_SPEED = 0.12;
+        speed = DEFAULT_SLOW_SPEED;
+    }
+
+    void setFastSpeed()
+    {
+        static constexpr float DEFAULT_FAST_SPEED = 0.18;
+        speed = DEFAULT_FAST_SPEED;
+    }
 protected:
     MazeCell *previousCell = nullptr;
 
@@ -162,5 +182,47 @@ protected:
     {
         if (!isScattering) return nullptr;
         return getScatterCell();
+    }
+
+    MazeCell* bounceInJailUntilRespawn()
+    {
+        if (jailTimer == 0)
+        {
+            isDead = false;
+            inJail = false;
+            return const_cast<MazeCell*>(mazeFile->getGhostJailEntryCell());
+        }
+
+        // here we would just switch between 2 bounce points, probably also just coming from the maze itself
+        jailTimer--;
+
+        if (currentCell == MazeFile::getGhostJailLeftBounceCell())
+        {
+            return const_cast<MazeCell*>(MazeFile::getGhostJailRightBounceCell());
+        }
+        if (currentCell == MazeFile::getGhostJailRightBounceCell())
+        {
+            return const_cast<MazeCell*>(MazeFile::getGhostJailLeftBounceCell());
+        }
+        return const_cast<MazeCell*>(MazeFile::getGhostJailLeftBounceCell());
+    }
+
+    int jailTimer = 0;
+
+    // new: all ghosts can share behavior after pacman eats them; we'll also need a spawn/respawn state because in certain
+    // cases the ghosts go to their scatter corner first;
+    // ANOTHER THING: improve scattering by having them cycle through a sequence of scatter points
+    MazeCell *goToJail()
+    {
+        if (const auto jail_entry_cell = mazeFile->getGhostJailEntryCell(); currentCell != jail_entry_cell)
+        {
+            return getClosestNeighborToTargetCell(jail_entry_cell);
+        }
+
+        // here we would enter the jail
+        jailTimer = 20;
+        inJail = true;
+        setNormalSpeed();
+        return bounceInJailUntilRespawn();
     }
 };

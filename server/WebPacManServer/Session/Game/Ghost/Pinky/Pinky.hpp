@@ -12,11 +12,21 @@ struct Pinky final : Ghost {
     // note, this is most likely not good to plug in as the target cell; we should use it to choose a walkable cell
     MazeCell potentiallyUnwalkableTargetCell;
 
-    Pinky() = default;
+    Pinky() : Ghost(nullptr) {}
+    explicit Pinky(MazeFile *file) : Ghost(file) {}
+
     ~Pinky() override = default;
 
     MazeCell *obtainNextTarget() override
     {
+        if (isDead && !inJail)
+        {
+            return goToJail();
+        }
+        if (inJail)
+        {
+            return bounceInJailUntilRespawn();
+        }
         if (const auto scatterCellOrNull = scatterIfNecessary())
         {
             return getClosestNeighborToTargetCell(scatterCellOrNull);
@@ -30,9 +40,7 @@ struct Pinky final : Ghost {
                     potentiallyUnwalkableTargetCell = MazeCell(
                         player->currentCell->gridX,
                         player->currentCell->gridY - 4,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
                 } break;
             case Direction::DOWN:
@@ -40,9 +48,7 @@ struct Pinky final : Ghost {
                     potentiallyUnwalkableTargetCell = MazeCell(
                         player->currentCell->gridX,
                         player->currentCell->gridY + 4,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
                 } break;
             case Direction::LEFT:
@@ -50,9 +56,7 @@ struct Pinky final : Ghost {
                     potentiallyUnwalkableTargetCell = MazeCell(
                         player->currentCell->gridX - 4,
                         player->currentCell->gridY,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
 
 
@@ -62,9 +66,7 @@ struct Pinky final : Ghost {
                     potentiallyUnwalkableTargetCell = MazeCell(
                         player->currentCell->gridX + 4,
                         player->currentCell->gridY,
-                        TileType::OPEN,
-                        0,
-                        0
+                        TileType::OPEN
                     );
                 } break;
             default: return nullptr;

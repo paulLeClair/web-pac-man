@@ -63,19 +63,18 @@ public:
             if (scatterCountdown == 0)
             {
                 blinky.isScattering = false;
+                blinky.setNormalSpeed();
+
                 pinky.isScattering = false;
+                pinky.setNormalSpeed();
+
                 inky.isScattering = false;
+                inky.setNormalSpeed();
+
                 clyde.isScattering = false;
-                ghostsAreScattering = false;
-
-                // temp until ghost jail is added
-                blinky.isDead = false;
-                inky.isDead = false;
-                clyde.isDead = false;
-                pinky.isDead = false;
+                clyde.setNormalSpeed();
 
                 ghostsAreScattering = false;
-
             }
         }
 
@@ -89,10 +88,18 @@ public:
             {
                 // activate scattering effect
                 ghostsAreScattering = true;
+
                 blinky.isScattering = true;
+                blinky.setSlowSpeed();
+
                 pinky.isScattering = true;
+                pinky.setSlowSpeed();
+
                 inky.isScattering = true;
+                inky.setSlowSpeed();
+
                 clyde.isScattering = true;
+                clyde.setSlowSpeed();
 
                 scatterCountdown = scatterTimeout;
             }
@@ -101,6 +108,12 @@ public:
             {
                 // TODO -> log error...
                 return;
+            }
+
+            if (items.empty())
+            {
+                // this would trigger the next stage
+                setupGameEntities();
             }
         }
         // TODO -> display score
@@ -125,11 +138,15 @@ public:
 private:
     void setupGameEntities()
     {
+        static constexpr float DEFAULT_PLAYER_SPEED = 0.15;
+        static constexpr float DEFAULT_GHOST_SPEED = 0.15;
+
         player.isChomping = false;
         player.currentCell = pacmanStartCell;
         player.targetCell = nullptr;
         player.orientation = Direction::LEFT;
         player.bufferedInput = Direction::NONE;
+        player.speed = DEFAULT_PLAYER_SPEED;
 
         player.mazeFile = maze.get();
 
@@ -138,18 +155,21 @@ private:
         pinky.currentCell = pinkyStartCell;
         pinky.targetCell = nullptr;
         pinky.isDead = false;
+        player.speed = DEFAULT_GHOST_SPEED;
 
         inky.player = &player;
         inky.mazeFile = maze.get();
         inky.currentCell = inkyStartCell;
         inky.targetCell = nullptr;
         inky.isDead = false;
+        inky.speed = DEFAULT_GHOST_SPEED;
 
         blinky.player = &player;
         blinky.mazeFile = maze.get();
         blinky.currentCell = blinkyStartCell;
         blinky.targetCell = nullptr;
         blinky.isDead = false;
+        blinky.speed = DEFAULT_GHOST_SPEED;
 
         clyde.player = &player;
         clyde.mazeFile = maze.get();
@@ -157,6 +177,7 @@ private:
         clyde.clydeScatterCell = clydeStartCell;
         clyde.targetCell = nullptr;
         clyde.isDead = false;
+        clyde.speed = DEFAULT_GHOST_SPEED;
 
         initializeItems();
     }
@@ -214,12 +235,17 @@ private:
     void update_pinky_state()
     {
         pinky.update();
-        if (pinkyIsCollidingWithPacman())
+        if (ghostIsCollidingWithPacman(pinky))
         {
             if (ghostsAreScattering)
             {
-                // TODO -> increase speed and set target cell as entrance to the ghost jail
-                pinky.isDead = true;
+                if (!pinky.isDead)
+                {
+                    // TODO -> increase speed and set target cell as entrance to the ghost jail
+                    pinky.isDead = true;
+                    pinky.speed *= 2;
+                    pinky.inJail = false;
+                }
             }
             else
             {
@@ -232,12 +258,17 @@ private:
     void update_blinky_state()
     {
         blinky.update();
-        if (blinkyIsCollidingWithPacman())
+        if (ghostIsCollidingWithPacman(blinky))
         {
             if (ghostsAreScattering)
             {
-                // TODO -> increase speed and set target cell as entrance to the ghost jail
-                blinky.isDead = true;
+                if (!blinky.isDead)
+                {
+                    // TODO -> increase speed and set target cell as entrance to the ghost jail
+                    blinky.isDead = true;
+                    blinky.speed *= 2;
+                    blinky.inJail = false;
+                }
             }
             else
             {
@@ -250,12 +281,17 @@ private:
     void update_inky_state()
     {
         inky.update();
-        if (inkyIsCollidingWithPacman())
+        if (ghostIsCollidingWithPacman(inky))
         {
             if (ghostsAreScattering)
             {
-                // TODO -> increase speed and set target cell as entrance to the ghost jail
-                inky.isDead = true;
+                if (!inky.isDead)
+                {
+                    // TODO -> increase speed and set target cell as entrance to the ghost jail
+                    inky.isDead = true;
+                    inky.speed *= 2;
+                    inky.inJail = false;
+                }
             }
             else
             {
@@ -268,14 +304,19 @@ private:
     void update_clyde_state()
     {
         clyde.update();
-        if (clydeIsCollidingWithPacman())
+        if (ghostIsCollidingWithPacman(clyde))
         {
             if (ghostsAreScattering)
             {
-                // TODO -> increase speed and set target cell as entrance to the ghost jail
-                clyde.isDead = true;
+                if (!clyde.isDead)
+                {
+                    // TODO -> increase speed and set target cell as entrance to the ghost jail
+                    clyde.isDead = true;
+                    clyde.speed *= 2;
+                    clyde.inJail = false;
+                }
             }
-            else
+            else if (!clyde.isDead)
             {
                 // restart the game i guess
                 setupGameEntities();
@@ -303,24 +344,26 @@ private:
         return clyde.currentCell == player.currentCell;
     }
 
-    bool ghostIsCollidingWithPacman(const Ghost &ghost) const // unused for now
+    bool ghostIsCollidingWithPacman(const Ghost &ghost) const
     {
         float currentPlayerPosX = player.currentCell->gridX;
         float currentPlayerPosY = player.currentCell->gridY;
         if (player.targetCell)
         {
-            currentPlayerPosX  = player.currentCell->gridX + player.param * player.targetCell->gridX;
-            currentPlayerPosY = player.currentCell->gridY + player.param * player.targetCell->gridY;
+            currentPlayerPosX  = player.currentCell->gridX + player.param * (player.targetCell->gridX - player.currentCell->gridX);
+            currentPlayerPosY = player.currentCell->gridY + player.param * (player.targetCell->gridY - player.currentCell->gridY);
         }
         float currentGhostPosX = ghost.currentCell->gridX;
         float currentGhostPosY = ghost.currentCell->gridY;
-        if ( ghost.targetCell)
+        if (ghost.targetCell)
         {
-            currentGhostPosX = ghost.currentCell->gridX + ghost.param * ghost.targetCell->gridX;
-            currentGhostPosY = ghost.currentCell->gridY + ghost.param * ghost.targetCell->gridY;
+            currentGhostPosX = ghost.currentCell->gridX + ghost.param * (ghost.targetCell->gridX - ghost.currentCell->gridX);
+            currentGhostPosY = ghost.currentCell->gridY + ghost.param * (ghost.targetCell->gridY - ghost.currentCell->gridY);
         }
 
-        return currentGhostPosX == currentPlayerPosX && currentGhostPosY == currentPlayerPosY;
+        static constexpr float epsilon = 1;
+
+        return std::abs(currentGhostPosX - currentPlayerPosX) < epsilon && std::abs(currentGhostPosY - currentPlayerPosY) < epsilon;
     }
 };
 

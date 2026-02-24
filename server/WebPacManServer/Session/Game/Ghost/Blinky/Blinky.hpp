@@ -9,11 +9,24 @@
 namespace pacman {
 
 struct Blinky final : Ghost {
-    Blinky() = default;
+    Blinky();
+
+    explicit Blinky(MazeFile *mazeFile) : Ghost(mazeFile) {};
+
     ~Blinky() override = default;
 
     MazeCell* obtainNextTarget() override
     {
+        // new: all ghosts need to be checking if they're in jail and going there if necessary
+        if (isDead && !inJail)
+        {
+            return goToJail();
+        }
+        if (inJail)
+        {
+            return bounceInJailUntilRespawn();
+        }
+
          if (const auto scatterCellOrNull = scatterIfNecessary())
         {
             return getClosestNeighborToTargetCell(scatterCellOrNull);
