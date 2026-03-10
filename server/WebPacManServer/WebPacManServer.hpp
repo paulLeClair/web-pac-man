@@ -32,8 +32,6 @@ public:
 private:
         std::string mazeFilePath;
 
-        BS::thread_pool<> gameLogicThreadPool;
-
         net::io_context io_context;
 
         tcp::acceptor acceptor;
@@ -46,6 +44,7 @@ private:
         std::vector<std::shared_ptr<Session>> sessions;
 
         std::jthread gameTickerThread;
+        int ioThreadCount;
         void gameTickerThreadKernel(std::stop_token stoken);
 
         void acceptSessions();

@@ -1,0 +1,6 @@
+syntax="proto3";
+
+message WpmPacket {
+  int32 packetType = 1;
+  int32 payload = 2;
+}

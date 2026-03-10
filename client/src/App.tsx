@@ -7,6 +7,7 @@ import {GhostName} from "./Ghost/Ghost";
 import {GameStateMessage} from "./protobuf/gen/game_state";
 import {createKeyHold, useKeyDownEvent, KbdKey} from "@solid-primitives/keyboard";
 import {UserInputMessage} from "./protobuf/gen/user_inputs";
+import {WpmPacket} from './protobuf/gen/wpm_packet'
 
 // TODO -> move this to a defines file probably
 
@@ -21,6 +22,23 @@ export enum Direction {
     DOWN = 2,
     LEFT = 3,
     RIGHT = 4
+}
+
+// this must match up with the server
+export enum SoundType {
+    UNKNOWN = 0,
+    INTRO_THEME,
+    PACMAN_EATING,
+    GHOST_ALARM,
+    GHOSTS_SCATTERING,
+    GHOST_EATEN,
+}
+
+enum WpmPacketType {
+    UNKNOWN = 0,
+    TRIGGER_SOUND,
+    LOOP_SOUND,
+    STOP_SOUND
 }
 
 export const TopOfBoardPadding = 24; // probably should get this from server but its ok for now
@@ -54,8 +72,8 @@ export interface EntityState {
 }
 
 enum IncomingPacketType { // incoming from client's perspective
-    GameModeTransitionRequest = 0x80,
     GameStateUpdate = 0x70,
+    SoundControlPacket = 0x80,
 }
 
 enum OutgoingPacketType { // outgoing from client's perspective
@@ -76,10 +94,10 @@ const App: Component<AppProps> = (props) => {
     const [clydeState, setClydeState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
     const [itemsState, setItemsState] = createSignal<Map<number, number>>(new Map())
 
+    const currentlyPlayingSounds = new Map<HTMLAudioElement, SoundType>
+
+    // not sure if this is needed and so it might get deleted
     function handleStringMessage(event: MessageEvent<string>) {
-        // this should be used to transition between cutscenes/states, which should change what the user is seeing in the frontend;
-        // probably we want a "gameMode" signal which this (via the event handler callback) can change if the server instructs;
-        // we also would want to send back a "finished" message and wait for the next state to be sent from the server
     }
 
     function handleIncomingBinaryMessage(event: MessageEvent<ArrayBuffer>) {
@@ -90,13 +108,79 @@ const App: Component<AppProps> = (props) => {
         // IMPORTANT: server will use first byte for packet type
         let packetType = msgBufferView[0];
         switch (packetType) {
-            case IncomingPacketType.GameModeTransitionRequest:
+            case IncomingPacketType.SoundControlPacket:
+                handleSoundControlPacket(msgBufferView);
                 break;
             case IncomingPacketType.GameStateUpdate:
                 handleGameStateUpdate(msgBufferView);
                 break;
         }
 
+    }
+
+    function handleSoundControlPacket(messageBufferView : Uint8Array<ArrayBuffer>) {
+        if (!(messageBufferView[0] === IncomingPacketType.SoundControlPacket)) return;
+        const soundPacket = WpmPacket.fromBinary(messageBufferView.slice(1));
+        const soundType = soundPacket.payload;
+        switch (soundType) {
+            case SoundType.INTRO_THEME:
+                executeSoundCommand(soundType,"/assets/sounds/intro_theme.mp3", soundPacket.packetType);
+                break
+            case SoundType.PACMAN_EATING:
+                executeSoundCommand(soundType, "/assets/sounds/pacman_eating.mp3", soundPacket.packetType);
+                break
+            case SoundType.GHOST_ALARM:
+                executeSoundCommand(soundType, "/assets/sounds/ghost_alarm.mp3", soundPacket.packetType);
+                break
+            case SoundType.GHOSTS_SCATTERING:
+                executeSoundCommand(soundType, "/assets/sounds/ghost_scattering.mp3", soundPacket.packetType);
+                break
+            case SoundType.GHOST_EATEN:
+                executeSoundCommand(soundType,"/assets/sounds/ghost_eaten.mp3", soundPacket.packetType);
+                break
+            default:
+                console.error("Unknown sound packet type: " + soundPacket.packetType);
+        }
+    }
+
+    function executeSoundCommand(soundType: SoundType, soundPath: string, wpmPacketType: WpmPacketType) {
+        if (soundPath.length === 0 || wpmPacketType === WpmPacketType.UNKNOWN) return;
+
+        const audio = new Audio(soundPath);
+        switch (wpmPacketType) {
+            case WpmPacketType.TRIGGER_SOUND:
+                audio.loop = false;
+                audio.play().catch(
+                    (reason) => {
+                        console.error("Failed to trigger sound: " + reason);
+                    }
+                );
+                currentlyPlayingSounds.set(audio, soundType);
+                audio.addEventListener("ended", () => {
+                    currentlyPlayingSounds.delete(audio);
+                })
+                break
+            case WpmPacketType.LOOP_SOUND:
+                audio.loop = true;
+                audio.play().catch(
+                    (reason) => {
+                        console.error("Failed to loop sound: " + reason);
+                    }
+                );
+                currentlyPlayingSounds.set(audio, soundType);
+                break
+            case WpmPacketType.STOP_SOUND:
+                // i think here we will need some kind of persistent tracking of all playing sounds
+                for (const [audioElement, playingSoundType] of currentlyPlayingSounds.entries()) {
+                    if (playingSoundType === soundType) {
+                        audioElement.pause();
+                        audioElement.currentTime = 0;
+                    }
+                }
+                break
+            // TODO -> just log that this isn't one of the expected sound packet designations
+            default: console.error("Unknown WPM packet type: " + wpmPacketType);
+        }
     }
 
     function handleGameStateUpdate(messageBufferView: Uint8Array<ArrayBuffer>) {
@@ -107,13 +191,6 @@ const App: Component<AppProps> = (props) => {
 
             // after this we just follow the standardized game state data format:
             const gameState = GameStateMessage.fromBinary(messageBufferView.slice(1));
-
-            // we should be more efficient and granular with our updates to avoid unnecessary re-renders;
-            // for prototyping I'll keep it naive just to ensure that the data is being passed properly.
-            // after that's working, we should diff each of these so we can avoid not setting them unnecessarily
-
-            // TODO -> we'll need to convert from game-native coordinates to whatever the game board's
-            // size actually is on the client side; that way the entirety of game logic can be serverside
 
             setPacmanState({
                 x: gameState.pacmanPositionX,
@@ -157,15 +234,14 @@ const App: Component<AppProps> = (props) => {
                 itemsMap.set(Number(packedCoords), type)
             }
             setItemsState(itemsMap)
-        })
+        }
+        )
     }
 
     // TODO -> use props to get server ip
     const ws = createWS("ws://127.0.0.1:80")
     ws.binaryType = "arraybuffer"
 
-    // TODO -> take into account game mode for different layouts and animations;
-    // some of these can be client-side and use the websocket for synchronization
     ws.addEventListener("message", (event) => {
         if (typeof event.data === "string") {
             handleStringMessage(event);

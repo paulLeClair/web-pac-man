@@ -47,6 +47,38 @@ enum class Direction : int32_t
     RIGHT = 4,
 };
 
+enum class SoundType : int32_t
+{
+    UNKNOWN = 0,
+    INTRO_THEME,
+    PACMAN_EATING,
+    GHOST_ALARM,
+    GHOSTS_SCATTERING,
+    GHOST_EATEN,
+};
+
+enum class WpmPacketType
+{
+    UNKNOWN = 0,
+    TRIGGER_SOUND,
+    LOOP_SOUND,
+    STOP_SOUND
+};
+
+
+enum class IncomingPacketType : int32_t
+{
+    UserInputPress = 0x101,
+    UserInputRelease = 0x102, // maybe unused
+    GameModeComplete = 0x103,
+};
+
+enum class OutgoingPacketType : uint8_t
+{
+    GameStateUpdate = 0x70,
+    SoundControlPacket = 0x80,
+};
+
 struct Entity
 {
     virtual ~Entity() = default;

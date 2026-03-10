@@ -16,6 +16,7 @@ set(server_code
         WebPacManServer/Session/Session.hpp
         WebPacManServer/Session/Defines.hpp
         WebPacManServer/Session/Game/Game.hpp
+        WebPacManServer/Session/Game/Game.cpp
         WebPacManServer/Session/Game/Player/Player.cpp
         WebPacManServer/Session/Game/Player/Player.hpp
         WebPacManServer/Session/Game/Ghost/Ghost.hpp
@@ -27,11 +28,13 @@ set(server_code
         WebPacManServer/Session/Game/Ghost/Inky/Inky.hpp
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.cpp
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.hpp
+        WebPacManServer/Session/Game/Maze/Maze.hpp
         protobuf/gen/game_state.pb.h
         protobuf/gen/game_state.pb.cc
         protobuf/gen/user_inputs.pb.h
         protobuf/gen/user_inputs.pb.cc
-        WebPacManServer/Session/Game/Maze/Maze.hpp
+        protobuf/gen/wpm_packet.pb.h
+        protobuf/gen/wpm_packet.pb.cc
 )
 
 

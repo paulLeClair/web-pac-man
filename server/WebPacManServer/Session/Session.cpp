@@ -9,7 +9,7 @@
 
 namespace pacman
 {
-    Session::Session(tcp::socket &&socket, const std::string &mapFilePath) : sessionId(boost::uuids::uuid()), ws(std::move(socket)), game(mapFilePath)
+    Session::Session(tcp::socket &&socket, const std::string &mapFilePath) : sessionId(boost::uuids::uuid()), ws(std::move(socket)), game(std::make_shared<Game>(mapFilePath))
     {
 
     }
@@ -20,6 +20,7 @@ namespace pacman
      */
     void Session::run()
     {
+
         net::dispatch(ws.get_executor(),
             beast::bind_front_handler(&Session::asyncRunHandler, shared_from_this()));
 
@@ -28,43 +29,43 @@ namespace pacman
     void Session::gameTick()
     {
             std::lock_guard guard(mutex);
-            game.tick();
+            game->tick(*this); // new idea: pass session into game tick so we can shoot other stuff before the state update
 
             // for now naive flat update of all state variables at once
             GameStateMessage gameState;
 
-            gameState.set_ghostsarescattering(game.ghostsAreScattering);
+            gameState.set_ghostsarescattering(game->ghostsAreScattering);
 
             // player update
-            gameState.set_pacmanischomping(game.player.isChomping);
-            gameState.set_pacmanorientation(static_cast<int32_t>(game.player.orientation));
-            gameState.set_pacmanpositionx(game.player.pos.x);
-            gameState.set_pacmanpositiony(game.player.pos.y);
+            gameState.set_pacmanischomping(game->player.isChomping);
+            gameState.set_pacmanorientation(static_cast<int32_t>(game->player.orientation));
+            gameState.set_pacmanpositionx(game->player.pos.x);
+            gameState.set_pacmanpositiony(game->player.pos.y);
 
             // ghost updates
-            gameState.set_blinkyisdead(game.blinky.isDead);
-            gameState.set_blinkyorientation(static_cast<int32_t>(game.blinky.orientation));
-            gameState.set_blinkypositionx(game.blinky.pos.x);
-            gameState.set_blinkypositiony(game.blinky.pos.y);
+            gameState.set_blinkyisdead(game->blinky.isDead);
+            gameState.set_blinkyorientation(static_cast<int32_t>(game->blinky.orientation));
+            gameState.set_blinkypositionx(game->blinky.pos.x);
+            gameState.set_blinkypositiony(game->blinky.pos.y);
 
-            gameState.set_inkyisdead(game.inky.isDead);
-            gameState.set_inkyorientation(static_cast<int32_t>(game.inky.orientation));
-            gameState.set_inkypositionx(game.inky.pos.x);
-            gameState.set_inkypositiony(game.inky.pos.y);
+            gameState.set_inkyisdead(game->inky.isDead);
+            gameState.set_inkyorientation(static_cast<int32_t>(game->inky.orientation));
+            gameState.set_inkypositionx(game->inky.pos.x);
+            gameState.set_inkypositiony(game->inky.pos.y);
 
-            gameState.set_pinkyisdead(game.pinky.isDead);
-            gameState.set_pinkyorientation(static_cast<int32_t>(game.pinky.orientation));
-            gameState.set_pinkypositionx(game.pinky.pos.x);
-            gameState.set_pinkypositiony(game.pinky.pos.y);
+            gameState.set_pinkyisdead(game->pinky.isDead);
+            gameState.set_pinkyorientation(static_cast<int32_t>(game->pinky.orientation));
+            gameState.set_pinkypositionx(game->pinky.pos.x);
+            gameState.set_pinkypositiony(game->pinky.pos.y);
 
-            gameState.set_clydeisdead(game.clyde.isDead);
-            gameState.set_clydeorientation(static_cast<int32_t>(game.clyde.orientation));
-            gameState.set_clydepositionx(game.clyde.pos.x);
-            gameState.set_clydepositiony(game.clyde.pos.y);
+            gameState.set_clydeisdead(game->clyde.isDead);
+            gameState.set_clydeorientation(static_cast<int32_t>(game->clyde.orientation));
+            gameState.set_clydepositionx(game->clyde.pos.x);
+            gameState.set_clydepositiony(game->clyde.pos.y);
 
             gameState.clear_items();
             const auto itemsHandle = gameState.mutable_items();
-            for (auto &[packedCoords, type] : game.items)
+            for (auto &[packedCoords, type] : game->items)
             {
                 const uint32_t pixelwiseX = (packedCoords >> 16) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
                 const uint32_t pixelwiseY = ((packedCoords << 16) >> 16) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
@@ -100,18 +101,28 @@ namespace pacman
         ws.set_option(websocket::stream_base::timeout::suggested(beast::role_type::server));
 
         ws.async_accept(
-            beast::bind_front_handler(&Session::asyncAcceptHandler, shared_from_this())
+            beast::bind_front_handler(&Session::asyncWebsocketAcceptHandler, shared_from_this())
         );
     }
 
 
-    void Session::asyncAcceptHandler(beast::error_code ec)
+    /**
+     * This is where the session actually "starts", since the websocket connection has been established between
+     * client and server.
+     * @param ec beast error code
+     */
+    void Session::asyncWebsocketAcceptHandler(beast::error_code ec)
     {
         if (ec)
         {
             // TODO -> log!
             return;
         }
+
+        // TODO -> here we would first run the intro cutscene but that can come after sound is confirmed working
+
+        // when we begin gameplay, we'll also want to have the ghosts spawn in the jail and come out in the proper order
+        game->loopSound(SoundType::GHOST_ALARM, *this);
 
         listenToClient();
     }
@@ -225,11 +236,11 @@ namespace pacman
         {
         case static_cast<int32_t>(IncomingPacketType::UserInputPress):
             {
-                game.lastBufferedInput = static_cast<Direction>(inputDirection);
+                game->lastBufferedInput = static_cast<Direction>(inputDirection);
 
-                if (game.player.targetCell && isOppositeDirection(game.lastBufferedInput, game.player.orientation))
+                if (game->player.targetCell && isOppositeDirection(game->lastBufferedInput, game->player.orientation))
                 {
-                    game.player.reverseDirection();
+                    game->player.reverseDirection();
                 }
 
                 break;

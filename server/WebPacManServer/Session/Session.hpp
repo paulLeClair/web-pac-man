@@ -12,18 +12,7 @@
 
 namespace pacman
 {
-    enum class IncomingPacketType : int32_t
-    {
-        UserInputPress = 0x101,
-        UserInputRelease = 0x102, // maybe unused
-        GameModeComplete = 0x103,
-    };
 
-    enum class OutgoingPacketType : uint8_t
-    {
-        GameStateUpdate = 0x70,
-        GameStateTransition = 0x80,
-    };
 
     class Session : public std::enable_shared_from_this<Session>
     {
@@ -41,16 +30,16 @@ namespace pacman
 
         void gameTick();
 
-    private:
-        Game game;
         std::mutex mutex = std::mutex();
+    private:
+        std::shared_ptr<Game> game = nullptr;
 
         // this is used to store the serialized game state data sent to the client
-        std::vector<uint8_t> gameStateMessageData;
+        std::vector<uint8_t> gameStateMessageData = {};
 
         void asyncRunHandler();
         void listenToClient();
-        void asyncAcceptHandler(beast::error_code ec);
+        void asyncWebsocketAcceptHandler(beast::error_code ec);
         void asyncListenToClientHandler(beast::error_code ec, std::size_t bytes_transferred);
         void asyncTestEchoInputHandler(beast::error_code ec, std::size_t bytes_transferred);
         void asyncWriteGameStateHandler(beast::error_code ec, std::size_t bytes_transferred);
