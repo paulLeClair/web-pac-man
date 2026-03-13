@@ -38,6 +38,9 @@ const Ghost: Component<GhostProps> = (props) => {
     const [ghostName, setGhostName] = createSignal(GhostName.UNKNOWN)
     setGhostName(props.ghostName)
 
+    const hidden = createMemo(() => props.ghostStateAccessor().hidden);
+    if (hidden()) return <div/>;
+
     const positionStyles = createMemo(() => {
         const s = props.ghostStateAccessor();
         return {

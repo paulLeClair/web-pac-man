@@ -50,24 +50,29 @@ inline constexpr GameStateMessage::Impl_::Impl_(
         currentmode_{0},
         pacmanorientation_{0},
         pacmanpositiony_{0},
-        pinkypositionx_{0},
-        pinkypositiony_{0},
         pacmanischomping_{false},
+        pacmanishidden_{false},
         ghostsarescattering_{false},
         pinkyisdead_{false},
-        inkyisdead_{false},
         pinkyorientation_{0},
+        pinkypositionx_{0},
+        pinkypositiony_{0},
         inkypositionx_{0},
         inkypositiony_{0},
-        blinkypositionx_{0},
         inkyorientation_{0},
-        blinkyorientation_{0},
+        pinkyishidden_{false},
+        inkyisdead_{false},
+        inkyishidden_{false},
+        blinkyisdead_{false},
+        blinkypositionx_{0},
         blinkypositiony_{0},
+        blinkyorientation_{0},
+        clydeorientation_{0},
         clydepositionx_{0},
         clydepositiony_{0},
-        blinkyisdead_{false},
+        blinkyishidden_{false},
         clydeisdead_{false},
-        clydeorientation_{0},
+        clydeishidden_{false},
         items_{} {}
 
 template <typename>
@@ -105,53 +110,63 @@ const ::uint32_t
         1,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_._has_bits_),
-        26, // hasbit index offset
+        31, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.currentmode_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanpositionx_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanpositiony_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanorientation_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanischomping_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanishidden_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.ghostsarescattering_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pinkypositionx_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pinkypositiony_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pinkyorientation_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pinkyisdead_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pinkyishidden_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.inkypositionx_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.inkypositiony_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.inkyorientation_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.inkyisdead_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.inkyishidden_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.blinkypositionx_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.blinkypositiony_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.blinkyorientation_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.blinkyisdead_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.blinkyishidden_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydepositionx_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydepositiony_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydeorientation_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydeisdead_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydeishidden_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.items_),
         1,
         0,
         3,
         2,
-        6,
-        7,
         4,
         5,
+        6,
+        9,
         10,
         8,
+        7,
+        14,
         11,
         12,
-        14,
-        9,
         13,
-        16,
         15,
-        19,
-        17,
+        16,
         18,
-        21,
+        19,
         20,
+        17,
+        24,
         22,
+        23,
+        21,
+        25,
+        26,
+        27,
 };
 
 static const ::_pbi::MigrationSchema
@@ -165,29 +180,32 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
 };
 const char descriptor_table_protodef_game_5fstate_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\020game_state.proto\"\202\005\n\020GameStateMessage\022"
+    "\n\020game_state.proto\"\366\005\n\020GameStateMessage\022"
     "\023\n\013currentMode\030\001 \001(\005\022\027\n\017pacmanPositionX\030"
     "\002 \001(\001\022\027\n\017pacmanPositionY\030\003 \001(\001\022\031\n\021pacman"
     "Orientation\030\004 \001(\005\022\030\n\020pacmanIsChomping\030\005 "
-    "\001(\010\022\033\n\023ghostsAreScattering\030\006 \001(\010\022\026\n\016pink"
-    "yPositionX\030\007 \001(\001\022\026\n\016pinkyPositionY\030\010 \001(\001"
-    "\022\030\n\020pinkyOrientation\030\t \001(\005\022\023\n\013pinkyIsDea"
-    "d\030\n \001(\010\022\025\n\rinkyPositionX\030\013 \001(\001\022\025\n\rinkyPo"
-    "sitionY\030\014 \001(\001\022\027\n\017inkyOrientation\030\r \001(\005\022\022"
-    "\n\ninkyIsDead\030\016 \001(\010\022\027\n\017blinkyPositionX\030\017 "
-    "\001(\001\022\027\n\017blinkyPositionY\030\020 \001(\001\022\031\n\021blinkyOr"
-    "ientation\030\021 \001(\005\022\024\n\014blinkyIsDead\030\022 \001(\010\022\026\n"
-    "\016clydePositionX\030\023 \001(\001\022\026\n\016clydePositionY\030"
-    "\024 \001(\001\022\030\n\020clydeOrientation\030\025 \001(\005\022\023\n\013clyde"
-    "IsDead\030\026 \001(\010\022+\n\005items\030\027 \003(\0132\034.GameStateM"
-    "essage.ItemsEntry\032,\n\nItemsEntry\022\013\n\003key\030\001"
-    " \001(\r\022\r\n\005value\030\002 \001(\r:\0028\001b\006proto3"
+    "\001(\010\022\026\n\016pacmanIsHidden\030\006 \001(\010\022\033\n\023ghostsAre"
+    "Scattering\030\007 \001(\010\022\026\n\016pinkyPositionX\030\010 \001(\001"
+    "\022\026\n\016pinkyPositionY\030\t \001(\001\022\030\n\020pinkyOrienta"
+    "tion\030\n \001(\005\022\023\n\013pinkyIsDead\030\013 \001(\010\022\025\n\rpinky"
+    "IsHidden\030\014 \001(\010\022\025\n\rinkyPositionX\030\r \001(\001\022\025\n"
+    "\rinkyPositionY\030\016 \001(\001\022\027\n\017inkyOrientation\030"
+    "\017 \001(\005\022\022\n\ninkyIsDead\030\020 \001(\010\022\024\n\014inkyIsHidde"
+    "n\030\021 \001(\010\022\027\n\017blinkyPositionX\030\022 \001(\001\022\027\n\017blin"
+    "kyPositionY\030\023 \001(\001\022\031\n\021blinkyOrientation\030\024"
+    " \001(\005\022\024\n\014blinkyIsDead\030\025 \001(\010\022\026\n\016blinkyIsHi"
+    "dden\030\026 \001(\010\022\026\n\016clydePositionX\030\027 \001(\001\022\026\n\016cl"
+    "ydePositionY\030\030 \001(\001\022\030\n\020clydeOrientation\030\031"
+    " \001(\005\022\023\n\013clydeIsDead\030\032 \001(\010\022\025\n\rclydeIsHidd"
+    "en\030\033 \001(\010\022+\n\005items\030\034 \003(\0132\034.GameStateMessa"
+    "ge.ItemsEntry\032,\n\nItemsEntry\022\013\n\003key\030\001 \001(\r"
+    "\022\r\n\005value\030\002 \001(\r:\0028\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_game_5fstate_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_game_5fstate_2eproto = {
     false,
     false,
-    671,
+    787,
     descriptor_table_protodef_game_5fstate_2eproto,
     "game_state.proto",
     &descriptor_table_game_5fstate_2eproto_once,
@@ -338,9 +356,9 @@ GameStateMessage::GameStateMessage(
                offsetof(Impl_, pacmanpositionx_),
            reinterpret_cast<const char*>(&from._impl_) +
                offsetof(Impl_, pacmanpositionx_),
-           offsetof(Impl_, clydeorientation_) -
+           offsetof(Impl_, clydeishidden_) -
                offsetof(Impl_, pacmanpositionx_) +
-               sizeof(Impl_::clydeorientation_));
+               sizeof(Impl_::clydeishidden_));
 
   // @@protoc_insertion_point(copy_constructor:GameStateMessage)
 }
@@ -355,9 +373,9 @@ inline void GameStateMessage::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) 
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, pacmanpositionx_),
            0,
-           offsetof(Impl_, clydeorientation_) -
+           offsetof(Impl_, clydeishidden_) -
                offsetof(Impl_, pacmanpositionx_) +
-               sizeof(Impl_::clydeorientation_));
+               sizeof(Impl_::clydeishidden_));
 }
 GameStateMessage::~GameStateMessage() {
   // @@protoc_insertion_point(destructor:GameStateMessage)
@@ -428,16 +446,16 @@ GameStateMessage::GetClassData() const {
   return GameStateMessage_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<5, 23, 1, 0, 2>
+const ::_pbi::TcParseTable<5, 28, 1, 0, 2>
 GameStateMessage::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_._has_bits_),
     0, // no _extensions_
-    23, 248,  // max_field_number, fast_idx_mask
+    28, 248,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4286578688,  // skipmap
+    4026531840,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    23,  // num_field_entries
+    28,  // num_field_entries
     1,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     GameStateMessage_class_data_.base(),
@@ -465,82 +483,97 @@ GameStateMessage::_table_ = {
      {32, 2, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanorientation_)}},
     // bool pacmanIsChomping = 5;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.pacmanischomping_), 6>(),
-     {40, 6, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.pacmanischomping_), 4>(),
+     {40, 4, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanischomping_)}},
-    // bool ghostsAreScattering = 6;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.ghostsarescattering_), 7>(),
-     {48, 7, 0,
+    // bool pacmanIsHidden = 6;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.pacmanishidden_), 5>(),
+     {48, 5, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanishidden_)}},
+    // bool ghostsAreScattering = 7;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.ghostsarescattering_), 6>(),
+     {56, 6, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.ghostsarescattering_)}},
-    // double pinkyPositionX = 7;
+    // double pinkyPositionX = 8;
     {::_pbi::TcParser::FastF64S1,
-     {57, 4, 0,
+     {65, 9, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkypositionx_)}},
-    // double pinkyPositionY = 8;
+    // double pinkyPositionY = 9;
     {::_pbi::TcParser::FastF64S1,
-     {65, 5, 0,
+     {73, 10, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkypositiony_)}},
-    // int32 pinkyOrientation = 9;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(GameStateMessage, _impl_.pinkyorientation_), 10>(),
-     {72, 10, 0,
-      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyorientation_)}},
-    // bool pinkyIsDead = 10;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.pinkyisdead_), 8>(),
+    // int32 pinkyOrientation = 10;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(GameStateMessage, _impl_.pinkyorientation_), 8>(),
      {80, 8, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyorientation_)}},
+    // bool pinkyIsDead = 11;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.pinkyisdead_), 7>(),
+     {88, 7, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyisdead_)}},
-    // double inkyPositionX = 11;
+    // bool pinkyIsHidden = 12;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.pinkyishidden_), 14>(),
+     {96, 14, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyishidden_)}},
+    // double inkyPositionX = 13;
     {::_pbi::TcParser::FastF64S1,
-     {89, 11, 0,
+     {105, 11, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkypositionx_)}},
-    // double inkyPositionY = 12;
+    // double inkyPositionY = 14;
     {::_pbi::TcParser::FastF64S1,
-     {97, 12, 0,
+     {113, 12, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkypositiony_)}},
-    // int32 inkyOrientation = 13;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(GameStateMessage, _impl_.inkyorientation_), 14>(),
-     {104, 14, 0,
+    // int32 inkyOrientation = 15;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(GameStateMessage, _impl_.inkyorientation_), 13>(),
+     {120, 13, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyorientation_)}},
-    // bool inkyIsDead = 14;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GameStateMessage, _impl_.inkyisdead_), 9>(),
-     {112, 9, 0,
+    // bool inkyIsDead = 16;
+    {::_pbi::TcParser::FastV8S2,
+     {384, 15, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyisdead_)}},
-    // double blinkyPositionX = 15;
-    {::_pbi::TcParser::FastF64S1,
-     {121, 13, 0,
+    // bool inkyIsHidden = 17;
+    {::_pbi::TcParser::FastV8S2,
+     {392, 16, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyishidden_)}},
+    // double blinkyPositionX = 18;
+    {::_pbi::TcParser::FastF64S2,
+     {401, 18, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkypositionx_)}},
-    // double blinkyPositionY = 16;
+    // double blinkyPositionY = 19;
     {::_pbi::TcParser::FastF64S2,
-     {385, 16, 0,
+     {409, 19, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkypositiony_)}},
-    // int32 blinkyOrientation = 17;
+    // int32 blinkyOrientation = 20;
     {::_pbi::TcParser::FastV32S2,
-     {392, 15, 0,
+     {416, 20, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyorientation_)}},
-    // bool blinkyIsDead = 18;
+    // bool blinkyIsDead = 21;
     {::_pbi::TcParser::FastV8S2,
-     {400, 19, 0,
+     {424, 17, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyisdead_)}},
-    // double clydePositionX = 19;
-    {::_pbi::TcParser::FastF64S2,
-     {409, 17, 0,
-      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositionx_)}},
-    // double clydePositionY = 20;
-    {::_pbi::TcParser::FastF64S2,
-     {417, 18, 0,
-      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositiony_)}},
-    // int32 clydeOrientation = 21;
-    {::_pbi::TcParser::FastV32S2,
-     {424, 21, 0,
-      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeorientation_)}},
-    // bool clydeIsDead = 22;
+    // bool blinkyIsHidden = 22;
     {::_pbi::TcParser::FastV8S2,
-     {432, 20, 0,
+     {432, 24, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyishidden_)}},
+    // double clydePositionX = 23;
+    {::_pbi::TcParser::FastF64S2,
+     {441, 22, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositionx_)}},
+    // double clydePositionY = 24;
+    {::_pbi::TcParser::FastF64S2,
+     {449, 23, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositiony_)}},
+    // int32 clydeOrientation = 25;
+    {::_pbi::TcParser::FastV32S2,
+     {456, 21, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeorientation_)}},
+    // bool clydeIsDead = 26;
+    {::_pbi::TcParser::FastV8S2,
+     {464, 25, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeisdead_)}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // bool clydeIsHidden = 27;
+    {::_pbi::TcParser::FastV8S2,
+     {472, 26, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeishidden_)}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
@@ -557,43 +590,53 @@ GameStateMessage::_table_ = {
     // int32 pacmanOrientation = 4;
     {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanorientation_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // bool pacmanIsChomping = 5;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanischomping_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
-    // bool ghostsAreScattering = 6;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.ghostsarescattering_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
-    // double pinkyPositionX = 7;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkypositionx_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // double pinkyPositionY = 8;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkypositiony_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // int32 pinkyOrientation = 9;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyorientation_), _Internal::kHasBitsOffset + 10, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
-    // bool pinkyIsDead = 10;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyisdead_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
-    // double inkyPositionX = 11;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanischomping_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool pacmanIsHidden = 6;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanishidden_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool ghostsAreScattering = 7;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.ghostsarescattering_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // double pinkyPositionX = 8;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkypositionx_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // double pinkyPositionY = 9;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkypositiony_), _Internal::kHasBitsOffset + 10, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // int32 pinkyOrientation = 10;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyorientation_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // bool pinkyIsDead = 11;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyisdead_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool pinkyIsHidden = 12;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pinkyishidden_), _Internal::kHasBitsOffset + 14, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // double inkyPositionX = 13;
     {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkypositionx_), _Internal::kHasBitsOffset + 11, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // double inkyPositionY = 12;
+    // double inkyPositionY = 14;
     {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkypositiony_), _Internal::kHasBitsOffset + 12, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // int32 inkyOrientation = 13;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyorientation_), _Internal::kHasBitsOffset + 14, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
-    // bool inkyIsDead = 14;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyisdead_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
-    // double blinkyPositionX = 15;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkypositionx_), _Internal::kHasBitsOffset + 13, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // double blinkyPositionY = 16;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkypositiony_), _Internal::kHasBitsOffset + 16, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // int32 blinkyOrientation = 17;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyorientation_), _Internal::kHasBitsOffset + 15, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
-    // bool blinkyIsDead = 18;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyisdead_), _Internal::kHasBitsOffset + 19, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
-    // double clydePositionX = 19;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositionx_), _Internal::kHasBitsOffset + 17, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // double clydePositionY = 20;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositiony_), _Internal::kHasBitsOffset + 18, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
-    // int32 clydeOrientation = 21;
+    // int32 inkyOrientation = 15;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyorientation_), _Internal::kHasBitsOffset + 13, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // bool inkyIsDead = 16;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyisdead_), _Internal::kHasBitsOffset + 15, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool inkyIsHidden = 17;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.inkyishidden_), _Internal::kHasBitsOffset + 16, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // double blinkyPositionX = 18;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkypositionx_), _Internal::kHasBitsOffset + 18, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // double blinkyPositionY = 19;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkypositiony_), _Internal::kHasBitsOffset + 19, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // int32 blinkyOrientation = 20;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyorientation_), _Internal::kHasBitsOffset + 20, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    // bool blinkyIsDead = 21;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyisdead_), _Internal::kHasBitsOffset + 17, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool blinkyIsHidden = 22;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.blinkyishidden_), _Internal::kHasBitsOffset + 24, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // double clydePositionX = 23;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositionx_), _Internal::kHasBitsOffset + 22, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // double clydePositionY = 24;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydepositiony_), _Internal::kHasBitsOffset + 23, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // int32 clydeOrientation = 25;
     {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeorientation_), _Internal::kHasBitsOffset + 21, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
-    // bool clydeIsDead = 22;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeisdead_), _Internal::kHasBitsOffset + 20, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
-    // map<uint32, uint32> items = 23;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.items_), _Internal::kHasBitsOffset + 22, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMap)},
+    // bool clydeIsDead = 26;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeisdead_), _Internal::kHasBitsOffset + 25, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool clydeIsHidden = 27;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeishidden_), _Internal::kHasBitsOffset + 26, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // map<uint32, uint32> items = 28;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.items_), _Internal::kHasBitsOffset + 27, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMap)},
   }},
   {{
       {::_pbi::TcParser::GetMapAuxInfo(
@@ -612,19 +655,24 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
   cached_has_bits = _impl_._has_bits_[0];
   if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
     ::memset(&_impl_.pacmanpositionx_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.ghostsarescattering_) -
-        reinterpret_cast<char*>(&_impl_.pacmanpositionx_)) + sizeof(_impl_.ghostsarescattering_));
+        reinterpret_cast<char*>(&_impl_.pinkyisdead_) -
+        reinterpret_cast<char*>(&_impl_.pacmanpositionx_)) + sizeof(_impl_.pinkyisdead_));
   }
   if (BatchCheckHasBit(cached_has_bits, 0x0000ff00U)) {
-    ::memset(&_impl_.pinkyisdead_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.blinkyorientation_) -
-        reinterpret_cast<char*>(&_impl_.pinkyisdead_)) + sizeof(_impl_.blinkyorientation_));
+    ::memset(&_impl_.pinkyorientation_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.inkyisdead_) -
+        reinterpret_cast<char*>(&_impl_.pinkyorientation_)) + sizeof(_impl_.inkyisdead_));
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x007f0000U)) {
-    ::memset(&_impl_.blinkypositiony_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.clydeorientation_) -
-        reinterpret_cast<char*>(&_impl_.blinkypositiony_)) + sizeof(_impl_.clydeorientation_));
-    if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x00ff0000U)) {
+    ::memset(&_impl_.inkyishidden_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.clydepositiony_) -
+        reinterpret_cast<char*>(&_impl_.inkyishidden_)) + sizeof(_impl_.clydepositiony_));
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0f000000U)) {
+    ::memset(&_impl_.blinkyishidden_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.clydeishidden_) -
+        reinterpret_cast<char*>(&_impl_.blinkyishidden_)) + sizeof(_impl_.clydeishidden_));
+    if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
       _impl_.items_.Clear();
     }
   }
@@ -688,7 +736,7 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
   }
 
   // bool pacmanIsChomping = 5;
-  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
     if (this_._internal_pacmanischomping() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
@@ -696,161 +744,206 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
     }
   }
 
-  // bool ghostsAreScattering = 6;
-  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+  // bool pacmanIsHidden = 6;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (this_._internal_pacmanishidden() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          6, this_._internal_pacmanishidden(), target);
+    }
+  }
+
+  // bool ghostsAreScattering = 7;
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
     if (this_._internal_ghostsarescattering() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
-          6, this_._internal_ghostsarescattering(), target);
+          7, this_._internal_ghostsarescattering(), target);
     }
   }
 
-  // double pinkyPositionX = 7;
-  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+  // double pinkyPositionX = 8;
+  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_pinkypositionx()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          7, this_._internal_pinkypositionx(), target);
+          8, this_._internal_pinkypositionx(), target);
     }
   }
 
-  // double pinkyPositionY = 8;
-  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+  // double pinkyPositionY = 9;
+  if (CheckHasBit(cached_has_bits, 0x00000400U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_pinkypositiony()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          8, this_._internal_pinkypositiony(), target);
+          9, this_._internal_pinkypositiony(), target);
     }
   }
 
-  // int32 pinkyOrientation = 9;
-  if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+  // int32 pinkyOrientation = 10;
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
     if (this_._internal_pinkyorientation() != 0) {
       target =
-          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<9>(
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<10>(
               stream, this_._internal_pinkyorientation(), target);
     }
   }
 
-  // bool pinkyIsDead = 10;
-  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+  // bool pinkyIsDead = 11;
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
     if (this_._internal_pinkyisdead() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
-          10, this_._internal_pinkyisdead(), target);
+          11, this_._internal_pinkyisdead(), target);
     }
   }
 
-  // double inkyPositionX = 11;
+  // bool pinkyIsHidden = 12;
+  if (CheckHasBit(cached_has_bits, 0x00004000U)) {
+    if (this_._internal_pinkyishidden() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          12, this_._internal_pinkyishidden(), target);
+    }
+  }
+
+  // double inkyPositionX = 13;
   if (CheckHasBit(cached_has_bits, 0x00000800U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_inkypositionx()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          11, this_._internal_inkypositionx(), target);
+          13, this_._internal_inkypositionx(), target);
     }
   }
 
-  // double inkyPositionY = 12;
+  // double inkyPositionY = 14;
   if (CheckHasBit(cached_has_bits, 0x00001000U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_inkypositiony()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          12, this_._internal_inkypositiony(), target);
+          14, this_._internal_inkypositiony(), target);
     }
   }
 
-  // int32 inkyOrientation = 13;
-  if (CheckHasBit(cached_has_bits, 0x00004000U)) {
+  // int32 inkyOrientation = 15;
+  if (CheckHasBit(cached_has_bits, 0x00002000U)) {
     if (this_._internal_inkyorientation() != 0) {
       target =
-          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<13>(
+          ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<15>(
               stream, this_._internal_inkyorientation(), target);
     }
   }
 
-  // bool inkyIsDead = 14;
-  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+  // bool inkyIsDead = 16;
+  if (CheckHasBit(cached_has_bits, 0x00008000U)) {
     if (this_._internal_inkyisdead() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
-          14, this_._internal_inkyisdead(), target);
+          16, this_._internal_inkyisdead(), target);
     }
   }
 
-  // double blinkyPositionX = 15;
-  if (CheckHasBit(cached_has_bits, 0x00002000U)) {
+  // bool inkyIsHidden = 17;
+  if (CheckHasBit(cached_has_bits, 0x00010000U)) {
+    if (this_._internal_inkyishidden() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          17, this_._internal_inkyishidden(), target);
+    }
+  }
+
+  // double blinkyPositionX = 18;
+  if (CheckHasBit(cached_has_bits, 0x00040000U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_blinkypositionx()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          15, this_._internal_blinkypositionx(), target);
+          18, this_._internal_blinkypositionx(), target);
     }
   }
 
-  // double blinkyPositionY = 16;
-  if (CheckHasBit(cached_has_bits, 0x00010000U)) {
+  // double blinkyPositionY = 19;
+  if (CheckHasBit(cached_has_bits, 0x00080000U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_blinkypositiony()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          16, this_._internal_blinkypositiony(), target);
+          19, this_._internal_blinkypositiony(), target);
     }
   }
 
-  // int32 blinkyOrientation = 17;
-  if (CheckHasBit(cached_has_bits, 0x00008000U)) {
+  // int32 blinkyOrientation = 20;
+  if (CheckHasBit(cached_has_bits, 0x00100000U)) {
     if (this_._internal_blinkyorientation() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-          17, this_._internal_blinkyorientation(), target);
+          20, this_._internal_blinkyorientation(), target);
     }
   }
 
-  // bool blinkyIsDead = 18;
-  if (CheckHasBit(cached_has_bits, 0x00080000U)) {
+  // bool blinkyIsDead = 21;
+  if (CheckHasBit(cached_has_bits, 0x00020000U)) {
     if (this_._internal_blinkyisdead() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
-          18, this_._internal_blinkyisdead(), target);
+          21, this_._internal_blinkyisdead(), target);
     }
   }
 
-  // double clydePositionX = 19;
-  if (CheckHasBit(cached_has_bits, 0x00020000U)) {
+  // bool blinkyIsHidden = 22;
+  if (CheckHasBit(cached_has_bits, 0x01000000U)) {
+    if (this_._internal_blinkyishidden() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          22, this_._internal_blinkyishidden(), target);
+    }
+  }
+
+  // double clydePositionX = 23;
+  if (CheckHasBit(cached_has_bits, 0x00400000U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_clydepositionx()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          19, this_._internal_clydepositionx(), target);
+          23, this_._internal_clydepositionx(), target);
     }
   }
 
-  // double clydePositionY = 20;
-  if (CheckHasBit(cached_has_bits, 0x00040000U)) {
+  // double clydePositionY = 24;
+  if (CheckHasBit(cached_has_bits, 0x00800000U)) {
     if (::absl::bit_cast<::uint64_t>(this_._internal_clydepositiony()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteDoubleToArray(
-          20, this_._internal_clydepositiony(), target);
+          24, this_._internal_clydepositiony(), target);
     }
   }
 
-  // int32 clydeOrientation = 21;
+  // int32 clydeOrientation = 25;
   if (CheckHasBit(cached_has_bits, 0x00200000U)) {
     if (this_._internal_clydeorientation() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-          21, this_._internal_clydeorientation(), target);
+          25, this_._internal_clydeorientation(), target);
     }
   }
 
-  // bool clydeIsDead = 22;
-  if (CheckHasBit(cached_has_bits, 0x00100000U)) {
+  // bool clydeIsDead = 26;
+  if (CheckHasBit(cached_has_bits, 0x02000000U)) {
     if (this_._internal_clydeisdead() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
-          22, this_._internal_clydeisdead(), target);
+          26, this_._internal_clydeisdead(), target);
     }
   }
 
-  // map<uint32, uint32> items = 23;
-  if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+  // bool clydeIsHidden = 27;
+  if (CheckHasBit(cached_has_bits, 0x04000000U)) {
+    if (this_._internal_clydeishidden() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          27, this_._internal_clydeishidden(), target);
+    }
+  }
+
+  // map<uint32, uint32> items = 28;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
     if (!this_._internal_items().empty()) {
       using MapType = ::google::protobuf::Map<::uint32_t, ::uint32_t>;
       using WireHelper = _pbi::MapEntryFuncs<::uint32_t, ::uint32_t,
@@ -861,12 +954,12 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
       if (stream->IsSerializationDeterministic() && field.size() > 1) {
         for (const auto& entry : ::google::protobuf::internal::MapSorterFlat<MapType>(field)) {
           target = WireHelper::InternalSerialize(
-              23, entry.first, entry.second, target, stream);
+              28, entry.first, entry.second, target, stream);
         }
       } else {
         for (const auto& entry : field) {
           target = WireHelper::InternalSerialize(
-              23, entry.first, entry.second, target, stream);
+              28, entry.first, entry.second, target, stream);
         }
       }
     }
@@ -924,124 +1017,156 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
         total_size += 9;
       }
     }
-    // double pinkyPositionX = 7;
-    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
-      if (::absl::bit_cast<::uint64_t>(this_._internal_pinkypositionx()) != 0) {
-        total_size += 9;
-      }
-    }
-    // double pinkyPositionY = 8;
-    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
-      if (::absl::bit_cast<::uint64_t>(this_._internal_pinkypositiony()) != 0) {
-        total_size += 9;
-      }
-    }
     // bool pacmanIsChomping = 5;
-    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
       if (this_._internal_pacmanischomping() != 0) {
         total_size += 2;
       }
     }
-    // bool ghostsAreScattering = 6;
-    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    // bool pacmanIsHidden = 6;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (this_._internal_pacmanishidden() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool ghostsAreScattering = 7;
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
       if (this_._internal_ghostsarescattering() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool pinkyIsDead = 11;
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (this_._internal_pinkyisdead() != 0) {
         total_size += 2;
       }
     }
   }
   if (BatchCheckHasBit(cached_has_bits, 0x0000ff00U)) {
-    // bool pinkyIsDead = 10;
+    // int32 pinkyOrientation = 10;
     if (CheckHasBit(cached_has_bits, 0x00000100U)) {
-      if (this_._internal_pinkyisdead() != 0) {
-        total_size += 2;
-      }
-    }
-    // bool inkyIsDead = 14;
-    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
-      if (this_._internal_inkyisdead() != 0) {
-        total_size += 2;
-      }
-    }
-    // int32 pinkyOrientation = 9;
-    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       if (this_._internal_pinkyorientation() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_pinkyorientation());
       }
     }
-    // double inkyPositionX = 11;
+    // double pinkyPositionX = 8;
+    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_pinkypositionx()) != 0) {
+        total_size += 9;
+      }
+    }
+    // double pinkyPositionY = 9;
+    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_pinkypositiony()) != 0) {
+        total_size += 9;
+      }
+    }
+    // double inkyPositionX = 13;
     if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       if (::absl::bit_cast<::uint64_t>(this_._internal_inkypositionx()) != 0) {
         total_size += 9;
       }
     }
-    // double inkyPositionY = 12;
+    // double inkyPositionY = 14;
     if (CheckHasBit(cached_has_bits, 0x00001000U)) {
       if (::absl::bit_cast<::uint64_t>(this_._internal_inkypositiony()) != 0) {
         total_size += 9;
       }
     }
-    // double blinkyPositionX = 15;
+    // int32 inkyOrientation = 15;
     if (CheckHasBit(cached_has_bits, 0x00002000U)) {
-      if (::absl::bit_cast<::uint64_t>(this_._internal_blinkypositionx()) != 0) {
-        total_size += 9;
-      }
-    }
-    // int32 inkyOrientation = 13;
-    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
       if (this_._internal_inkyorientation() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_inkyorientation());
       }
     }
-    // int32 blinkyOrientation = 17;
+    // bool pinkyIsHidden = 12;
+    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
+      if (this_._internal_pinkyishidden() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool inkyIsDead = 16;
     if (CheckHasBit(cached_has_bits, 0x00008000U)) {
+      if (this_._internal_inkyisdead() != 0) {
+        total_size += 3;
+      }
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00ff0000U)) {
+    // bool inkyIsHidden = 17;
+    if (CheckHasBit(cached_has_bits, 0x00010000U)) {
+      if (this_._internal_inkyishidden() != 0) {
+        total_size += 3;
+      }
+    }
+    // bool blinkyIsDead = 21;
+    if (CheckHasBit(cached_has_bits, 0x00020000U)) {
+      if (this_._internal_blinkyisdead() != 0) {
+        total_size += 3;
+      }
+    }
+    // double blinkyPositionX = 18;
+    if (CheckHasBit(cached_has_bits, 0x00040000U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_blinkypositionx()) != 0) {
+        total_size += 10;
+      }
+    }
+    // double blinkyPositionY = 19;
+    if (CheckHasBit(cached_has_bits, 0x00080000U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_blinkypositiony()) != 0) {
+        total_size += 10;
+      }
+    }
+    // int32 blinkyOrientation = 20;
+    if (CheckHasBit(cached_has_bits, 0x00100000U)) {
       if (this_._internal_blinkyorientation() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_blinkyorientation());
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x007f0000U)) {
-    // double blinkyPositionY = 16;
-    if (CheckHasBit(cached_has_bits, 0x00010000U)) {
-      if (::absl::bit_cast<::uint64_t>(this_._internal_blinkypositiony()) != 0) {
-        total_size += 10;
-      }
-    }
-    // double clydePositionX = 19;
-    if (CheckHasBit(cached_has_bits, 0x00020000U)) {
-      if (::absl::bit_cast<::uint64_t>(this_._internal_clydepositionx()) != 0) {
-        total_size += 10;
-      }
-    }
-    // double clydePositionY = 20;
-    if (CheckHasBit(cached_has_bits, 0x00040000U)) {
-      if (::absl::bit_cast<::uint64_t>(this_._internal_clydepositiony()) != 0) {
-        total_size += 10;
-      }
-    }
-    // bool blinkyIsDead = 18;
-    if (CheckHasBit(cached_has_bits, 0x00080000U)) {
-      if (this_._internal_blinkyisdead() != 0) {
-        total_size += 3;
-      }
-    }
-    // bool clydeIsDead = 22;
-    if (CheckHasBit(cached_has_bits, 0x00100000U)) {
-      if (this_._internal_clydeisdead() != 0) {
-        total_size += 3;
-      }
-    }
-    // int32 clydeOrientation = 21;
+    // int32 clydeOrientation = 25;
     if (CheckHasBit(cached_has_bits, 0x00200000U)) {
       if (this_._internal_clydeorientation() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_clydeorientation());
       }
     }
-    // map<uint32, uint32> items = 23;
-    if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+    // double clydePositionX = 23;
+    if (CheckHasBit(cached_has_bits, 0x00400000U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_clydepositionx()) != 0) {
+        total_size += 10;
+      }
+    }
+    // double clydePositionY = 24;
+    if (CheckHasBit(cached_has_bits, 0x00800000U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_clydepositiony()) != 0) {
+        total_size += 10;
+      }
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0f000000U)) {
+    // bool blinkyIsHidden = 22;
+    if (CheckHasBit(cached_has_bits, 0x01000000U)) {
+      if (this_._internal_blinkyishidden() != 0) {
+        total_size += 3;
+      }
+    }
+    // bool clydeIsDead = 26;
+    if (CheckHasBit(cached_has_bits, 0x02000000U)) {
+      if (this_._internal_clydeisdead() != 0) {
+        total_size += 3;
+      }
+    }
+    // bool clydeIsHidden = 27;
+    if (CheckHasBit(cached_has_bits, 0x04000000U)) {
+      if (this_._internal_clydeishidden() != 0) {
+        total_size += 3;
+      }
+    }
+    // map<uint32, uint32> items = 28;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
       total_size +=
           2 * ::google::protobuf::internal::FromIntSize(this_._internal_items_size());
       for (const auto& entry : this_._internal_items()) {
@@ -1091,40 +1216,40 @@ void GameStateMessage::MergeImpl(::google::protobuf::MessageLite& to_msg,
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00000010U)) {
-      if (::absl::bit_cast<::uint64_t>(from._internal_pinkypositionx()) != 0) {
-        _this->_impl_.pinkypositionx_ = from._impl_.pinkypositionx_;
-      }
-    }
-    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
-      if (::absl::bit_cast<::uint64_t>(from._internal_pinkypositiony()) != 0) {
-        _this->_impl_.pinkypositiony_ = from._impl_.pinkypositiony_;
-      }
-    }
-    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
       if (from._internal_pacmanischomping() != 0) {
         _this->_impl_.pacmanischomping_ = from._impl_.pacmanischomping_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (from._internal_pacmanishidden() != 0) {
+        _this->_impl_.pacmanishidden_ = from._impl_.pacmanishidden_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
       if (from._internal_ghostsarescattering() != 0) {
         _this->_impl_.ghostsarescattering_ = from._impl_.ghostsarescattering_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (from._internal_pinkyisdead() != 0) {
+        _this->_impl_.pinkyisdead_ = from._impl_.pinkyisdead_;
       }
     }
   }
   if (BatchCheckHasBit(cached_has_bits, 0x0000ff00U)) {
     if (CheckHasBit(cached_has_bits, 0x00000100U)) {
-      if (from._internal_pinkyisdead() != 0) {
-        _this->_impl_.pinkyisdead_ = from._impl_.pinkyisdead_;
+      if (from._internal_pinkyorientation() != 0) {
+        _this->_impl_.pinkyorientation_ = from._impl_.pinkyorientation_;
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00000200U)) {
-      if (from._internal_inkyisdead() != 0) {
-        _this->_impl_.inkyisdead_ = from._impl_.inkyisdead_;
+      if (::absl::bit_cast<::uint64_t>(from._internal_pinkypositionx()) != 0) {
+        _this->_impl_.pinkypositionx_ = from._impl_.pinkypositionx_;
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00000400U)) {
-      if (from._internal_pinkyorientation() != 0) {
-        _this->_impl_.pinkyorientation_ = from._impl_.pinkyorientation_;
+      if (::absl::bit_cast<::uint64_t>(from._internal_pinkypositiony()) != 0) {
+        _this->_impl_.pinkypositiony_ = from._impl_.pinkypositiony_;
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00000800U)) {
@@ -1138,45 +1263,45 @@ void GameStateMessage::MergeImpl(::google::protobuf::MessageLite& to_msg,
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00002000U)) {
-      if (::absl::bit_cast<::uint64_t>(from._internal_blinkypositionx()) != 0) {
-        _this->_impl_.blinkypositionx_ = from._impl_.blinkypositionx_;
-      }
-    }
-    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
       if (from._internal_inkyorientation() != 0) {
         _this->_impl_.inkyorientation_ = from._impl_.inkyorientation_;
       }
     }
+    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
+      if (from._internal_pinkyishidden() != 0) {
+        _this->_impl_.pinkyishidden_ = from._impl_.pinkyishidden_;
+      }
+    }
     if (CheckHasBit(cached_has_bits, 0x00008000U)) {
-      if (from._internal_blinkyorientation() != 0) {
-        _this->_impl_.blinkyorientation_ = from._impl_.blinkyorientation_;
+      if (from._internal_inkyisdead() != 0) {
+        _this->_impl_.inkyisdead_ = from._impl_.inkyisdead_;
       }
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x007f0000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x00ff0000U)) {
     if (CheckHasBit(cached_has_bits, 0x00010000U)) {
-      if (::absl::bit_cast<::uint64_t>(from._internal_blinkypositiony()) != 0) {
-        _this->_impl_.blinkypositiony_ = from._impl_.blinkypositiony_;
+      if (from._internal_inkyishidden() != 0) {
+        _this->_impl_.inkyishidden_ = from._impl_.inkyishidden_;
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00020000U)) {
-      if (::absl::bit_cast<::uint64_t>(from._internal_clydepositionx()) != 0) {
-        _this->_impl_.clydepositionx_ = from._impl_.clydepositionx_;
-      }
-    }
-    if (CheckHasBit(cached_has_bits, 0x00040000U)) {
-      if (::absl::bit_cast<::uint64_t>(from._internal_clydepositiony()) != 0) {
-        _this->_impl_.clydepositiony_ = from._impl_.clydepositiony_;
-      }
-    }
-    if (CheckHasBit(cached_has_bits, 0x00080000U)) {
       if (from._internal_blinkyisdead() != 0) {
         _this->_impl_.blinkyisdead_ = from._impl_.blinkyisdead_;
       }
     }
+    if (CheckHasBit(cached_has_bits, 0x00040000U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_blinkypositionx()) != 0) {
+        _this->_impl_.blinkypositionx_ = from._impl_.blinkypositionx_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00080000U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_blinkypositiony()) != 0) {
+        _this->_impl_.blinkypositiony_ = from._impl_.blinkypositiony_;
+      }
+    }
     if (CheckHasBit(cached_has_bits, 0x00100000U)) {
-      if (from._internal_clydeisdead() != 0) {
-        _this->_impl_.clydeisdead_ = from._impl_.clydeisdead_;
+      if (from._internal_blinkyorientation() != 0) {
+        _this->_impl_.blinkyorientation_ = from._impl_.blinkyorientation_;
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00200000U)) {
@@ -1184,7 +1309,34 @@ void GameStateMessage::MergeImpl(::google::protobuf::MessageLite& to_msg,
         _this->_impl_.clydeorientation_ = from._impl_.clydeorientation_;
       }
     }
-    if (CheckHasBitForRepeated(cached_has_bits, 0x00400000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00400000U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_clydepositionx()) != 0) {
+        _this->_impl_.clydepositionx_ = from._impl_.clydepositionx_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00800000U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_clydepositiony()) != 0) {
+        _this->_impl_.clydepositiony_ = from._impl_.clydepositiony_;
+      }
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0f000000U)) {
+    if (CheckHasBit(cached_has_bits, 0x01000000U)) {
+      if (from._internal_blinkyishidden() != 0) {
+        _this->_impl_.blinkyishidden_ = from._impl_.blinkyishidden_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x02000000U)) {
+      if (from._internal_clydeisdead() != 0) {
+        _this->_impl_.clydeisdead_ = from._impl_.clydeisdead_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x04000000U)) {
+      if (from._internal_clydeishidden() != 0) {
+        _this->_impl_.clydeishidden_ = from._impl_.clydeishidden_;
+      }
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
       _this->_impl_.items_.MergeFrom(from._impl_.items_);
     }
   }
@@ -1206,8 +1358,8 @@ void GameStateMessage::InternalSwap(GameStateMessage* PROTOBUF_RESTRICT PROTOBUF
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeorientation_)
-      + sizeof(GameStateMessage::_impl_.clydeorientation_)
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeishidden_)
+      + sizeof(GameStateMessage::_impl_.clydeishidden_)
       - PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanpositionx_)>(
           reinterpret_cast<char*>(&_impl_.pacmanpositionx_),
           reinterpret_cast<char*>(&other->_impl_.pacmanpositionx_));

@@ -34,7 +34,7 @@ namespace pacman
 
         uint32_t score = 0;
 
-        CurrentGameMode currentGameState = CurrentGameMode::GAMEPLAY;
+        GameMode currentGameMode = GameMode::GAMEPLAY;
 
         // map of packed grid coordinates to the type of item stored there
         std::unordered_map<uint32_t, ItemType> items;
@@ -54,109 +54,65 @@ namespace pacman
         Inky inky;
         Clyde clyde;
 
+        bool displayReadyMessage;
+
         // trigger a particular sound to play once all the way through
-        void triggerSound(SoundType soundType, Session &session);
+        void triggerSound(SoundType soundType, Session& session);
         // trigger a particular sound to loop until stopped
-        void loopSound(SoundType soundType, Session &session);
+        void loopSound(SoundType soundType, Session& session);
         // cut a sound short if its currently playing, else nothing will happen
-        void stopSound(SoundType soundType, Session &session);
+        void stopSound(SoundType soundType, Session& session);
 
         void tick(Session& session)
         {
-            static constexpr auto scatterTimeout = 180;
-
-            player.bufferedInput = lastBufferedInput;
-            player.update();
-
-            if (ghostsAreScattering)
+            switch (currentGameMode)
             {
-                scatterCountdown--;
-                if (scatterCountdown == 0)
+            case GameMode::START:
                 {
-                    blinky.isScattering = false;
-                    blinky.setNormalSpeed();
-
-                    pinky.isScattering = false;
-                    pinky.setNormalSpeed();
-
-                    inky.isScattering = false;
-                    inky.setNormalSpeed();
-
-                    clyde.isScattering = false;
-                    clyde.setNormalSpeed();
-
-                    ghostsAreScattering = false;
-                    // stopSound(SoundType::GHOSTS_SCATTERING, session);
-                    // triggerSound(SoundType::GHOST_ALARM, session);
+                    tickStart(session);
+                    break;
                 }
+            case GameMode::GAMEPLAY:
+                {
+                    tickGameplay(session);
+                    break;
+                }
+            case GameMode::SUCCESS:
+                {
+                    tickSuccess(session);
+                    break;
+                }
+            case GameMode::FAILURE:
+                {
+                    tickFailure(session);
+                    break;
+                }
+            case GameMode::INTERMISSION_1:
+                {
+                    //todo
+                    break;
+                }
+            case GameMode::INTERMISSION_2:
+                {
+                    //todo
+                    break;
+                }
+            default:
+                {
+
+                };
             }
-
-            if (const uint32_t packedPlayerCoords = player.currentCell->gridX << 16 | player.currentCell->gridY;
-                items.contains(packedPlayerCoords))
-            {
-                auto obtainedItemType = items.at(packedPlayerCoords);
-                score += static_cast<uint32_t>(obtainedItemType); // item type enum holds score directly
-
-                switch (obtainedItemType)
-                {
-                case ItemType::ENERGIZER:
-                    {
-                        // activate scattering effect
-                        ghostsAreScattering = true;
-
-                        blinky.isScattering = true;
-                        blinky.setSlowSpeed();
-
-                        pinky.isScattering = true;
-                        pinky.setSlowSpeed();
-
-                        inky.isScattering = true;
-                        inky.setSlowSpeed();
-
-                        clyde.isScattering = true;
-                        clyde.setSlowSpeed();
-
-                        scatterCountdown = scatterTimeout;
-                        // stopSound(SoundType::GHOST_ALARM, session);
-                        // loopSound(SoundType::GHOSTS_SCATTERING, session);
-                        break;
-                    }
-                case ItemType::DOT:
-                    {
-                        // triggerSound(SoundType::PACMAN_EATING, session);
-                    }
-                }
-
-                if (!items.erase(packedPlayerCoords))
-                {
-                    // TODO -> log error...
-                    return;
-                }
-
-                if (items.empty())
-                {
-                    // this would trigger the next stage
-                    setupGameEntities();
-                    // every game over we need to restart the sounds too
-                }
-            }
-            // TODO -> display score
-
-            update_ghost_state(pinky, session);
-            update_ghost_state(blinky, session);
-            update_ghost_state(inky, session);
-            update_ghost_state(clyde, session);
-
-            // TODO -> timer/score etc
         }
 
+    private:
         MazeCell* pacmanStartCell;
         MazeCell* pinkyStartCell;
         MazeCell* inkyStartCell;
         MazeCell* clydeStartCell;
         MazeCell* blinkyStartCell;
 
-    private:
+        // TODO -> move private function defs to cpp file
+
         void setupGameEntities()
         {
             static constexpr float DEFAULT_PLAYER_SPEED = 0.15;
@@ -254,7 +210,7 @@ namespace pacman
             }
         }
 
-        void update_ghost_state(Ghost& ghost, Session &session)
+        void update_ghost_state(Ghost& ghost, Session& session)
         {
             ghost.update();
             if (ghostIsCollidingWithPacman(ghost))
@@ -305,17 +261,23 @@ namespace pacman
                 currentGhostPosY - currentPlayerPosY) < epsilon;
         }
 
-        void stopAllSounds(Session &session)
+        void stopAllSounds(Session& session)
         {
             // stopSound(SoundType::GHOST_ALARM, session);
             // stopSound(SoundType::PACMAN_EATING, session);
         }
 
-
         // send a websocket message for the client to trigger a sound on the next update
-        void sendSoundPacket(SoundType soundType, WpmPacketType soundControlType, Session &session);
+        void sendSoundPacket(SoundType soundType, WpmPacketType soundControlType, Session& session);
 
         void asyncSoundPacketWriteHandler(boost::beast::error_code ec, std::size_t bytesTransferred);
-    };
 
+        void tickStart(Session& session);
+
+        void tickGameplay(Session& session);
+
+        void tickSuccess(Session& session);
+
+        void tickFailure(Session& session);
+    };
 } // pacman

@@ -145,7 +145,7 @@ namespace pacman {
 
     void WebPacManServer::gameTickerThreadKernel(std::stop_token stoken) //NOLINT
     {
-        static constexpr int DEFAULT_TICK_INTERVAL_IN_MS = 12;
+        static constexpr int DEFAULT_TICK_INTERVAL_IN_MS = 20;
         while (!stoken.stop_requested())
         {
             for (const auto &session : sessions)

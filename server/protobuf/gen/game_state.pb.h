@@ -260,25 +260,30 @@ class GameStateMessage final : public ::google::protobuf::Message
     kCurrentModeFieldNumber = 1,
     kPacmanOrientationFieldNumber = 4,
     kPacmanPositionYFieldNumber = 3,
-    kPinkyPositionXFieldNumber = 7,
-    kPinkyPositionYFieldNumber = 8,
     kPacmanIsChompingFieldNumber = 5,
-    kGhostsAreScatteringFieldNumber = 6,
-    kPinkyIsDeadFieldNumber = 10,
-    kInkyIsDeadFieldNumber = 14,
-    kPinkyOrientationFieldNumber = 9,
-    kInkyPositionXFieldNumber = 11,
-    kInkyPositionYFieldNumber = 12,
-    kBlinkyPositionXFieldNumber = 15,
-    kInkyOrientationFieldNumber = 13,
-    kBlinkyOrientationFieldNumber = 17,
-    kBlinkyPositionYFieldNumber = 16,
-    kClydePositionXFieldNumber = 19,
-    kClydePositionYFieldNumber = 20,
-    kBlinkyIsDeadFieldNumber = 18,
-    kClydeIsDeadFieldNumber = 22,
-    kClydeOrientationFieldNumber = 21,
-    kItemsFieldNumber = 23,
+    kPacmanIsHiddenFieldNumber = 6,
+    kGhostsAreScatteringFieldNumber = 7,
+    kPinkyIsDeadFieldNumber = 11,
+    kPinkyOrientationFieldNumber = 10,
+    kPinkyPositionXFieldNumber = 8,
+    kPinkyPositionYFieldNumber = 9,
+    kInkyPositionXFieldNumber = 13,
+    kInkyPositionYFieldNumber = 14,
+    kInkyOrientationFieldNumber = 15,
+    kPinkyIsHiddenFieldNumber = 12,
+    kInkyIsDeadFieldNumber = 16,
+    kInkyIsHiddenFieldNumber = 17,
+    kBlinkyIsDeadFieldNumber = 21,
+    kBlinkyPositionXFieldNumber = 18,
+    kBlinkyPositionYFieldNumber = 19,
+    kBlinkyOrientationFieldNumber = 20,
+    kClydeOrientationFieldNumber = 25,
+    kClydePositionXFieldNumber = 23,
+    kClydePositionYFieldNumber = 24,
+    kBlinkyIsHiddenFieldNumber = 22,
+    kClydeIsDeadFieldNumber = 26,
+    kClydeIsHiddenFieldNumber = 27,
+    kItemsFieldNumber = 28,
   };
   // double pacmanPositionX = 2;
   void clear_pacmanpositionx() ;
@@ -320,26 +325,6 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_pacmanpositiony(double value);
 
   public:
-  // double pinkyPositionX = 7;
-  void clear_pinkypositionx() ;
-  double pinkypositionx() const;
-  void set_pinkypositionx(double value);
-
-  private:
-  double _internal_pinkypositionx() const;
-  void _internal_set_pinkypositionx(double value);
-
-  public:
-  // double pinkyPositionY = 8;
-  void clear_pinkypositiony() ;
-  double pinkypositiony() const;
-  void set_pinkypositiony(double value);
-
-  private:
-  double _internal_pinkypositiony() const;
-  void _internal_set_pinkypositiony(double value);
-
-  public:
   // bool pacmanIsChomping = 5;
   void clear_pacmanischomping() ;
   bool pacmanischomping() const;
@@ -350,7 +335,17 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_pacmanischomping(bool value);
 
   public:
-  // bool ghostsAreScattering = 6;
+  // bool pacmanIsHidden = 6;
+  void clear_pacmanishidden() ;
+  bool pacmanishidden() const;
+  void set_pacmanishidden(bool value);
+
+  private:
+  bool _internal_pacmanishidden() const;
+  void _internal_set_pacmanishidden(bool value);
+
+  public:
+  // bool ghostsAreScattering = 7;
   void clear_ghostsarescattering() ;
   bool ghostsarescattering() const;
   void set_ghostsarescattering(bool value);
@@ -360,7 +355,7 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_ghostsarescattering(bool value);
 
   public:
-  // bool pinkyIsDead = 10;
+  // bool pinkyIsDead = 11;
   void clear_pinkyisdead() ;
   bool pinkyisdead() const;
   void set_pinkyisdead(bool value);
@@ -370,17 +365,7 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_pinkyisdead(bool value);
 
   public:
-  // bool inkyIsDead = 14;
-  void clear_inkyisdead() ;
-  bool inkyisdead() const;
-  void set_inkyisdead(bool value);
-
-  private:
-  bool _internal_inkyisdead() const;
-  void _internal_set_inkyisdead(bool value);
-
-  public:
-  // int32 pinkyOrientation = 9;
+  // int32 pinkyOrientation = 10;
   void clear_pinkyorientation() ;
   ::int32_t pinkyorientation() const;
   void set_pinkyorientation(::int32_t value);
@@ -390,7 +375,27 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_pinkyorientation(::int32_t value);
 
   public:
-  // double inkyPositionX = 11;
+  // double pinkyPositionX = 8;
+  void clear_pinkypositionx() ;
+  double pinkypositionx() const;
+  void set_pinkypositionx(double value);
+
+  private:
+  double _internal_pinkypositionx() const;
+  void _internal_set_pinkypositionx(double value);
+
+  public:
+  // double pinkyPositionY = 9;
+  void clear_pinkypositiony() ;
+  double pinkypositiony() const;
+  void set_pinkypositiony(double value);
+
+  private:
+  double _internal_pinkypositiony() const;
+  void _internal_set_pinkypositiony(double value);
+
+  public:
+  // double inkyPositionX = 13;
   void clear_inkypositionx() ;
   double inkypositionx() const;
   void set_inkypositionx(double value);
@@ -400,7 +405,7 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_inkypositionx(double value);
 
   public:
-  // double inkyPositionY = 12;
+  // double inkyPositionY = 14;
   void clear_inkypositiony() ;
   double inkypositiony() const;
   void set_inkypositiony(double value);
@@ -410,17 +415,7 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_inkypositiony(double value);
 
   public:
-  // double blinkyPositionX = 15;
-  void clear_blinkypositionx() ;
-  double blinkypositionx() const;
-  void set_blinkypositionx(double value);
-
-  private:
-  double _internal_blinkypositionx() const;
-  void _internal_set_blinkypositionx(double value);
-
-  public:
-  // int32 inkyOrientation = 13;
+  // int32 inkyOrientation = 15;
   void clear_inkyorientation() ;
   ::int32_t inkyorientation() const;
   void set_inkyorientation(::int32_t value);
@@ -430,47 +425,37 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_inkyorientation(::int32_t value);
 
   public:
-  // int32 blinkyOrientation = 17;
-  void clear_blinkyorientation() ;
-  ::int32_t blinkyorientation() const;
-  void set_blinkyorientation(::int32_t value);
+  // bool pinkyIsHidden = 12;
+  void clear_pinkyishidden() ;
+  bool pinkyishidden() const;
+  void set_pinkyishidden(bool value);
 
   private:
-  ::int32_t _internal_blinkyorientation() const;
-  void _internal_set_blinkyorientation(::int32_t value);
+  bool _internal_pinkyishidden() const;
+  void _internal_set_pinkyishidden(bool value);
 
   public:
-  // double blinkyPositionY = 16;
-  void clear_blinkypositiony() ;
-  double blinkypositiony() const;
-  void set_blinkypositiony(double value);
+  // bool inkyIsDead = 16;
+  void clear_inkyisdead() ;
+  bool inkyisdead() const;
+  void set_inkyisdead(bool value);
 
   private:
-  double _internal_blinkypositiony() const;
-  void _internal_set_blinkypositiony(double value);
+  bool _internal_inkyisdead() const;
+  void _internal_set_inkyisdead(bool value);
 
   public:
-  // double clydePositionX = 19;
-  void clear_clydepositionx() ;
-  double clydepositionx() const;
-  void set_clydepositionx(double value);
+  // bool inkyIsHidden = 17;
+  void clear_inkyishidden() ;
+  bool inkyishidden() const;
+  void set_inkyishidden(bool value);
 
   private:
-  double _internal_clydepositionx() const;
-  void _internal_set_clydepositionx(double value);
+  bool _internal_inkyishidden() const;
+  void _internal_set_inkyishidden(bool value);
 
   public:
-  // double clydePositionY = 20;
-  void clear_clydepositiony() ;
-  double clydepositiony() const;
-  void set_clydepositiony(double value);
-
-  private:
-  double _internal_clydepositiony() const;
-  void _internal_set_clydepositiony(double value);
-
-  public:
-  // bool blinkyIsDead = 18;
+  // bool blinkyIsDead = 21;
   void clear_blinkyisdead() ;
   bool blinkyisdead() const;
   void set_blinkyisdead(bool value);
@@ -480,17 +465,37 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_blinkyisdead(bool value);
 
   public:
-  // bool clydeIsDead = 22;
-  void clear_clydeisdead() ;
-  bool clydeisdead() const;
-  void set_clydeisdead(bool value);
+  // double blinkyPositionX = 18;
+  void clear_blinkypositionx() ;
+  double blinkypositionx() const;
+  void set_blinkypositionx(double value);
 
   private:
-  bool _internal_clydeisdead() const;
-  void _internal_set_clydeisdead(bool value);
+  double _internal_blinkypositionx() const;
+  void _internal_set_blinkypositionx(double value);
 
   public:
-  // int32 clydeOrientation = 21;
+  // double blinkyPositionY = 19;
+  void clear_blinkypositiony() ;
+  double blinkypositiony() const;
+  void set_blinkypositiony(double value);
+
+  private:
+  double _internal_blinkypositiony() const;
+  void _internal_set_blinkypositiony(double value);
+
+  public:
+  // int32 blinkyOrientation = 20;
+  void clear_blinkyorientation() ;
+  ::int32_t blinkyorientation() const;
+  void set_blinkyorientation(::int32_t value);
+
+  private:
+  ::int32_t _internal_blinkyorientation() const;
+  void _internal_set_blinkyorientation(::int32_t value);
+
+  public:
+  // int32 clydeOrientation = 25;
   void clear_clydeorientation() ;
   ::int32_t clydeorientation() const;
   void set_clydeorientation(::int32_t value);
@@ -500,7 +505,57 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_clydeorientation(::int32_t value);
 
   public:
-  // map<uint32, uint32> items = 23;
+  // double clydePositionX = 23;
+  void clear_clydepositionx() ;
+  double clydepositionx() const;
+  void set_clydepositionx(double value);
+
+  private:
+  double _internal_clydepositionx() const;
+  void _internal_set_clydepositionx(double value);
+
+  public:
+  // double clydePositionY = 24;
+  void clear_clydepositiony() ;
+  double clydepositiony() const;
+  void set_clydepositiony(double value);
+
+  private:
+  double _internal_clydepositiony() const;
+  void _internal_set_clydepositiony(double value);
+
+  public:
+  // bool blinkyIsHidden = 22;
+  void clear_blinkyishidden() ;
+  bool blinkyishidden() const;
+  void set_blinkyishidden(bool value);
+
+  private:
+  bool _internal_blinkyishidden() const;
+  void _internal_set_blinkyishidden(bool value);
+
+  public:
+  // bool clydeIsDead = 26;
+  void clear_clydeisdead() ;
+  bool clydeisdead() const;
+  void set_clydeisdead(bool value);
+
+  private:
+  bool _internal_clydeisdead() const;
+  void _internal_set_clydeisdead(bool value);
+
+  public:
+  // bool clydeIsHidden = 27;
+  void clear_clydeishidden() ;
+  bool clydeishidden() const;
+  void set_clydeishidden(bool value);
+
+  private:
+  bool _internal_clydeishidden() const;
+  void _internal_set_clydeishidden(bool value);
+
+  public:
+  // map<uint32, uint32> items = 28;
   int items_size() const;
   private:
   int _internal_items_size() const;
@@ -519,7 +574,7 @@ class GameStateMessage final : public ::google::protobuf::Message
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<5, 23,
+  static const ::google::protobuf::internal::TcParseTable<5, 28,
                                    1, 0,
                                    2>
       _table_;
@@ -545,24 +600,29 @@ class GameStateMessage final : public ::google::protobuf::Message
     ::int32_t currentmode_;
     ::int32_t pacmanorientation_;
     double pacmanpositiony_;
-    double pinkypositionx_;
-    double pinkypositiony_;
     bool pacmanischomping_;
+    bool pacmanishidden_;
     bool ghostsarescattering_;
     bool pinkyisdead_;
-    bool inkyisdead_;
     ::int32_t pinkyorientation_;
+    double pinkypositionx_;
+    double pinkypositiony_;
     double inkypositionx_;
     double inkypositiony_;
-    double blinkypositionx_;
     ::int32_t inkyorientation_;
-    ::int32_t blinkyorientation_;
+    bool pinkyishidden_;
+    bool inkyisdead_;
+    bool inkyishidden_;
+    bool blinkyisdead_;
+    double blinkypositionx_;
     double blinkypositiony_;
+    ::int32_t blinkyorientation_;
+    ::int32_t clydeorientation_;
     double clydepositionx_;
     double clydepositiony_;
-    bool blinkyisdead_;
+    bool blinkyishidden_;
     bool clydeisdead_;
-    ::int32_t clydeorientation_;
+    bool clydeishidden_;
     ::google::protobuf::internal::MapField<GameStateMessage_ItemsEntry_DoNotUse, ::uint32_t, ::uint32_t,
                       ::google::protobuf::internal::WireFormatLite::TYPE_UINT32,
                       ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>
@@ -698,7 +758,7 @@ inline void GameStateMessage::clear_pacmanischomping() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.pacmanischomping_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000040U);
+                  0x00000010U);
 }
 inline bool GameStateMessage::pacmanischomping() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.pacmanIsChomping)
@@ -706,7 +766,7 @@ inline bool GameStateMessage::pacmanischomping() const {
 }
 inline void GameStateMessage::set_pacmanischomping(bool value) {
   _internal_set_pacmanischomping(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
   // @@protoc_insertion_point(field_set:GameStateMessage.pacmanIsChomping)
 }
 inline bool GameStateMessage::_internal_pacmanischomping() const {
@@ -718,12 +778,37 @@ inline void GameStateMessage::_internal_set_pacmanischomping(bool value) {
   _impl_.pacmanischomping_ = value;
 }
 
-// bool ghostsAreScattering = 6;
+// bool pacmanIsHidden = 6;
+inline void GameStateMessage::clear_pacmanishidden() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pacmanishidden_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline bool GameStateMessage::pacmanishidden() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.pacmanIsHidden)
+  return _internal_pacmanishidden();
+}
+inline void GameStateMessage::set_pacmanishidden(bool value) {
+  _internal_set_pacmanishidden(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.pacmanIsHidden)
+}
+inline bool GameStateMessage::_internal_pacmanishidden() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pacmanishidden_;
+}
+inline void GameStateMessage::_internal_set_pacmanishidden(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pacmanishidden_ = value;
+}
+
+// bool ghostsAreScattering = 7;
 inline void GameStateMessage::clear_ghostsarescattering() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.ghostsarescattering_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000080U);
+                  0x00000040U);
 }
 inline bool GameStateMessage::ghostsarescattering() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.ghostsAreScattering)
@@ -731,7 +816,7 @@ inline bool GameStateMessage::ghostsarescattering() const {
 }
 inline void GameStateMessage::set_ghostsarescattering(bool value) {
   _internal_set_ghostsarescattering(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
   // @@protoc_insertion_point(field_set:GameStateMessage.ghostsAreScattering)
 }
 inline bool GameStateMessage::_internal_ghostsarescattering() const {
@@ -743,12 +828,12 @@ inline void GameStateMessage::_internal_set_ghostsarescattering(bool value) {
   _impl_.ghostsarescattering_ = value;
 }
 
-// double pinkyPositionX = 7;
+// double pinkyPositionX = 8;
 inline void GameStateMessage::clear_pinkypositionx() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.pinkypositionx_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000010U);
+                  0x00000200U);
 }
 inline double GameStateMessage::pinkypositionx() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.pinkyPositionX)
@@ -756,7 +841,7 @@ inline double GameStateMessage::pinkypositionx() const {
 }
 inline void GameStateMessage::set_pinkypositionx(double value) {
   _internal_set_pinkypositionx(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
   // @@protoc_insertion_point(field_set:GameStateMessage.pinkyPositionX)
 }
 inline double GameStateMessage::_internal_pinkypositionx() const {
@@ -768,12 +853,12 @@ inline void GameStateMessage::_internal_set_pinkypositionx(double value) {
   _impl_.pinkypositionx_ = value;
 }
 
-// double pinkyPositionY = 8;
+// double pinkyPositionY = 9;
 inline void GameStateMessage::clear_pinkypositiony() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.pinkypositiony_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000020U);
+                  0x00000400U);
 }
 inline double GameStateMessage::pinkypositiony() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.pinkyPositionY)
@@ -781,7 +866,7 @@ inline double GameStateMessage::pinkypositiony() const {
 }
 inline void GameStateMessage::set_pinkypositiony(double value) {
   _internal_set_pinkypositiony(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000400U);
   // @@protoc_insertion_point(field_set:GameStateMessage.pinkyPositionY)
 }
 inline double GameStateMessage::_internal_pinkypositiony() const {
@@ -793,12 +878,12 @@ inline void GameStateMessage::_internal_set_pinkypositiony(double value) {
   _impl_.pinkypositiony_ = value;
 }
 
-// int32 pinkyOrientation = 9;
+// int32 pinkyOrientation = 10;
 inline void GameStateMessage::clear_pinkyorientation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.pinkyorientation_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000400U);
+                  0x00000100U);
 }
 inline ::int32_t GameStateMessage::pinkyorientation() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.pinkyOrientation)
@@ -806,7 +891,7 @@ inline ::int32_t GameStateMessage::pinkyorientation() const {
 }
 inline void GameStateMessage::set_pinkyorientation(::int32_t value) {
   _internal_set_pinkyorientation(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000400U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
   // @@protoc_insertion_point(field_set:GameStateMessage.pinkyOrientation)
 }
 inline ::int32_t GameStateMessage::_internal_pinkyorientation() const {
@@ -818,12 +903,12 @@ inline void GameStateMessage::_internal_set_pinkyorientation(::int32_t value) {
   _impl_.pinkyorientation_ = value;
 }
 
-// bool pinkyIsDead = 10;
+// bool pinkyIsDead = 11;
 inline void GameStateMessage::clear_pinkyisdead() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.pinkyisdead_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000100U);
+                  0x00000080U);
 }
 inline bool GameStateMessage::pinkyisdead() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.pinkyIsDead)
@@ -831,7 +916,7 @@ inline bool GameStateMessage::pinkyisdead() const {
 }
 inline void GameStateMessage::set_pinkyisdead(bool value) {
   _internal_set_pinkyisdead(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
   // @@protoc_insertion_point(field_set:GameStateMessage.pinkyIsDead)
 }
 inline bool GameStateMessage::_internal_pinkyisdead() const {
@@ -843,7 +928,32 @@ inline void GameStateMessage::_internal_set_pinkyisdead(bool value) {
   _impl_.pinkyisdead_ = value;
 }
 
-// double inkyPositionX = 11;
+// bool pinkyIsHidden = 12;
+inline void GameStateMessage::clear_pinkyishidden() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pinkyishidden_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00004000U);
+}
+inline bool GameStateMessage::pinkyishidden() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.pinkyIsHidden)
+  return _internal_pinkyishidden();
+}
+inline void GameStateMessage::set_pinkyishidden(bool value) {
+  _internal_set_pinkyishidden(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00004000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.pinkyIsHidden)
+}
+inline bool GameStateMessage::_internal_pinkyishidden() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pinkyishidden_;
+}
+inline void GameStateMessage::_internal_set_pinkyishidden(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pinkyishidden_ = value;
+}
+
+// double inkyPositionX = 13;
 inline void GameStateMessage::clear_inkypositionx() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.inkypositionx_ = 0;
@@ -868,7 +978,7 @@ inline void GameStateMessage::_internal_set_inkypositionx(double value) {
   _impl_.inkypositionx_ = value;
 }
 
-// double inkyPositionY = 12;
+// double inkyPositionY = 14;
 inline void GameStateMessage::clear_inkypositiony() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.inkypositiony_ = 0;
@@ -893,12 +1003,12 @@ inline void GameStateMessage::_internal_set_inkypositiony(double value) {
   _impl_.inkypositiony_ = value;
 }
 
-// int32 inkyOrientation = 13;
+// int32 inkyOrientation = 15;
 inline void GameStateMessage::clear_inkyorientation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.inkyorientation_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00004000U);
+                  0x00002000U);
 }
 inline ::int32_t GameStateMessage::inkyorientation() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.inkyOrientation)
@@ -906,7 +1016,7 @@ inline ::int32_t GameStateMessage::inkyorientation() const {
 }
 inline void GameStateMessage::set_inkyorientation(::int32_t value) {
   _internal_set_inkyorientation(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00004000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00002000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.inkyOrientation)
 }
 inline ::int32_t GameStateMessage::_internal_inkyorientation() const {
@@ -918,12 +1028,12 @@ inline void GameStateMessage::_internal_set_inkyorientation(::int32_t value) {
   _impl_.inkyorientation_ = value;
 }
 
-// bool inkyIsDead = 14;
+// bool inkyIsDead = 16;
 inline void GameStateMessage::clear_inkyisdead() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.inkyisdead_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000200U);
+                  0x00008000U);
 }
 inline bool GameStateMessage::inkyisdead() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.inkyIsDead)
@@ -931,7 +1041,7 @@ inline bool GameStateMessage::inkyisdead() const {
 }
 inline void GameStateMessage::set_inkyisdead(bool value) {
   _internal_set_inkyisdead(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
+  SetHasBit(_impl_._has_bits_[0], 0x00008000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.inkyIsDead)
 }
 inline bool GameStateMessage::_internal_inkyisdead() const {
@@ -943,12 +1053,37 @@ inline void GameStateMessage::_internal_set_inkyisdead(bool value) {
   _impl_.inkyisdead_ = value;
 }
 
-// double blinkyPositionX = 15;
+// bool inkyIsHidden = 17;
+inline void GameStateMessage::clear_inkyishidden() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.inkyishidden_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00010000U);
+}
+inline bool GameStateMessage::inkyishidden() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.inkyIsHidden)
+  return _internal_inkyishidden();
+}
+inline void GameStateMessage::set_inkyishidden(bool value) {
+  _internal_set_inkyishidden(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00010000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.inkyIsHidden)
+}
+inline bool GameStateMessage::_internal_inkyishidden() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.inkyishidden_;
+}
+inline void GameStateMessage::_internal_set_inkyishidden(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.inkyishidden_ = value;
+}
+
+// double blinkyPositionX = 18;
 inline void GameStateMessage::clear_blinkypositionx() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.blinkypositionx_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00002000U);
+                  0x00040000U);
 }
 inline double GameStateMessage::blinkypositionx() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.blinkyPositionX)
@@ -956,7 +1091,7 @@ inline double GameStateMessage::blinkypositionx() const {
 }
 inline void GameStateMessage::set_blinkypositionx(double value) {
   _internal_set_blinkypositionx(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00002000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00040000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.blinkyPositionX)
 }
 inline double GameStateMessage::_internal_blinkypositionx() const {
@@ -968,12 +1103,12 @@ inline void GameStateMessage::_internal_set_blinkypositionx(double value) {
   _impl_.blinkypositionx_ = value;
 }
 
-// double blinkyPositionY = 16;
+// double blinkyPositionY = 19;
 inline void GameStateMessage::clear_blinkypositiony() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.blinkypositiony_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00010000U);
+                  0x00080000U);
 }
 inline double GameStateMessage::blinkypositiony() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.blinkyPositionY)
@@ -981,7 +1116,7 @@ inline double GameStateMessage::blinkypositiony() const {
 }
 inline void GameStateMessage::set_blinkypositiony(double value) {
   _internal_set_blinkypositiony(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00010000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00080000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.blinkyPositionY)
 }
 inline double GameStateMessage::_internal_blinkypositiony() const {
@@ -993,12 +1128,12 @@ inline void GameStateMessage::_internal_set_blinkypositiony(double value) {
   _impl_.blinkypositiony_ = value;
 }
 
-// int32 blinkyOrientation = 17;
+// int32 blinkyOrientation = 20;
 inline void GameStateMessage::clear_blinkyorientation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.blinkyorientation_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00008000U);
+                  0x00100000U);
 }
 inline ::int32_t GameStateMessage::blinkyorientation() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.blinkyOrientation)
@@ -1006,7 +1141,7 @@ inline ::int32_t GameStateMessage::blinkyorientation() const {
 }
 inline void GameStateMessage::set_blinkyorientation(::int32_t value) {
   _internal_set_blinkyorientation(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00008000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00100000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.blinkyOrientation)
 }
 inline ::int32_t GameStateMessage::_internal_blinkyorientation() const {
@@ -1018,12 +1153,12 @@ inline void GameStateMessage::_internal_set_blinkyorientation(::int32_t value) {
   _impl_.blinkyorientation_ = value;
 }
 
-// bool blinkyIsDead = 18;
+// bool blinkyIsDead = 21;
 inline void GameStateMessage::clear_blinkyisdead() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.blinkyisdead_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00080000U);
+                  0x00020000U);
 }
 inline bool GameStateMessage::blinkyisdead() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.blinkyIsDead)
@@ -1031,7 +1166,7 @@ inline bool GameStateMessage::blinkyisdead() const {
 }
 inline void GameStateMessage::set_blinkyisdead(bool value) {
   _internal_set_blinkyisdead(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00080000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00020000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.blinkyIsDead)
 }
 inline bool GameStateMessage::_internal_blinkyisdead() const {
@@ -1043,12 +1178,37 @@ inline void GameStateMessage::_internal_set_blinkyisdead(bool value) {
   _impl_.blinkyisdead_ = value;
 }
 
-// double clydePositionX = 19;
+// bool blinkyIsHidden = 22;
+inline void GameStateMessage::clear_blinkyishidden() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.blinkyishidden_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x01000000U);
+}
+inline bool GameStateMessage::blinkyishidden() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.blinkyIsHidden)
+  return _internal_blinkyishidden();
+}
+inline void GameStateMessage::set_blinkyishidden(bool value) {
+  _internal_set_blinkyishidden(value);
+  SetHasBit(_impl_._has_bits_[0], 0x01000000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.blinkyIsHidden)
+}
+inline bool GameStateMessage::_internal_blinkyishidden() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.blinkyishidden_;
+}
+inline void GameStateMessage::_internal_set_blinkyishidden(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.blinkyishidden_ = value;
+}
+
+// double clydePositionX = 23;
 inline void GameStateMessage::clear_clydepositionx() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.clydepositionx_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00020000U);
+                  0x00400000U);
 }
 inline double GameStateMessage::clydepositionx() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.clydePositionX)
@@ -1056,7 +1216,7 @@ inline double GameStateMessage::clydepositionx() const {
 }
 inline void GameStateMessage::set_clydepositionx(double value) {
   _internal_set_clydepositionx(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00020000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00400000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.clydePositionX)
 }
 inline double GameStateMessage::_internal_clydepositionx() const {
@@ -1068,12 +1228,12 @@ inline void GameStateMessage::_internal_set_clydepositionx(double value) {
   _impl_.clydepositionx_ = value;
 }
 
-// double clydePositionY = 20;
+// double clydePositionY = 24;
 inline void GameStateMessage::clear_clydepositiony() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.clydepositiony_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00040000U);
+                  0x00800000U);
 }
 inline double GameStateMessage::clydepositiony() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.clydePositionY)
@@ -1081,7 +1241,7 @@ inline double GameStateMessage::clydepositiony() const {
 }
 inline void GameStateMessage::set_clydepositiony(double value) {
   _internal_set_clydepositiony(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00040000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00800000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.clydePositionY)
 }
 inline double GameStateMessage::_internal_clydepositiony() const {
@@ -1093,7 +1253,7 @@ inline void GameStateMessage::_internal_set_clydepositiony(double value) {
   _impl_.clydepositiony_ = value;
 }
 
-// int32 clydeOrientation = 21;
+// int32 clydeOrientation = 25;
 inline void GameStateMessage::clear_clydeorientation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.clydeorientation_ = 0;
@@ -1118,12 +1278,12 @@ inline void GameStateMessage::_internal_set_clydeorientation(::int32_t value) {
   _impl_.clydeorientation_ = value;
 }
 
-// bool clydeIsDead = 22;
+// bool clydeIsDead = 26;
 inline void GameStateMessage::clear_clydeisdead() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.clydeisdead_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00100000U);
+                  0x02000000U);
 }
 inline bool GameStateMessage::clydeisdead() const {
   // @@protoc_insertion_point(field_get:GameStateMessage.clydeIsDead)
@@ -1131,7 +1291,7 @@ inline bool GameStateMessage::clydeisdead() const {
 }
 inline void GameStateMessage::set_clydeisdead(bool value) {
   _internal_set_clydeisdead(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00100000U);
+  SetHasBit(_impl_._has_bits_[0], 0x02000000U);
   // @@protoc_insertion_point(field_set:GameStateMessage.clydeIsDead)
 }
 inline bool GameStateMessage::_internal_clydeisdead() const {
@@ -1143,7 +1303,32 @@ inline void GameStateMessage::_internal_set_clydeisdead(bool value) {
   _impl_.clydeisdead_ = value;
 }
 
-// map<uint32, uint32> items = 23;
+// bool clydeIsHidden = 27;
+inline void GameStateMessage::clear_clydeishidden() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clydeishidden_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x04000000U);
+}
+inline bool GameStateMessage::clydeishidden() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.clydeIsHidden)
+  return _internal_clydeishidden();
+}
+inline void GameStateMessage::set_clydeishidden(bool value) {
+  _internal_set_clydeishidden(value);
+  SetHasBit(_impl_._has_bits_[0], 0x04000000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.clydeIsHidden)
+}
+inline bool GameStateMessage::_internal_clydeishidden() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.clydeishidden_;
+}
+inline void GameStateMessage::_internal_set_clydeishidden(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clydeishidden_ = value;
+}
+
+// map<uint32, uint32> items = 28;
 inline int GameStateMessage::_internal_items_size() const {
   return _internal_items().size();
 }
@@ -1154,7 +1339,7 @@ inline void GameStateMessage::clear_items() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.items_.Clear();
   ClearHasBitForRepeated(_impl_._has_bits_[0],
-                  0x00400000U);
+                  0x08000000U);
 }
 inline const ::google::protobuf::Map<::uint32_t, ::uint32_t>& GameStateMessage::_internal_items() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
@@ -1170,7 +1355,7 @@ inline ::google::protobuf::Map<::uint32_t, ::uint32_t>* PROTOBUF_NONNULL GameSta
 }
 inline ::google::protobuf::Map<::uint32_t, ::uint32_t>* PROTOBUF_NONNULL GameStateMessage::mutable_items()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00400000U);
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x08000000U);
   // @@protoc_insertion_point(field_mutable_map:GameStateMessage.items)
   return _internal_mutable_items();
 }

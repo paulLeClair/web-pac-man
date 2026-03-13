@@ -19,6 +19,9 @@ export interface PacmanProps {
 }
 
 const Pacman: Component<PacmanProps> = (props) => {
+  const hidden = createMemo(() => props.pacmanStateAccessor().hidden);
+  if (hidden()) return <div/>;
+
   const positionStyles = createMemo(() => {
     const s = props.pacmanStateAccessor();
     return {

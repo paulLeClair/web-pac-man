@@ -68,7 +68,8 @@ enum GameMode {
 export interface EntityState {
     x: number,
     y: number,
-    orientation: Direction
+    orientation: Direction,
+    hidden: boolean,
 }
 
 enum IncomingPacketType { // incoming from client's perspective
@@ -86,12 +87,12 @@ const App: Component<AppProps> = (props) => {
     // TODO -> game modes once basic mechanics are in place
 
     // i guess state will be top-down, where the app holds onto the actual signals which we pass along via props
-    const [pacmanState, setPacmanState] = createSignal<PacmanState>({x: 0, y: 0, orientation: Direction.UP, isChomping: true})
+    const [pacmanState, setPacmanState] = createSignal<PacmanState>({x: 0, y: 0, orientation: Direction.UP, isChomping: true, hidden: false})
     const [ghostsScattering, setGhostsScattering] = createSignal(false)
-    const [pinkyState, setPinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
-    const [inkyState, setInkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
-    const [blinkyState, setBlinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
-    const [clydeState, setClydeState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false})
+    const [pinkyState, setPinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
+    const [inkyState, setInkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
+    const [blinkyState, setBlinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
+    const [clydeState, setClydeState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
     const [itemsState, setItemsState] = createSignal<Map<number, number>>(new Map())
 
     const currentlyPlayingSounds = new Map<HTMLAudioElement, SoundType>
@@ -187,16 +188,14 @@ const App: Component<AppProps> = (props) => {
         if (!(messageBufferView[0] === IncomingPacketType.GameStateUpdate)) return;
 
         requestAnimationFrame(() => {
-            // TODO -> game mode implementation; we have a field in our state update but it's not yet used
-
-            // after this we just follow the standardized game state data format:
             const gameState = GameStateMessage.fromBinary(messageBufferView.slice(1));
 
             setPacmanState({
                 x: gameState.pacmanPositionX,
                 y: gameState.pacmanPositionY,
                 orientation: gameState.pacmanOrientation,
-                isChomping: gameState.pacmanIsChomping
+                isChomping: gameState.pacmanIsChomping,
+                hidden: gameState.pacmanIsHidden
             })
 
             setGhostsScattering(gameState.ghostsAreScattering)
@@ -205,28 +204,32 @@ const App: Component<AppProps> = (props) => {
                 x: gameState.pinkyPositionX,
                 y: gameState.pinkyPositionY,
                 orientation: gameState.pinkyOrientation,
-                isDead: gameState.pinkyIsDead
+                isDead: gameState.pinkyIsDead,
+                hidden: gameState.pinkyIsHidden
             })
 
             setBlinkyState({
                 x: gameState.blinkyPositionX,
                 y: gameState.blinkyPositionY,
                 orientation: gameState.blinkyOrientation,
-                isDead: gameState.blinkyIsDead
+                isDead: gameState.blinkyIsDead,
+                hidden: gameState.blinkyIsHidden
             })
 
             setInkyState({
                 x: gameState.inkyPositionX,
                 y: gameState.inkyPositionY,
                 orientation: gameState.inkyOrientation,
-                isDead: gameState.inkyIsDead
+                isDead: gameState.inkyIsDead,
+                hidden: gameState.inkyIsHidden
             })
 
             setClydeState({
                 x: gameState.clydePositionX,
                 y: gameState.clydePositionY,
                 orientation: gameState.clydeOrientation,
-                isDead: gameState.clydeIsDead
+                isDead: gameState.clydeIsDead,
+                hidden: gameState.clydeIsHidden
             })
 
             const itemsMap = new Map<number, number>();
@@ -234,8 +237,7 @@ const App: Component<AppProps> = (props) => {
                 itemsMap.set(Number(packedCoords), type)
             }
             setItemsState(itemsMap)
-        }
-        )
+        })
     }
 
     // TODO -> use props to get server ip

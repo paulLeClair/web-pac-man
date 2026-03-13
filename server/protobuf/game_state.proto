@@ -9,28 +9,33 @@ message GameStateMessage {
   double pacmanPositionY = 3;
   int32 pacmanOrientation = 4;
   bool pacmanIsChomping = 5;
+  bool pacmanIsHidden = 6;
 
-  bool ghostsAreScattering = 6;
+  bool ghostsAreScattering = 7;
 
-  double pinkyPositionX = 7;
-  double pinkyPositionY = 8;
-  int32 pinkyOrientation = 9;
-  bool pinkyIsDead = 10;
+  double pinkyPositionX = 8;
+  double pinkyPositionY = 9;
+  int32 pinkyOrientation = 10;
+  bool pinkyIsDead = 11;
+  bool pinkyIsHidden = 12;
 
-  double inkyPositionX = 11;
-  double inkyPositionY = 12;
-  int32 inkyOrientation = 13;
-  bool inkyIsDead = 14;
+  double inkyPositionX = 13;
+  double inkyPositionY = 14;
+  int32 inkyOrientation = 15;
+  bool inkyIsDead = 16;
+  bool inkyIsHidden = 17;
 
-  double blinkyPositionX = 15;
-  double blinkyPositionY = 16;
-  int32 blinkyOrientation = 17;
-  bool blinkyIsDead = 18;
+  double blinkyPositionX = 18;
+  double blinkyPositionY = 19;
+  int32 blinkyOrientation = 20;
+  bool blinkyIsDead = 21;
+  bool blinkyIsHidden = 22;
 
-  double clydePositionX = 19;
-  double clydePositionY = 20;
-  int32 clydeOrientation = 21;
-  bool clydeIsDead = 22;
+  double clydePositionX = 23;
+  double clydePositionY = 24;
+  int32 clydeOrientation = 25;
+  bool clydeIsDead = 26;
+  bool clydeIsHidden = 27;
 
-  map<uint32, uint32> items = 23;
+  map<uint32, uint32> items = 28;
 }

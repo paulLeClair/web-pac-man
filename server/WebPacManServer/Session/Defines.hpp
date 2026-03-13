@@ -5,16 +5,6 @@
 #pragma once
 #include "Game/Maze/Maze.hpp"
 
-// hopefully this file won't get too unwieldy but I'll just try and shove all the game entity defs in here
-enum class CurrentGameMode
-{
-    START_SCREEN, // "attract" mode which can be interrupted to initiate gameplay
-    GAMEPLAY,
-    INTERMISSION_1, // level 2
-    INTERMISSION_2, // level 5
-    INTERMISSION_3 // level 9
-};
-
 enum class ItemType : uint32_t
 {
     UNKNOWN = 0,
@@ -65,6 +55,17 @@ enum class WpmPacketType
     STOP_SOUND
 };
 
+enum class GameMode
+{
+    UNKNOWN = 0,
+    START,
+    GAMEPLAY,
+    SUCCESS,
+    FAILURE,
+    INTERMISSION_1,
+    INTERMISSION_2,
+};
+
 
 enum class IncomingPacketType : int32_t
 {
@@ -85,11 +86,19 @@ struct Entity
     Position pos = {0,0};
     Direction orientation = Direction::NONE;
 
-    // for now lets try a simple static speed
+    // allows hiding the entity (for cutscenes etc)
+    bool hidden = false;
+
+    // how fast the interpolation parameter changes each tick
     float speed = 0.08f;
 
+    // current interpolation parameter value between currentcell and targetcell (if one exists)
     float param = 0.0f;
+
+    // last cell that the entity either departed from or is still sitting on (depending if targetCell != nullptr)
     MazeCell *currentCell = nullptr;
+
+    // either the next cell that the entity is moving towards each tick or null if the entity is stationary
     MazeCell *targetCell = nullptr;
 
     virtual MazeCell* obtainNextTarget()
