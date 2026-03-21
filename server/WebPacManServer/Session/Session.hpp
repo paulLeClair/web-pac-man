@@ -12,12 +12,10 @@
 
 namespace pacman
 {
-
-
     class Session : public std::enable_shared_from_this<Session>
     {
     public:
-        explicit Session(tcp::socket&& socket, const std::string &mapFilePath);
+        explicit Session(tcp::socket&& socket, const std::string& mapFilePath);
 
         ~Session() = default;
 
@@ -31,6 +29,7 @@ namespace pacman
         void gameTick();
 
         std::mutex mutex = std::mutex();
+
     private:
         std::shared_ptr<Game> game = nullptr;
 

@@ -6,25 +6,23 @@
 
 #include "../Ghost.hpp"
 
-namespace pacman {
+namespace pacman
+{
+    struct Clyde final : Ghost
+    {
+        Clyde() : Ghost(nullptr)
+        {
+        }
 
-    struct Clyde final : Ghost {
-        Clyde() : Ghost(nullptr) {}
+        explicit Clyde(MazeFile* maze) : Ghost(maze)
+        {
+        }
 
-        explicit Clyde(MazeFile *maze) : Ghost(maze) {}
-
-        MazeCell *clydeScatterCell = nullptr;
+        MazeCell* clydeScatterCell = nullptr;
 
         MazeCell* obtainNextTarget() override
         {
-            if (isDead && !inJail)
-            {
-                return goToJail();
-            }
-            if (inJail)
-            {
-                return bounceInJailUntilRespawn();
-            }
+            if (isDead || inJail) return obtainDefeatedGhostTarget();
 
             if (const auto scatterCellOrNull = scatterIfNecessary())
             {
@@ -48,11 +46,10 @@ namespace pacman {
         }
 
     private:
-        bool pacmanIsMoreThanEightTilesAway() const
+        [[nodiscard]] bool pacmanIsMoreThanEightTilesAway() const
         {
             return std::abs(currentCell->gridX - player->currentCell->gridX) >= 8
                 || std::abs(currentCell->gridY - player->currentCell->gridY) >= 8;
         }
-};
-
+    };
 } // pacman

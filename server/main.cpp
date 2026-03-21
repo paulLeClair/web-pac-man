@@ -30,7 +30,8 @@ std::string ws2s(const std::wstring& wstr)
     return converterX.to_bytes(wstr);
 }
 
-INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow) { // NOLINT
+INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow)
+{ // NOLINT
     const auto lpwCmdLine = s2ws(lpCmdLine);
 
     int argc;

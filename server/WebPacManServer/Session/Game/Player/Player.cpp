@@ -44,6 +44,7 @@ namespace pacman
             {
                 switch (bufferedInput)
                 {
+                // todo -> factor out a little helper function to reduce the amount of code dupe here
                 case Direction::DOWN:
                     {
                         const auto result = getMazeCellIfWalkable(currentCell->gridX, currentCell->gridY + 1);
@@ -94,6 +95,7 @@ namespace pacman
         {
             switch (bufferedInput)
             {
+            // todo -> factor out helper function here
             case Direction::DOWN:
                 {
                     targetCell = getMazeCellIfWalkable(currentCell->gridX, currentCell->gridY + 1);

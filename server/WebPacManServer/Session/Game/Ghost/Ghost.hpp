@@ -34,8 +34,17 @@ struct Ghost : Entity
 
     GhostName ghostName = GhostName::CLYDE;
 
+    // note: theres a nomenclature mismatch between this and OG pacman: scattering is frightened, wander is scattering.
+    // also: if not wandering and not scattering, we can assume the ghost is chasing.
+    bool isWandering = false;
+
+    // note: theres a nomenclature mismatch between this and OG pacman: scattering is frightened, wander is scattering
     bool isScattering = false;
+
+    // this signals the walk back to jail if the ghost has been eaten by pacman
     bool isDead = false;
+
+    // signals whether the ghost is currently confined to the ghost jail
     bool inJail = false;
 
     pacman::Pacman *player = nullptr;
@@ -73,23 +82,24 @@ struct Ghost : Entity
 
     void setNormalSpeed()
     {
-        static constexpr float DEFAULT_NORMAL_SPEED = 0.15;
+        static constexpr float DEFAULT_NORMAL_SPEED = 0.14;
         speed = DEFAULT_NORMAL_SPEED;
     }
 
     void setSlowSpeed()
     {
-        static constexpr float DEFAULT_SLOW_SPEED = 0.12;
+        static constexpr float DEFAULT_SLOW_SPEED = 0.10;
         speed = DEFAULT_SLOW_SPEED;
     }
 
     void setFastSpeed()
     {
-        static constexpr float DEFAULT_FAST_SPEED = 0.18;
+        static constexpr float DEFAULT_FAST_SPEED = 0.16;
         speed = DEFAULT_FAST_SPEED;
     }
 protected:
     MazeCell *previousCell = nullptr;
+    int jailTimer = 0;
 
     static float getCellToCellDistance(const MazeCell *cell1, const MazeCell *cell2)
     {
@@ -97,6 +107,8 @@ protected:
         return sqrt(pow( (cell2->gridX - cell1->gridX), 2)
             + pow((cell2->gridY - cell1->gridY), 2));
     }
+
+    virtual MazeCell *getScatterCell() = 0;
 
     MazeCell *getClosestNeighborToTargetCell(const MazeCell *potentiallyUnwalkableTargetCell)
     {
@@ -138,7 +150,7 @@ protected:
             directionDistances[Direction::UP] = upNeighborDistance;
         }
 
-        float minTargetDistance = 1e100;
+        float minTargetDistance = 1e20;
         for (auto& dist : directionDistances | std::views::values)
         {
             minTargetDistance = std::min(minTargetDistance, dist);
@@ -176,13 +188,26 @@ protected:
         }
     }
 
-    virtual MazeCell *getScatterCell() = 0;
 
     MazeCell *scatterIfNecessary()
     {
         if (!isScattering) return nullptr;
         return getScatterCell();
     }
+
+    MazeCell* obtainDefeatedGhostTarget()
+    {
+        if (isDead && !inJail)
+        {
+            return goToJail();
+        }
+        if (inJail)
+        {
+            return bounceInJailUntilRespawn();
+        }
+        return nullptr; // log
+    }
+
 
     MazeCell* bounceInJailUntilRespawn()
     {
@@ -207,11 +232,6 @@ protected:
         return const_cast<MazeCell*>(MazeFile::getGhostJailLeftBounceCell());
     }
 
-    int jailTimer = 0;
-
-    // new: all ghosts can share behavior after pacman eats them; we'll also need a spawn/respawn state because in certain
-    // cases the ghosts go to their scatter corner first;
-    // ANOTHER THING: improve scattering by having them cycle through a sequence of scatter points
     MazeCell *goToJail()
     {
         if (const auto jail_entry_cell = mazeFile->getGhostJailEntryCell(); currentCell != jail_entry_cell)
@@ -222,7 +242,7 @@ protected:
         // here we would enter the jail
         jailTimer = 20;
         inJail = true;
-        setNormalSpeed();
+        setSlowSpeed();
         return bounceInJailUntilRespawn();
     }
 };

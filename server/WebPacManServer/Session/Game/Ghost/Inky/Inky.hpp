@@ -18,17 +18,10 @@ struct Inky final : Ghost {
     // note, this is most likely not good to plug in as the target cell; we should use it to choose a walkable cell
     MazeCell potentiallyUnwalkableTargetCell;
 
-    // inky's is the weirdest...
     MazeCell *obtainNextTarget() override
     {
-        if (isDead && !inJail)
-        {
-            return goToJail();
-        }
-        if (inJail)
-        {
-            return bounceInJailUntilRespawn();
-        }
+        if (isDead || inJail) return obtainDefeatedGhostTarget();
+
         if (const auto scatterCellOrNull = scatterIfNecessary())
         {
             return getClosestNeighborToTargetCell(scatterCellOrNull);

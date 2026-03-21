@@ -17,16 +17,11 @@ struct Pinky final : Ghost {
 
     ~Pinky() override = default;
 
+
     MazeCell *obtainNextTarget() override
     {
-        if (isDead && !inJail)
-        {
-            return goToJail();
-        }
-        if (inJail)
-        {
-            return bounceInJailUntilRespawn();
-        }
+        if (isDead || inJail) return obtainDefeatedGhostTarget();
+
         if (const auto scatterCellOrNull = scatterIfNecessary())
         {
             return getClosestNeighborToTargetCell(scatterCellOrNull);

@@ -20,13 +20,9 @@ set(server_code
         WebPacManServer/Session/Game/Player/Player.cpp
         WebPacManServer/Session/Game/Player/Player.hpp
         WebPacManServer/Session/Game/Ghost/Ghost.hpp
-        WebPacManServer/Session/Game/Ghost/Blinky/Blinky.cpp
         WebPacManServer/Session/Game/Ghost/Blinky/Blinky.hpp
-        WebPacManServer/Session/Game/Ghost/Clyde/Clyde.cpp
         WebPacManServer/Session/Game/Ghost/Clyde/Clyde.hpp
-        WebPacManServer/Session/Game/Ghost/Inky/Inky.cpp
         WebPacManServer/Session/Game/Ghost/Inky/Inky.hpp
-        WebPacManServer/Session/Game/Ghost/Pinky/Pinky.cpp
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.hpp
         WebPacManServer/Session/Game/Maze/Maze.hpp
         protobuf/gen/game_state.pb.h

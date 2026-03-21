@@ -127,7 +127,7 @@ namespace pacman
         // TODO -> here we would first run the intro cutscene but that can come after sound is confirmed working
 
         // when we begin gameplay, we'll also want to have the ghosts spawn in the jail and come out in the proper order
-        game->loopSound(SoundType::GHOST_ALARM, *this);
+        // game->loopSound(SoundType::GHOST_ALARM, *this);
 
         listenToClient();
     }

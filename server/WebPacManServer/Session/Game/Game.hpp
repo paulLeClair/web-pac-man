@@ -30,11 +30,13 @@ namespace pacman
                                                      clydeStartCell(maze->getCell(0, 28))
         {
             setupGameEntities();
+            currentGameMode = GameMode::START;
         }
 
         uint32_t score = 0;
 
         GameMode currentGameMode = GameMode::GAMEPLAY;
+        uint8_t level = 1;
 
         // map of packed grid coordinates to the type of item stored there
         std::unordered_map<uint32_t, ItemType> items;
@@ -113,6 +115,7 @@ namespace pacman
 
         // TODO -> move private function defs to cpp file
 
+        // temporary hacky "reset" function
         void setupGameEntities()
         {
             static constexpr float DEFAULT_PLAYER_SPEED = 0.15;
@@ -228,31 +231,34 @@ namespace pacman
                 else
                 {
                     // TODO -> overhaul how game over is handled/detected
-                    setupGameEntities();
-                    stopAllSounds(session);
+                    // setupGameEntities();
+                    // stopAllSounds(session);
+                    // testing:
+                    currentGameMode = GameMode::START;
                 }
             }
         }
 
+        // this should be moved to the ghost itself
         [[nodiscard]] bool ghostIsCollidingWithPacman(const Ghost& ghost) const
         {
             float currentPlayerPosX = player.currentCell->gridX;
             float currentPlayerPosY = player.currentCell->gridY;
             if (player.targetCell)
             {
-                currentPlayerPosX = player.currentCell->gridX + player.param * (player.targetCell->gridX - player.
-                    currentCell->gridX);
-                currentPlayerPosY = player.currentCell->gridY + player.param * (player.targetCell->gridY - player.
-                    currentCell->gridY);
+                currentPlayerPosX
+                    = player.currentCell->gridX + player.param * (player.targetCell->gridX - player.currentCell->gridX); //NOLINT
+                currentPlayerPosY
+                    = player.currentCell->gridY + player.param * (player.targetCell->gridY - player.currentCell->gridY); //NOLINT
             }
             float currentGhostPosX = ghost.currentCell->gridX;
             float currentGhostPosY = ghost.currentCell->gridY;
             if (ghost.targetCell)
             {
-                currentGhostPosX = ghost.currentCell->gridX + ghost.param * (ghost.targetCell->gridX - ghost.currentCell
-                    ->gridX);
-                currentGhostPosY = ghost.currentCell->gridY + ghost.param * (ghost.targetCell->gridY - ghost.currentCell
-                    ->gridY);
+                currentGhostPosX
+                    = ghost.currentCell->gridX + ghost.param * (ghost.targetCell->gridX - ghost.currentCell->gridX); //NOLINT
+                currentGhostPosY
+                    = ghost.currentCell->gridY + ghost.param * (ghost.targetCell->gridY - ghost.currentCell->gridY); //NOLINT
             }
 
             static constexpr float epsilon = 1;
@@ -273,6 +279,7 @@ namespace pacman
         void asyncSoundPacketWriteHandler(boost::beast::error_code ec, std::size_t bytesTransferred);
 
         void tickStart(Session& session);
+        void stopScattering(Session& session);
 
         void tickGameplay(Session& session);
 

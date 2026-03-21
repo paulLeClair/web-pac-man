@@ -52,18 +52,22 @@ enum class WpmPacketType
     UNKNOWN = 0,
     TRIGGER_SOUND,
     LOOP_SOUND,
-    STOP_SOUND
+    STOP_SOUND,
+    USER_INPUT, // TODO -> migrate user input code to use the WpmPacket instead
 };
 
 enum class GameMode
 {
     UNKNOWN = 0,
-    START,
-    GAMEPLAY,
-    SUCCESS,
-    FAILURE,
-    INTERMISSION_1,
-    INTERMISSION_2,
+    START, // intro cutscene that plays the famous pacman opening theme before level 1 begins
+    GAMEPLAY, // basic gameplay loop for a given level
+    SUCCESS, // short transition when you complete a level
+    FAILURE, // famous pacman death animation
+    INTERMISSION_1, // small cutscene between levels 2 and 3
+    INTERMISSION_2, // small cutscene between levels 5 and 6
+    INTERMISSION_3, // small cutscene between levels 9 and 10 and then every 4 levels from then on
+    ATTRACT, // this is meant to give us a "press any button to start" screen
+    GAME_OVER, // short game over message when you run out of lives
 };
 
 

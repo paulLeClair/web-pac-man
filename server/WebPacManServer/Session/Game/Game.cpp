@@ -9,19 +9,16 @@ namespace pacman
 {
     void Game::triggerSound(const SoundType soundType, Session& session)
     {
-        std::lock_guard lock(session.mutex);
         sendSoundPacket(soundType, WpmPacketType::TRIGGER_SOUND, session);
     }
 
     void Game::loopSound(const SoundType soundType, Session& session)
     {
-        std::lock_guard lock(session.mutex);
         sendSoundPacket(soundType, WpmPacketType::LOOP_SOUND, session);
     }
 
     void Game::stopSound(const SoundType soundType, Session& session)
     {
-        std::lock_guard lock(session.mutex);
         sendSoundPacket(soundType, WpmPacketType::STOP_SOUND, session);
     }
 
@@ -36,7 +33,7 @@ namespace pacman
         std::vector<uint8_t> packetData(triggerSoundPacketMessage.ByteSizeLong() + 1);
         packetData[0] = static_cast<uint8_t>(OutgoingPacketType::SoundControlPacket);
         if (const auto serializeSoundPacketResult = triggerSoundPacketMessage.SerializeToArray(
-            packetData.data() + 1, packetData.size() - 1); !serializeSoundPacketResult)
+            packetData.data() + 1, triggerSoundPacketMessage.ByteSizeLong()); !serializeSoundPacketResult)
         {
             // log error
             return;
@@ -75,7 +72,8 @@ namespace pacman
     // transition straight into gameplay mode
     void Game::tickStart(Session& session)
     {
-        // first we would trigger the sound (todo until sound assets are finalized on clientside)
+        using namespace std::chrono_literals;
+        static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStartPoint = boost::none;
 
         // hide characters if not already hidden
         if (!player.hidden) player.hidden = true;
@@ -84,19 +82,18 @@ namespace pacman
         if (!blinky.hidden) blinky.hidden = true;
         if (!pinky.hidden) pinky.hidden = true;
 
-        // start the countdown
-        static constexpr uint32_t INTRO_THEME_SOUND_LENGTH_IN_SECONDS = 3;
-        static std::chrono::time_point<std::chrono::steady_clock> countdownStartPoint = {};
-
-        if (countdownStartPoint == std::chrono::time_point<std::chrono::steady_clock>())
+        if (!countdownStartPoint.has_value())
         {
+            // first we would trigger the sound
+            triggerSound(SoundType::INTRO_THEME, session);
             countdownStartPoint = std::chrono::steady_clock::now();
         }
 
         // display ready message
         displayReadyMessage = true;
 
-        if ((std::chrono::steady_clock::now() - countdownStartPoint).count() >= INTRO_THEME_SOUND_LENGTH_IN_SECONDS)
+        auto currentTime = std::chrono::steady_clock::now();
+        if (countdownStartPoint.has_value() && currentTime - *countdownStartPoint >= 5s)
         {
             displayReadyMessage = false;
             player.hidden = false;
@@ -104,39 +101,49 @@ namespace pacman
             inky.hidden = false;
             blinky.hidden = false;
             pinky.hidden = false;
+
+            // we need to be jumping into the failure animation here and then either display "game over" or
+            // subtract a life and respawn
             currentGameMode = GameMode::GAMEPLAY;
+
+            countdownStartPoint = boost::none;
+            setupGameEntities();
         }
     }
 
-    // this is the basic gameplay loop;
+    void Game::stopScattering(Session& session)
+    {
+        scatterCountdown--;
+        if (scatterCountdown == 0)
+        {
+            blinky.isScattering = false;
+            blinky.setNormalSpeed();
+
+            pinky.isScattering = false;
+            pinky.setNormalSpeed();
+
+            inky.isScattering = false;
+            inky.setNormalSpeed();
+
+            clyde.isScattering = false;
+            clyde.setNormalSpeed();
+
+            ghostsAreScattering = false;
+            // stopSound(SoundType::GHOSTS_SCATTERING, session);
+            // loopSound(SoundType::GHOST_ALARM, session);
+        }
+    }
+
     void Game::tickGameplay(Session& session)
     {
-        static constexpr auto scatterTimeout = 180;
+        static constexpr auto scatterTimeout = 180; // TODO -> tweak this to match original game
 
         player.bufferedInput = lastBufferedInput;
         player.update();
 
         if (ghostsAreScattering)
         {
-            scatterCountdown--;
-            if (scatterCountdown == 0)
-            {
-                blinky.isScattering = false;
-                blinky.setNormalSpeed();
-
-                pinky.isScattering = false;
-                pinky.setNormalSpeed();
-
-                inky.isScattering = false;
-                inky.setNormalSpeed();
-
-                clyde.isScattering = false;
-                clyde.setNormalSpeed();
-
-                ghostsAreScattering = false;
-                // stopSound(SoundType::GHOSTS_SCATTERING, session);
-                // triggerSound(SoundType::GHOST_ALARM, session);
-            }
+            stopScattering(session);
         }
 
         if (const uint32_t packedPlayerCoords = player.currentCell->gridX << 16 | player.currentCell->gridY;
@@ -171,8 +178,9 @@ namespace pacman
                 }
             case ItemType::DOT:
                 {
-                    // triggerSound(SoundType::PACMAN_EATING, session);
+                    // TODO -> we probably want to be starting/stopping a loop with the waka-waka sound
                 }
+            default: ;
             }
 
             if (!items.erase(packedPlayerCoords))
@@ -183,19 +191,16 @@ namespace pacman
 
             if (items.empty())
             {
-                // this would trigger the next stage
+                // this would trigger the SUCCESS game mode
                 setupGameEntities();
-                // every game over we need to restart the sounds too
             }
         }
-        // TODO -> display score
 
         update_ghost_state(pinky, session);
         update_ghost_state(blinky, session);
         update_ghost_state(inky, session);
         update_ghost_state(clyde, session);
 
-        // TODO -> timer/score etc
     }
 
     void Game::tickSuccess(Session& session)

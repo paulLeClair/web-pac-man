@@ -125,19 +125,19 @@ const App: Component<AppProps> = (props) => {
         const soundType = soundPacket.payload;
         switch (soundType) {
             case SoundType.INTRO_THEME:
-                executeSoundCommand(soundType,"/assets/sounds/intro_theme.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType,"/assets/sound/intro_theme.wav", soundPacket.packetType);
                 break
             case SoundType.PACMAN_EATING:
-                executeSoundCommand(soundType, "/assets/sounds/pacman_eating.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType, "/assets/sound/pacman_eating.mp3", soundPacket.packetType);
                 break
             case SoundType.GHOST_ALARM:
-                executeSoundCommand(soundType, "/assets/sounds/ghost_alarm.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType, "/assets/sound/ghost_alarm.mp3", soundPacket.packetType);
                 break
             case SoundType.GHOSTS_SCATTERING:
-                executeSoundCommand(soundType, "/assets/sounds/ghost_scattering.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType, "/assets/sound/ghost_scattering.mp3", soundPacket.packetType);
                 break
             case SoundType.GHOST_EATEN:
-                executeSoundCommand(soundType,"/assets/sounds/ghost_eaten.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType,"/assets/sound/ghost_eaten.mp3", soundPacket.packetType);
                 break
             default:
                 console.error("Unknown sound packet type: " + soundPacket.packetType);
@@ -148,6 +148,7 @@ const App: Component<AppProps> = (props) => {
         if (soundPath.length === 0 || wpmPacketType === WpmPacketType.UNKNOWN) return;
 
         const audio = new Audio(soundPath);
+        audio.volume = 0.5;
         switch (wpmPacketType) {
             case WpmPacketType.TRIGGER_SOUND:
                 audio.loop = false;
