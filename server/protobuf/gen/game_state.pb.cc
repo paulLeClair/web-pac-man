@@ -73,6 +73,8 @@ inline constexpr GameStateMessage::Impl_::Impl_(
         blinkyishidden_{false},
         clydeisdead_{false},
         clydeishidden_{false},
+        hideboard_{false},
+        pacmanisdead_{false},
         items_{} {}
 
 template <typename>
@@ -110,7 +112,7 @@ const ::uint32_t
         1,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_._has_bits_),
-        31, // hasbit index offset
+        33, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.currentmode_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanpositionx_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanpositiony_),
@@ -139,6 +141,8 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydeisdead_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.clydeishidden_),
         PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.items_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.hideboard_),
+        PROTOBUF_FIELD_OFFSET(::GameStateMessage, _impl_.pacmanisdead_),
         1,
         0,
         3,
@@ -166,7 +170,9 @@ const ::uint32_t
         21,
         25,
         26,
+        29,
         27,
+        28,
 };
 
 static const ::_pbi::MigrationSchema
@@ -180,7 +186,7 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
 };
 const char descriptor_table_protodef_game_5fstate_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\020game_state.proto\"\366\005\n\020GameStateMessage\022"
+    "\n\020game_state.proto\"\237\006\n\020GameStateMessage\022"
     "\023\n\013currentMode\030\001 \001(\005\022\027\n\017pacmanPositionX\030"
     "\002 \001(\001\022\027\n\017pacmanPositionY\030\003 \001(\001\022\031\n\021pacman"
     "Orientation\030\004 \001(\005\022\030\n\020pacmanIsChomping\030\005 "
@@ -198,14 +204,15 @@ const char descriptor_table_protodef_game_5fstate_2eproto[] ABSL_ATTRIBUTE_SECTI
     "ydePositionY\030\030 \001(\001\022\030\n\020clydeOrientation\030\031"
     " \001(\005\022\023\n\013clydeIsDead\030\032 \001(\010\022\025\n\rclydeIsHidd"
     "en\030\033 \001(\010\022+\n\005items\030\034 \003(\0132\034.GameStateMessa"
-    "ge.ItemsEntry\032,\n\nItemsEntry\022\013\n\003key\030\001 \001(\r"
-    "\022\r\n\005value\030\002 \001(\r:\0028\001b\006proto3"
+    "ge.ItemsEntry\022\021\n\thideBoard\030\035 \001(\010\022\024\n\014pacm"
+    "anIsDead\030\036 \001(\010\032,\n\nItemsEntry\022\013\n\003key\030\001 \001("
+    "\r\022\r\n\005value\030\002 \001(\r:\0028\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_game_5fstate_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_game_5fstate_2eproto = {
     false,
     false,
-    787,
+    828,
     descriptor_table_protodef_game_5fstate_2eproto,
     "game_state.proto",
     &descriptor_table_game_5fstate_2eproto_once,
@@ -356,9 +363,9 @@ GameStateMessage::GameStateMessage(
                offsetof(Impl_, pacmanpositionx_),
            reinterpret_cast<const char*>(&from._impl_) +
                offsetof(Impl_, pacmanpositionx_),
-           offsetof(Impl_, clydeishidden_) -
+           offsetof(Impl_, pacmanisdead_) -
                offsetof(Impl_, pacmanpositionx_) +
-               sizeof(Impl_::clydeishidden_));
+               sizeof(Impl_::pacmanisdead_));
 
   // @@protoc_insertion_point(copy_constructor:GameStateMessage)
 }
@@ -373,9 +380,9 @@ inline void GameStateMessage::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) 
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, pacmanpositionx_),
            0,
-           offsetof(Impl_, clydeishidden_) -
+           offsetof(Impl_, pacmanisdead_) -
                offsetof(Impl_, pacmanpositionx_) +
-               sizeof(Impl_::clydeishidden_));
+               sizeof(Impl_::pacmanisdead_));
 }
 GameStateMessage::~GameStateMessage() {
   // @@protoc_insertion_point(destructor:GameStateMessage)
@@ -446,16 +453,16 @@ GameStateMessage::GetClassData() const {
   return GameStateMessage_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<5, 28, 1, 0, 2>
+const ::_pbi::TcParseTable<5, 30, 1, 0, 2>
 GameStateMessage::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_._has_bits_),
     0, // no _extensions_
-    28, 248,  // max_field_number, fast_idx_mask
+    30, 248,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4026531840,  // skipmap
+    3221225472,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    28,  // num_field_entries
+    30,  // num_field_entries
     1,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     GameStateMessage_class_data_.base(),
@@ -575,8 +582,14 @@ GameStateMessage::_table_ = {
      {472, 26, 0,
       PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeishidden_)}},
     {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // bool hideBoard = 29;
+    {::_pbi::TcParser::FastV8S2,
+     {488, 27, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.hideboard_)}},
+    // bool pacmanIsDead = 30;
+    {::_pbi::TcParser::FastV8S2,
+     {496, 28, 0,
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanisdead_)}},
     {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
@@ -636,7 +649,11 @@ GameStateMessage::_table_ = {
     // bool clydeIsHidden = 27;
     {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeishidden_), _Internal::kHasBitsOffset + 26, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // map<uint32, uint32> items = 28;
-    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.items_), _Internal::kHasBitsOffset + 27, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMap)},
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.items_), _Internal::kHasBitsOffset + 29, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMap)},
+    // bool hideBoard = 29;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.hideboard_), _Internal::kHasBitsOffset + 27, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool pacmanIsDead = 30;
+    {PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanisdead_), _Internal::kHasBitsOffset + 28, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
   }},
   {{
       {::_pbi::TcParser::GetMapAuxInfo(
@@ -668,11 +685,11 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
         reinterpret_cast<char*>(&_impl_.clydepositiony_) -
         reinterpret_cast<char*>(&_impl_.inkyishidden_)) + sizeof(_impl_.clydepositiony_));
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x0f000000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x3f000000U)) {
     ::memset(&_impl_.blinkyishidden_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.clydeishidden_) -
-        reinterpret_cast<char*>(&_impl_.blinkyishidden_)) + sizeof(_impl_.clydeishidden_));
-    if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
+        reinterpret_cast<char*>(&_impl_.pacmanisdead_) -
+        reinterpret_cast<char*>(&_impl_.blinkyishidden_)) + sizeof(_impl_.pacmanisdead_));
+    if (CheckHasBitForRepeated(cached_has_bits, 0x20000000U)) {
       _impl_.items_.Clear();
     }
   }
@@ -943,7 +960,7 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
   }
 
   // map<uint32, uint32> items = 28;
-  if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
+  if (CheckHasBitForRepeated(cached_has_bits, 0x20000000U)) {
     if (!this_._internal_items().empty()) {
       using MapType = ::google::protobuf::Map<::uint32_t, ::uint32_t>;
       using WireHelper = _pbi::MapEntryFuncs<::uint32_t, ::uint32_t,
@@ -962,6 +979,24 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
               28, entry.first, entry.second, target, stream);
         }
       }
+    }
+  }
+
+  // bool hideBoard = 29;
+  if (CheckHasBit(cached_has_bits, 0x08000000U)) {
+    if (this_._internal_hideboard() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          29, this_._internal_hideboard(), target);
+    }
+  }
+
+  // bool pacmanIsDead = 30;
+  if (CheckHasBit(cached_has_bits, 0x10000000U)) {
+    if (this_._internal_pacmanisdead() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          30, this_._internal_pacmanisdead(), target);
     }
   }
 
@@ -1146,7 +1181,7 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
       }
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x0f000000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x3f000000U)) {
     // bool blinkyIsHidden = 22;
     if (CheckHasBit(cached_has_bits, 0x01000000U)) {
       if (this_._internal_blinkyishidden() != 0) {
@@ -1165,8 +1200,20 @@ PROTOBUF_NOINLINE void GameStateMessage::Clear() {
         total_size += 3;
       }
     }
+    // bool hideBoard = 29;
+    if (CheckHasBit(cached_has_bits, 0x08000000U)) {
+      if (this_._internal_hideboard() != 0) {
+        total_size += 3;
+      }
+    }
+    // bool pacmanIsDead = 30;
+    if (CheckHasBit(cached_has_bits, 0x10000000U)) {
+      if (this_._internal_pacmanisdead() != 0) {
+        total_size += 3;
+      }
+    }
     // map<uint32, uint32> items = 28;
-    if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x20000000U)) {
       total_size +=
           2 * ::google::protobuf::internal::FromIntSize(this_._internal_items_size());
       for (const auto& entry : this_._internal_items()) {
@@ -1320,7 +1367,7 @@ void GameStateMessage::MergeImpl(::google::protobuf::MessageLite& to_msg,
       }
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x0f000000U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x3f000000U)) {
     if (CheckHasBit(cached_has_bits, 0x01000000U)) {
       if (from._internal_blinkyishidden() != 0) {
         _this->_impl_.blinkyishidden_ = from._impl_.blinkyishidden_;
@@ -1336,7 +1383,17 @@ void GameStateMessage::MergeImpl(::google::protobuf::MessageLite& to_msg,
         _this->_impl_.clydeishidden_ = from._impl_.clydeishidden_;
       }
     }
-    if (CheckHasBitForRepeated(cached_has_bits, 0x08000000U)) {
+    if (CheckHasBit(cached_has_bits, 0x08000000U)) {
+      if (from._internal_hideboard() != 0) {
+        _this->_impl_.hideboard_ = from._impl_.hideboard_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x10000000U)) {
+      if (from._internal_pacmanisdead() != 0) {
+        _this->_impl_.pacmanisdead_ = from._impl_.pacmanisdead_;
+      }
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x20000000U)) {
       _this->_impl_.items_.MergeFrom(from._impl_.items_);
     }
   }
@@ -1358,8 +1415,8 @@ void GameStateMessage::InternalSwap(GameStateMessage* PROTOBUF_RESTRICT PROTOBUF
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.clydeishidden_)
-      + sizeof(GameStateMessage::_impl_.clydeishidden_)
+      PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanisdead_)
+      + sizeof(GameStateMessage::_impl_.pacmanisdead_)
       - PROTOBUF_FIELD_OFFSET(GameStateMessage, _impl_.pacmanpositionx_)>(
           reinterpret_cast<char*>(&_impl_.pacmanpositionx_),
           reinterpret_cast<char*>(&other->_impl_.pacmanpositionx_));

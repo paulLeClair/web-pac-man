@@ -3,10 +3,11 @@
 //
 #include "Game.hpp"
 #include "../Session.hpp"
-#include "../../../protobuf/gen/wpm_packet.pb.h"
 
 namespace pacman
 {
+    using namespace std::chrono_literals;
+
     void Game::triggerSound(const SoundType soundType, Session& session)
     {
         sendSoundPacket(soundType, WpmPacketType::TRIGGER_SOUND, session);
@@ -22,65 +23,44 @@ namespace pacman
         sendSoundPacket(soundType, WpmPacketType::STOP_SOUND, session);
     }
 
-    void Game::sendSoundPacket(SoundType soundType, WpmPacketType soundControlType, Session& session)
+    void Game::sendSoundPacket(SoundType soundType, const WpmPacketType soundControlType, Session& session)
     {
-        // very simple, just pack up the appropriate flags
-        auto triggerSoundPacketMessage = WpmPacket();
-
-        triggerSoundPacketMessage.set_packettype(static_cast<int32_t>(soundControlType));
-        triggerSoundPacketMessage.set_payload(static_cast<int32_t>(soundType));
-
-        std::vector<uint8_t> packetData(triggerSoundPacketMessage.ByteSizeLong() + 1);
-        packetData[0] = static_cast<uint8_t>(OutgoingPacketType::SoundControlPacket);
-        if (const auto serializeSoundPacketResult = triggerSoundPacketMessage.SerializeToArray(
-            packetData.data() + 1, triggerSoundPacketMessage.ByteSizeLong()); !serializeSoundPacketResult)
-        {
-            // log error
-            return;
-        }
-
-        outgoingSoundMessageBuffer.consume(packetData.size()); // clear any previous data
-        const auto mutableBuffer = outgoingSoundMessageBuffer.prepare(packetData.size());
-        boost::asio::buffer_copy(mutableBuffer, boost::asio::buffer(packetData));
-        outgoingSoundMessageBuffer.commit(packetData.size());
-
-        session.ws.binary(true);
-
-        boost::asio::dispatch(
-            session.ws.get_executor(),
-            [&]
-            {
-                session.ws.async_write(
-                    outgoingSoundMessageBuffer.data(),
-                    beast::bind_front_handler(&Game::asyncSoundPacketWriteHandler, shared_from_this())
-                );
-            }
-        );
+        session.sendWpmPacket(soundControlType, static_cast<int32_t>(soundType));
     }
 
-    void Game::asyncSoundPacketWriteHandler(beast::error_code ec, std::size_t bytesTransferred)
+    void Game::sendCutsceneTriggerPacket(const int32_t cutsceneNumber, Session& session)
     {
-        boost::ignore_unused(bytesTransferred);
-
-        if (ec)
-        {
-            // log!
-        }
+        session.sendWpmPacket(WpmPacketType::TRIGGER_CUTSCENE, cutsceneNumber);
     }
 
-    // this should play the intro theme with all entities hidden and display the "READY!" message; once the song is over,
-    // transition straight into gameplay mode
-    void Game::tickStart(Session& session)
-    {
-        using namespace std::chrono_literals;
-        static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStartPoint = boost::none;
+    // this should definitely get moved to session
 
-        // hide characters if not already hidden
+
+    void Game::hide_characters()
+    {
         if (!player.hidden) player.hidden = true;
         if (!clyde.hidden) clyde.hidden = true;
         if (!inky.hidden) inky.hidden = true;
         if (!blinky.hidden) blinky.hidden = true;
         if (!pinky.hidden) pinky.hidden = true;
+    }
+
+    void Game::showCharacters()
+    {
+        player.hidden = false;
+        clyde.hidden = false;
+        inky.hidden = false;
+        blinky.hidden = false;
+        pinky.hidden = false;
+    }
+    // this should play the intro theme with all entities hidden and display the "READY!" message; once the song is over,
+    // transition straight into gameplay mode
+    void Game::tickStart(Session& session)
+    {
+        static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStartPoint = boost::none;
+
+        // hide characters if not already hidden
+        hide_characters();
 
         if (!countdownStartPoint.has_value())
         {
@@ -92,22 +72,19 @@ namespace pacman
         // display ready message
         displayReadyMessage = true;
 
-        auto currentTime = std::chrono::steady_clock::now();
-        if (countdownStartPoint.has_value() && currentTime - *countdownStartPoint >= 5s)
+        if (const auto currentTime = std::chrono::steady_clock::now();
+            countdownStartPoint.has_value() && currentTime - *countdownStartPoint >= 5s)
         {
             displayReadyMessage = false;
-            player.hidden = false;
-            clyde.hidden = false;
-            inky.hidden = false;
-            blinky.hidden = false;
-            pinky.hidden = false;
+            showCharacters();
 
             // we need to be jumping into the failure animation here and then either display "game over" or
             // subtract a life and respawn
             currentGameMode = GameMode::GAMEPLAY;
+            setupGameEntities();
+            loopSound(SoundType::GHOST_ALARM, session);
 
             countdownStartPoint = boost::none;
-            setupGameEntities();
         }
     }
 
@@ -129,14 +106,37 @@ namespace pacman
             clyde.setNormalSpeed();
 
             ghostsAreScattering = false;
-            // stopSound(SoundType::GHOSTS_SCATTERING, session);
-            // loopSound(SoundType::GHOST_ALARM, session);
+            stopSound(SoundType::GHOSTS_SCATTERING, session);
+            loopSound(SoundType::GHOST_ALARM, session);
         }
+    }
+
+    void Game::startScattering(Session& session, const int& scatterTimeout)
+    {
+        // activate scattering effect
+        ghostsAreScattering = true;
+
+        blinky.isScattering = true;
+        blinky.setSlowSpeed();
+
+        pinky.isScattering = true;
+        pinky.setSlowSpeed();
+
+        inky.isScattering = true;
+        inky.setSlowSpeed();
+
+        clyde.isScattering = true;
+        clyde.setSlowSpeed();
+
+        scatterCountdown = scatterTimeout;
+        stopSound(SoundType::GHOST_ALARM, session);
+        loopSound(SoundType::GHOSTS_SCATTERING, session);
     }
 
     void Game::tickGameplay(Session& session)
     {
         static constexpr auto scatterTimeout = 180; // TODO -> tweak this to match original game
+        static bool wakaWaka = false;
 
         player.bufferedInput = lastBufferedInput;
         player.update();
@@ -146,6 +146,7 @@ namespace pacman
             stopScattering(session);
         }
 
+        // this check needs to be redone a little bit;
         if (const uint32_t packedPlayerCoords = player.currentCell->gridX << 16 | player.currentCell->gridY;
             items.contains(packedPlayerCoords))
         {
@@ -156,29 +157,17 @@ namespace pacman
             {
             case ItemType::ENERGIZER:
                 {
-                    // activate scattering effect
-                    ghostsAreScattering = true;
-
-                    blinky.isScattering = true;
-                    blinky.setSlowSpeed();
-
-                    pinky.isScattering = true;
-                    pinky.setSlowSpeed();
-
-                    inky.isScattering = true;
-                    inky.setSlowSpeed();
-
-                    clyde.isScattering = true;
-                    clyde.setSlowSpeed();
-
-                    scatterCountdown = scatterTimeout;
-                    // stopSound(SoundType::GHOST_ALARM, session);
-                    // loopSound(SoundType::GHOSTS_SCATTERING, session);
+                    startScattering(session, scatterTimeout);
                     break;
                 }
             case ItemType::DOT:
                 {
                     // TODO -> we probably want to be starting/stopping a loop with the waka-waka sound
+                    if (!wakaWaka)
+                    {
+                        wakaWaka = true;
+                        loopSound(SoundType::PACMAN_EATING, session);
+                    }
                 }
             default: ;
             }
@@ -191,8 +180,16 @@ namespace pacman
 
             if (items.empty())
             {
-                // this would trigger the SUCCESS game mode
-                setupGameEntities();
+                currentGameMode = GameMode::SUCCESS;
+            }
+        }
+        else
+        {
+            // stop looping the chomp sound
+            if (wakaWaka)
+            {
+                wakaWaka = false;
+                stopSound(SoundType::PACMAN_EATING, session);
             }
         }
 
@@ -200,16 +197,138 @@ namespace pacman
         update_ghost_state(blinky, session);
         update_ghost_state(inky, session);
         update_ghost_state(clyde, session);
-
     }
 
     void Game::tickSuccess(Session& session)
     {
-        // display level transition message; (future: display intermissions at appropriate level milestones)
+        static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
+
+        hide_characters();
+
+        if (!countdownStart.has_value())
+        {
+            countdownStart = std::chrono::steady_clock::now();
+            stopAllSounds(session);
+            // probably also want to add a little "success!" message that can be toggled on and off
+            // or play a little jingle to signal that the level was completed
+        }
+
+        if (const auto currentTime = std::chrono::steady_clock::now();
+            countdownStart.has_value() && currentTime - *countdownStart >= 4s)
+        {
+            // here we need to increment the level and play any intermission animations that apply
+            level++;
+            if (level == 2)
+            {
+                currentGameMode = GameMode::INTERMISSION_1;
+                return;
+            }
+            if (level == 5)
+            {
+                currentGameMode = GameMode::INTERMISSION_2;
+                return;
+            }
+            if (level == 9 || level % 4 == 0)
+            {
+                currentGameMode = GameMode::INTERMISSION_3;
+                return;
+            }
+
+            currentGameMode = GameMode::GAMEPLAY;
+            loopSound(SoundType::GHOST_ALARM, session);
+        }
     }
 
     void Game::tickFailure(Session& session)
     {
+        static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
+
         // hide all items and freeze movement, trigger failure sound, (future: pacman dying animation)
+        player.hidden = false;
+        pacmanIsDead = true;
+
+        if (!countdownStart.has_value())
+        {
+            stopAllSounds(session);
+            triggerSound(SoundType::GAME_OVER, session);
+            countdownStart = std::chrono::steady_clock::now();
+        }
+
+        if (const auto currentTime = std::chrono::steady_clock::now();
+            countdownStart.has_value() && currentTime - *countdownStart >= 3s)
+        {
+            countdownStart = boost::none;
+
+            // if we have any lives left, we just jump back into gameplay
+            if (numberOfLives)
+            {
+                currentGameMode = GameMode::GAMEPLAY;
+            }
+            else
+            {
+                currentGameMode = GameMode::GAME_OVER;
+            }
+        }
+    }
+
+    void Game::tickAttract()
+    {
+        hide_characters();
+        hideBoard = false;
+
+        // todo -> probably just have a randomly-controlled player running the game loop with no sounds,
+        // for now just blank screen with "press any button to start" message that needs to be added to client assets
+
+        // this should just wait for a user input
+        if (lastBufferedInput != Direction::NONE)
+        {
+            lastBufferedInput = Direction::NONE;
+            currentGameMode = GameMode::START;
+        }
+    }
+
+    // this should just display a short game over message and then return to attract mode probably
+    void Game::tickGameOver(Session& session)
+    {
+        static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
+
+        hide_characters();
+        hideBoard = true;
+
+        // TODO -> add toggle-able "GAME OVER" message and display it here
+
+        if (!countdownStart.has_value())
+        {
+            countdownStart = std::chrono::steady_clock::now();
+            stopAllSounds(session);
+        }
+
+        if (const auto currentTime = std::chrono::steady_clock::now();
+            countdownStart.has_value() && currentTime - *countdownStart >= 3s)
+        {
+            countdownStart = boost::none;
+            currentGameMode = GameMode::ATTRACT;
+        }
+    }
+
+    void Game::tickIntermission(const int32_t intermissionNumber, Session& session)
+    {
+        static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
+
+        if (!countdownStart.has_value())
+        {
+            stopAllSounds(session); // just in case
+            triggerSound(SoundType::COFFEE_BREAK, session);
+            sendCutsceneTriggerPacket(intermissionNumber, session);
+            countdownStart = std::chrono::steady_clock::now();
+        }
+
+        if (const auto currentTime = std::chrono::steady_clock::now();
+            countdownStart.has_value() && currentTime - *countdownStart >= 14s)
+        {
+            // cutscene over, transition back to gameplay
+            currentGameMode = GameMode::GAMEPLAY;
+            loopSound(SoundType::GHOST_ALARM, session);
+        }
     }
 }

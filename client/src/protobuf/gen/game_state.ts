@@ -131,6 +131,14 @@ export interface GameStateMessage {
     items: {
         [key: number]: number;
     };
+    /**
+     * @generated from protobuf field: bool hideBoard = 29
+     */
+    hideBoard: boolean;
+    /**
+     * @generated from protobuf field: bool pacmanIsDead = 30
+     */
+    pacmanIsDead: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GameStateMessage$Type extends MessageType<GameStateMessage> {
@@ -163,7 +171,9 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
             { no: 25, name: "clydeOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 26, name: "clydeIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 27, name: "clydeIsHidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 28, name: "items", kind: "map", K: 13 /*ScalarType.UINT32*/, V: { kind: "scalar", T: 13 /*ScalarType.UINT32*/ } }
+            { no: 28, name: "items", kind: "map", K: 13 /*ScalarType.UINT32*/, V: { kind: "scalar", T: 13 /*ScalarType.UINT32*/ } },
+            { no: 29, name: "hideBoard", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 30, name: "pacmanIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GameStateMessage>): GameStateMessage {
@@ -196,6 +206,8 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         message.clydeIsDead = false;
         message.clydeIsHidden = false;
         message.items = {};
+        message.hideBoard = false;
+        message.pacmanIsDead = false;
         if (value !== undefined)
             reflectionMergePartial<GameStateMessage>(this, message, value);
         return message;
@@ -288,6 +300,12 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
                     break;
                 case /* map<uint32, uint32> items */ 28:
                     this.binaryReadMap28(message.items, reader, options);
+                    break;
+                case /* bool hideBoard */ 29:
+                    message.hideBoard = reader.bool();
+                    break;
+                case /* bool pacmanIsDead */ 30:
+                    message.pacmanIsDead = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -401,6 +419,12 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         /* map<uint32, uint32> items = 28; */
         for (let k of globalThis.Object.keys(message.items))
             writer.tag(28, WireType.LengthDelimited).fork().tag(1, WireType.Varint).uint32(parseInt(k)).tag(2, WireType.Varint).uint32(message.items[k as any]).join();
+        /* bool hideBoard = 29; */
+        if (message.hideBoard !== false)
+            writer.tag(29, WireType.Varint).bool(message.hideBoard);
+        /* bool pacmanIsDead = 30; */
+        if (message.pacmanIsDead !== false)
+            writer.tag(30, WireType.Varint).bool(message.pacmanIsDead);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

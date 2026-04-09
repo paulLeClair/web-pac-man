@@ -44,7 +44,10 @@ enum class SoundType : int32_t
     PACMAN_EATING,
     GHOST_ALARM,
     GHOSTS_SCATTERING,
-    GHOST_EATEN,
+    COFFEE_BREAK,
+    SPECIAL_ITEM_GET,
+    EXTRA_LIFE,
+    GAME_OVER,
 };
 
 enum class WpmPacketType
@@ -54,6 +57,7 @@ enum class WpmPacketType
     LOOP_SOUND,
     STOP_SOUND,
     USER_INPUT, // TODO -> migrate user input code to use the WpmPacket instead
+    TRIGGER_CUTSCENE
 };
 
 enum class GameMode
@@ -81,7 +85,7 @@ enum class IncomingPacketType : int32_t
 enum class OutgoingPacketType : uint8_t
 {
     GameStateUpdate = 0x70,
-    SoundControlPacket = 0x80,
+    WpmPacket = 0x80,
 };
 
 struct Entity

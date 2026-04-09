@@ -8,6 +8,27 @@
     }
 }
 
+.pacman-dead {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    z-index: auto;
+
+    /*these have to be 12 to line up with our sprite sheet, but they
+    should be dynamically scaled based off the board image size */
+    width: 12px;
+    height: 12px;
+    background: url("/assets/Pacman/pacman-death-animation-sprite-sheet.png");
+
+    animation: pacmandead 1s steps(16) 1;
+}
+
+@keyframes pacmandead {
+    100% {
+        background-position-x: -180px;
+    }
+}
+
 .orientation-right {
     transform: rotate(0deg);
 }

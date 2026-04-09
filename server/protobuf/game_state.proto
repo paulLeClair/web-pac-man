@@ -38,4 +38,7 @@ message GameStateMessage {
   bool clydeIsHidden = 27;
 
   map<uint32, uint32> items = 28;
+  bool hideBoard = 29;
+  bool pacmanIsDead = 30;
+
 }

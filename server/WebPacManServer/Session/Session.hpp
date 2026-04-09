@@ -21,8 +21,7 @@ namespace pacman
 
         boost::uuids::uuid sessionId;
         websocket::stream<beast::tcp_stream> ws;
-        beast::flat_buffer incomingClientMessageBuffer = beast::flat_buffer();
-        beast::flat_buffer gameStateFlatBuffer = beast::flat_buffer();
+        beast::flat_buffer incomingClientMessageBuffer = beast::flat_buffer(); // TODO -> get rid of this too
 
         void run();
 
@@ -31,10 +30,19 @@ namespace pacman
         std::mutex mutex = std::mutex();
 
     private:
+        friend class Game; // temp
+
         std::shared_ptr<Game> game = nullptr;
 
         // this is used to store the serialized game state data sent to the client
-        std::vector<uint8_t> gameStateMessageData = {};
+
+        // likely it will be good to add more explicit sync here, including an "outgoing sound packets" queue
+        // that might be worth generalizing for all outgoing packets
+        bool writeInProgress = false;
+        std::deque<std::shared_ptr<std::vector<uint8_t>>> outgoingWpmPackets;
+        std::deque<std::shared_ptr<std::vector<uint8_t>>> outgoingGameStatePackets;
+
+        // TODO -> have a queue for outgoing game state updates as well
 
         void asyncRunHandler();
         void listenToClient();
@@ -52,5 +60,9 @@ namespace pacman
          */
         static bool isOppositeDirection(Direction direction1, Direction direction2);
         void handleBinaryMessage();
+        void sendWpmPacket(WpmPacketType packetType, int32_t payload);
+        void writeWpmPacket();
+        void writeGameStatePacket();
+        void asyncWpmPacketWriteHandler(beast::error_code ec, std::size_t bytesTransferred);
     };
 } // pacman

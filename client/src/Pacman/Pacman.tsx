@@ -1,4 +1,4 @@
-import {Component, createMemo} from 'solid-js';
+import {Component, Show, createMemo} from 'solid-js';
 import './Pacman.css'
 import {Direction, EntityState, SideOfBoardPadding, TopOfBoardPadding} from "../App";
 
@@ -10,7 +10,8 @@ enum Orientation {
 }
 
 export interface PacmanState extends EntityState {
-  isChomping: boolean
+  isChomping: boolean,
+  isDead: boolean,
 }
 
 export interface PacmanProps {
@@ -19,8 +20,6 @@ export interface PacmanProps {
 }
 
 const Pacman: Component<PacmanProps> = (props) => {
-  const hidden = createMemo(() => props.pacmanStateAccessor().hidden);
-  if (hidden()) return <div/>;
 
   const positionStyles = createMemo(() => {
     const s = props.pacmanStateAccessor();
@@ -42,6 +41,7 @@ const Pacman: Component<PacmanProps> = (props) => {
 
   const pacmanClassesString = createMemo(() => {
     const s = props.pacmanStateAccessor();
+    if (s.isDead) return "pacman-dead";
     let cls = `pacman ${pacmanOrientation()}`;
     if (s.isChomping) cls += " pacman-chomp";
     return cls;
@@ -49,7 +49,9 @@ const Pacman: Component<PacmanProps> = (props) => {
 
   // for some things we'll have to mix in some inline styles I think
   return (
-    <div class={pacmanClassesString()}  style={positionStyles()}/>
+      <Show when={!props.pacmanStateAccessor().hidden}>
+        <div class={pacmanClassesString()} style={positionStyles()}/>
+      </Show>
   );
 };
 

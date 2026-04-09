@@ -31,39 +31,23 @@ export enum SoundType {
     PACMAN_EATING,
     GHOST_ALARM,
     GHOSTS_SCATTERING,
-    GHOST_EATEN,
+    COFFEE_BREAK,
+    SPECIAL_ITEM_GET,
+    EXTRA_LIFE,
+    GAME_OVER,
 }
 
 enum WpmPacketType {
     UNKNOWN = 0,
     TRIGGER_SOUND,
     LOOP_SOUND,
-    STOP_SOUND
+    STOP_SOUND,
+    USER_INPUT,
+    TRIGGER_CUTSCENE,
 }
 
 export const TopOfBoardPadding = 24; // probably should get this from server but its ok for now
 export const SideOfBoardPadding = 4;
-
-enum GameMode {
-    Unknown = 0,
-    // Loading/Attract mode
-    TitleScreen,
-    Ready,
-
-    // Core gameplay
-    Playing,
-    Paused,
-
-    // Specialized states
-    PacmanDying,
-    LevelComplete,
-    GameOver,
-
-    // Cutscenes
-    Intermission1, // Blinky chases Pac-Man
-    Intermission2, // Pac-Man chases Blinky
-    Intermission3, // Nicknamed ghost scene
-}
 
 export interface EntityState {
     x: number,
@@ -74,26 +58,26 @@ export interface EntityState {
 
 enum IncomingPacketType { // incoming from client's perspective
     GameStateUpdate = 0x70,
-    SoundControlPacket = 0x80,
+    WpmPacket = 0x80,
 }
 
 enum OutgoingPacketType { // outgoing from client's perspective
     UserInputPress = 0x101,
     UserInputRelease = 0x102, // maybe unused/unnecessary
-    GameModeComplete = 0x103,
 }
 
 const App: Component<AppProps> = (props) => {
     // TODO -> game modes once basic mechanics are in place
 
     // i guess state will be top-down, where the app holds onto the actual signals which we pass along via props
-    const [pacmanState, setPacmanState] = createSignal<PacmanState>({x: 0, y: 0, orientation: Direction.UP, isChomping: true, hidden: false})
+    const [pacmanState, setPacmanState] = createSignal<PacmanState>({x: 0, y: 0, orientation: Direction.UP, isChomping: true, hidden: false, isDead: false})
     const [ghostsScattering, setGhostsScattering] = createSignal(false)
     const [pinkyState, setPinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
     const [inkyState, setInkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
     const [blinkyState, setBlinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
     const [clydeState, setClydeState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
     const [itemsState, setItemsState] = createSignal<Map<number, number>>(new Map())
+    const [cutsceneState, setCutsceneState] = createSignal<number>(0)
 
     const currentlyPlayingSounds = new Map<HTMLAudioElement, SoundType>
 
@@ -109,35 +93,66 @@ const App: Component<AppProps> = (props) => {
         // IMPORTANT: server will use first byte for packet type
         let packetType = msgBufferView[0];
         switch (packetType) {
-            case IncomingPacketType.SoundControlPacket:
-                handleSoundControlPacket(msgBufferView);
+            case IncomingPacketType.WpmPacket:
+                handleWpmPacket(msgBufferView);
                 break;
             case IncomingPacketType.GameStateUpdate:
                 handleGameStateUpdate(msgBufferView);
                 break;
         }
-
     }
 
-    function handleSoundControlPacket(messageBufferView : Uint8Array<ArrayBuffer>) {
-        if (!(messageBufferView[0] === IncomingPacketType.SoundControlPacket)) return;
-        const soundPacket = WpmPacket.fromBinary(messageBufferView.slice(1));
+    function handleWpmPacket(messageBufferView : Uint8Array<ArrayBuffer>) {
+        if (!(messageBufferView[0] === IncomingPacketType.WpmPacket)) return;
+        const packet = WpmPacket.fromBinary(messageBufferView.slice(1));
+
+        if (packet.packetType == WpmPacketType.UNKNOWN) {
+            console.error("Unknown WPM packet received; no action taken")
+            return
+        }
+        if (packet.packetType == WpmPacketType.TRIGGER_CUTSCENE) {
+            handleCutsceneTriggerPacket(packet)
+            return
+        }
+        handleSoundControlPacket(packet)
+    }
+
+    function handleCutsceneTriggerPacket(cutsceneTriggerPacket : WpmPacket) {
+        // this one has to be done carefully; we want to basically just clear the game board area and
+        // play the cutscene; we do this upon receiving the trigger and until the cutscene is done playing all
+        // game state updates are effectively ignored.
+        setCutsceneState(cutsceneTriggerPacket.payload)
+
+        // at this point we would want to trigger the particular cutscene based off our cutscene state;
+        // upon finishing we unset our cutscene state and begin digesting game state updates again
+    }
+
+    function handleSoundControlPacket(soundPacket : WpmPacket) {
         const soundType = soundPacket.payload;
         switch (soundType) {
             case SoundType.INTRO_THEME:
                 executeSoundCommand(soundType,"/assets/sound/intro_theme.wav", soundPacket.packetType);
                 break
             case SoundType.PACMAN_EATING:
-                executeSoundCommand(soundType, "/assets/sound/pacman_eating.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType, "/assets/sound/chomp.wav", soundPacket.packetType);
                 break
             case SoundType.GHOST_ALARM:
-                executeSoundCommand(soundType, "/assets/sound/ghost_alarm.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType, "/assets/sound/ghost_alarm.wav", soundPacket.packetType);
                 break
             case SoundType.GHOSTS_SCATTERING:
-                executeSoundCommand(soundType, "/assets/sound/ghost_scattering.mp3", soundPacket.packetType);
+                executeSoundCommand(soundType, "/assets/sound/ghost_scatter.wav", soundPacket.packetType);
                 break
-            case SoundType.GHOST_EATEN:
-                executeSoundCommand(soundType,"/assets/sound/ghost_eaten.mp3", soundPacket.packetType);
+            case SoundType.COFFEE_BREAK:
+                executeSoundCommand(soundType, "/assets/sound/coffee_break.mp3", soundPacket.packetType);
+                break
+            case SoundType.SPECIAL_ITEM_GET:
+                executeSoundCommand(soundType, "/assets/sound/special_item_get.wav", soundPacket.packetType);
+                break
+            case SoundType.EXTRA_LIFE:
+                executeSoundCommand(soundType, "/assets/sound/extra_life.wav", soundPacket.packetType);
+                break
+            case SoundType.GAME_OVER:
+                executeSoundCommand(soundType, "/assets/sound/game_over.wav", soundPacket.packetType);
                 break
             default:
                 console.error("Unknown sound packet type: " + soundPacket.packetType);
@@ -148,7 +163,7 @@ const App: Component<AppProps> = (props) => {
         if (soundPath.length === 0 || wpmPacketType === WpmPacketType.UNKNOWN) return;
 
         const audio = new Audio(soundPath);
-        audio.volume = 0.5;
+        audio.volume = 0.3;
         switch (wpmPacketType) {
             case WpmPacketType.TRIGGER_SOUND:
                 audio.loop = false;
@@ -188,6 +203,8 @@ const App: Component<AppProps> = (props) => {
     function handleGameStateUpdate(messageBufferView: Uint8Array<ArrayBuffer>) {
         if (!(messageBufferView[0] === IncomingPacketType.GameStateUpdate)) return;
 
+        if (cutsceneState() != 0) return;
+
         requestAnimationFrame(() => {
             const gameState = GameStateMessage.fromBinary(messageBufferView.slice(1));
 
@@ -196,7 +213,8 @@ const App: Component<AppProps> = (props) => {
                 y: gameState.pacmanPositionY,
                 orientation: gameState.pacmanOrientation,
                 isChomping: gameState.pacmanIsChomping,
-                hidden: gameState.pacmanIsHidden
+                hidden: gameState.pacmanIsHidden,
+                isDead: gameState.pacmanIsDead
             })
 
             setGhostsScattering(gameState.ghostsAreScattering)
@@ -285,7 +303,7 @@ const App: Component<AppProps> = (props) => {
     return (
         <div>
             {/*  TODO -> scoreboard etc*/}
-            <Board itemsAccessor={itemsState}>
+            <Board itemsAccessor={itemsState} hidden={cutsceneState() != 0}>
                 <Ghost ghostName={GhostName.PINKY} ghostStateAccessor={pinkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.INKY} ghostStateAccessor={inkyState} isScatteringAccessor={ghostsScattering}/>
                 <Ghost ghostName={GhostName.BLINKY} ghostStateAccessor={blinkyState} isScatteringAccessor={ghostsScattering}/>

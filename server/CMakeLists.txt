@@ -52,6 +52,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 if(MSVC)
     set(protobuf_MSVC_STATIC_RUNTIME OFF CACHE BOOL "Link Protobuf dynamically" FORCE)
+    target_compile_options(pacman_server PRIVATE /bigobj)
 endif()
 
 set(protobuf_VERSION "v33.5") # Ensure this matches the protoc version used

@@ -25,45 +25,51 @@ namespace pacman
         explicit Game(const std::string& fileName) : maze(std::make_unique<MazeFile>(fileName)),
                                                      pacmanStartCell(maze->getCell(13, 22)),
                                                      pinkyStartCell(maze->getCell(25, 1)),
-                                                     blinkyStartCell(maze->getCell(0, 0)),
                                                      inkyStartCell(maze->getCell(25, 28)),
-                                                     clydeStartCell(maze->getCell(0, 28))
+                                                     clydeStartCell(maze->getCell(0, 28)),
+                                                     blinkyStartCell(maze->getCell(0, 0))
         {
             setupGameEntities();
-            currentGameMode = GameMode::START;
+            currentGameMode = GameMode::ATTRACT;
         }
+        std::unique_ptr<MazeFile> maze;
 
         uint32_t score = 0;
 
-        GameMode currentGameMode = GameMode::GAMEPLAY;
+        GameMode currentGameMode = GameMode::UNKNOWN;
         uint8_t level = 1;
 
         // map of packed grid coordinates to the type of item stored there
         std::unordered_map<uint32_t, ItemType> items;
 
-        std::unique_ptr<MazeFile> maze;
+        uint8_t numberOfLives = 2;
 
         bool ghostsAreScattering = false;
         uint32_t scatterCountdown = 0;
 
         Pacman player;
+        bool pacmanIsDead = false;
+        bool hideBoard = false;
+        bool displayReadyMessage = false;
 
         // NOTE: i'm fairly certain boost asio should sync this, but we may need a lock
-        Direction lastBufferedInput = {};
+        Direction lastBufferedInput = Direction::NONE;
 
         Blinky blinky;
         Pinky pinky;
         Inky inky;
         Clyde clyde;
 
-        bool displayReadyMessage;
-
         // trigger a particular sound to play once all the way through
-        void triggerSound(SoundType soundType, Session& session);
+        static void triggerSound(SoundType soundType, Session& session);
         // trigger a particular sound to loop until stopped
-        void loopSound(SoundType soundType, Session& session);
+        static void loopSound(SoundType soundType, Session& session);
         // cut a sound short if its currently playing, else nothing will happen
-        void stopSound(SoundType soundType, Session& session);
+        static void stopSound(SoundType soundType, Session& session);
+
+        void tickGameOver(Session& session);
+
+        void tickIntermission(int32_t intermissionNumber, Session& session);
 
         void tick(Session& session)
         {
@@ -91,17 +97,33 @@ namespace pacman
                 }
             case GameMode::INTERMISSION_1:
                 {
+                    tickIntermission(1, session);
                     //todo
                     break;
                 }
             case GameMode::INTERMISSION_2:
                 {
+                    tickIntermission(2, session);
                     //todo
+                    break;
+                }
+            case GameMode::INTERMISSION_3:
+                {
+                    tickIntermission(3, session);
+                    break;
+                }
+            case GameMode::ATTRACT:
+                {
+                    tickAttract();
+                    break;
+                }
+            case GameMode::GAME_OVER:
+                {
+                    tickGameOver(session);
                     break;
                 }
             default:
                 {
-
                 };
             }
         }
@@ -181,7 +203,6 @@ namespace pacman
             return blacklistedLocations.contains(mazeCell.gridX << 16 | mazeCell.gridY);
         }
 
-        boost::beast::flat_buffer outgoingSoundMessageBuffer = boost::beast::flat_buffer();
 
         void initializeItems()
         {
@@ -267,24 +288,28 @@ namespace pacman
                 currentGhostPosY - currentPlayerPosY) < epsilon;
         }
 
+        void stopScattering(Session& session);
+        void startScattering(Session& session, const int& scatterTimeout);
+
         void stopAllSounds(Session& session)
         {
-            // stopSound(SoundType::GHOST_ALARM, session);
-            // stopSound(SoundType::PACMAN_EATING, session);
+            //TODO
         }
 
-        // send a websocket message for the client to trigger a sound on the next update
-        void sendSoundPacket(SoundType soundType, WpmPacketType soundControlType, Session& session);
+        static void sendSoundPacket(SoundType soundType, WpmPacketType soundControlType, Session& session);
+        static void sendCutsceneTriggerPacket(int32_t cutsceneNumber, Session& session);
 
-        void asyncSoundPacketWriteHandler(boost::beast::error_code ec, std::size_t bytesTransferred);
+        void hide_characters();
+        void showCharacters();
 
         void tickStart(Session& session);
-        void stopScattering(Session& session);
 
         void tickGameplay(Session& session);
 
         void tickSuccess(Session& session);
 
         void tickFailure(Session& session);
+
+        void tickAttract();
     };
 } // pacman

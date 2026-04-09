@@ -283,6 +283,8 @@ class GameStateMessage final : public ::google::protobuf::Message
     kBlinkyIsHiddenFieldNumber = 22,
     kClydeIsDeadFieldNumber = 26,
     kClydeIsHiddenFieldNumber = 27,
+    kHideBoardFieldNumber = 29,
+    kPacmanIsDeadFieldNumber = 30,
     kItemsFieldNumber = 28,
   };
   // double pacmanPositionX = 2;
@@ -555,6 +557,26 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_clydeishidden(bool value);
 
   public:
+  // bool hideBoard = 29;
+  void clear_hideboard() ;
+  bool hideboard() const;
+  void set_hideboard(bool value);
+
+  private:
+  bool _internal_hideboard() const;
+  void _internal_set_hideboard(bool value);
+
+  public:
+  // bool pacmanIsDead = 30;
+  void clear_pacmanisdead() ;
+  bool pacmanisdead() const;
+  void set_pacmanisdead(bool value);
+
+  private:
+  bool _internal_pacmanisdead() const;
+  void _internal_set_pacmanisdead(bool value);
+
+  public:
   // map<uint32, uint32> items = 28;
   int items_size() const;
   private:
@@ -574,7 +596,7 @@ class GameStateMessage final : public ::google::protobuf::Message
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<5, 28,
+  static const ::google::protobuf::internal::TcParseTable<5, 30,
                                    1, 0,
                                    2>
       _table_;
@@ -623,6 +645,8 @@ class GameStateMessage final : public ::google::protobuf::Message
     bool blinkyishidden_;
     bool clydeisdead_;
     bool clydeishidden_;
+    bool hideboard_;
+    bool pacmanisdead_;
     ::google::protobuf::internal::MapField<GameStateMessage_ItemsEntry_DoNotUse, ::uint32_t, ::uint32_t,
                       ::google::protobuf::internal::WireFormatLite::TYPE_UINT32,
                       ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>
@@ -1339,7 +1363,7 @@ inline void GameStateMessage::clear_items() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.items_.Clear();
   ClearHasBitForRepeated(_impl_._has_bits_[0],
-                  0x08000000U);
+                  0x20000000U);
 }
 inline const ::google::protobuf::Map<::uint32_t, ::uint32_t>& GameStateMessage::_internal_items() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
@@ -1355,9 +1379,59 @@ inline ::google::protobuf::Map<::uint32_t, ::uint32_t>* PROTOBUF_NONNULL GameSta
 }
 inline ::google::protobuf::Map<::uint32_t, ::uint32_t>* PROTOBUF_NONNULL GameStateMessage::mutable_items()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBitForRepeated(_impl_._has_bits_[0], 0x08000000U);
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x20000000U);
   // @@protoc_insertion_point(field_mutable_map:GameStateMessage.items)
   return _internal_mutable_items();
+}
+
+// bool hideBoard = 29;
+inline void GameStateMessage::clear_hideboard() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hideboard_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x08000000U);
+}
+inline bool GameStateMessage::hideboard() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.hideBoard)
+  return _internal_hideboard();
+}
+inline void GameStateMessage::set_hideboard(bool value) {
+  _internal_set_hideboard(value);
+  SetHasBit(_impl_._has_bits_[0], 0x08000000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.hideBoard)
+}
+inline bool GameStateMessage::_internal_hideboard() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hideboard_;
+}
+inline void GameStateMessage::_internal_set_hideboard(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hideboard_ = value;
+}
+
+// bool pacmanIsDead = 30;
+inline void GameStateMessage::clear_pacmanisdead() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pacmanisdead_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x10000000U);
+}
+inline bool GameStateMessage::pacmanisdead() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.pacmanIsDead)
+  return _internal_pacmanisdead();
+}
+inline void GameStateMessage::set_pacmanisdead(bool value) {
+  _internal_set_pacmanisdead(value);
+  SetHasBit(_impl_._has_bits_[0], 0x10000000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.pacmanIsDead)
+}
+inline bool GameStateMessage::_internal_pacmanisdead() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.pacmanisdead_;
+}
+inline void GameStateMessage::_internal_set_pacmanisdead(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.pacmanisdead_ = value;
 }
 
 #ifdef __GNUC__

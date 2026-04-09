@@ -1,4 +1,4 @@
-import {Component, createMemo, createSignal} from 'solid-js';
+import {Component, Show, createMemo, createSignal} from 'solid-js';
 import './Ghost.css'
 import {Direction, EntityState, SideOfBoardPadding, TopOfBoardPadding} from "../App";
 
@@ -38,9 +38,6 @@ const Ghost: Component<GhostProps> = (props) => {
     const [ghostName, setGhostName] = createSignal(GhostName.UNKNOWN)
     setGhostName(props.ghostName)
 
-    const hidden = createMemo(() => props.ghostStateAccessor().hidden);
-    if (hidden()) return <div/>;
-
     const positionStyles = createMemo(() => {
         const s = props.ghostStateAccessor();
         return {
@@ -76,7 +73,9 @@ const Ghost: Component<GhostProps> = (props) => {
     })
 
   return (
-      <div class={ghostClassesString()} style={positionStyles()}/>
+      <Show when={!props.ghostStateAccessor().hidden}>
+          <div class={ghostClassesString()} style={positionStyles()}/>
+      </Show>
   );
 };
 

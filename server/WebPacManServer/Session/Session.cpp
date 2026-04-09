@@ -6,6 +6,7 @@
 
 #include "../../protobuf/gen/game_state.pb.h"
 #include "../../protobuf/gen/user_inputs.pb.h"
+#include "../../protobuf/gen/wpm_packet.pb.h"
 
 namespace pacman
 {
@@ -28,7 +29,7 @@ namespace pacman
     void Session::gameTick()
     {
         std::lock_guard guard(mutex);
-        game->tick(*this); // new idea: pass session into game tick so we can shoot other stuff before the state update
+        game->tick(*this);
 
         // for now naive flat update of all state variables at once
         GameStateMessage gameState;
@@ -67,6 +68,9 @@ namespace pacman
         gameState.set_clydepositiony(game->clyde.pos.y);
         gameState.set_clydeishidden(game->clyde.hidden);
 
+        // new: set pacman dead/alive flag
+        gameState.set_pacmanisdead(game->pacmanIsDead);
+
         gameState.clear_items();
         const auto itemsHandle = gameState.mutable_items();
         for (auto& [packedCoords, type] : game->items)
@@ -80,7 +84,7 @@ namespace pacman
                 static_cast<uint32_t>(type)));
         }
 
-        gameStateMessageData.resize(gameState.ByteSizeLong() + 1);
+        std::vector<uint8_t> gameStateMessageData(gameState.ByteSizeLong() + 1);
         gameStateMessageData[0] = static_cast<uint8_t>(OutgoingPacketType::GameStateUpdate);
         if (const auto serializeGameStateSuccess = gameState.SerializeToArray(
             gameStateMessageData.data() + 1, gameStateMessageData.size() - 1); !serializeGameStateSuccess)
@@ -88,17 +92,55 @@ namespace pacman
             // TODO -> log error!
             return;
         }
-
-        const auto mutableBuffer = gameStateFlatBuffer.prepare(gameStateMessageData.size());
-        boost::asio::buffer_copy(mutableBuffer, boost::asio::buffer(gameStateMessageData));
-        gameStateFlatBuffer.commit(gameStateMessageData.size());
+        auto gameStateMessageBuffer = std::make_shared<std::vector<uint8_t>>(std::move(gameStateMessageData));
 
         ws.binary(true);
-        ws.async_write(
-            gameStateFlatBuffer.data(),
-            beast::bind_front_handler(&Session::asyncWriteGameStateHandler, shared_from_this())
+        net::post(ws.get_executor(),
+                      [self = shared_from_this(), gameStateMessageBuffer]
+                      {
+                          self->outgoingGameStatePackets.emplace_back(gameStateMessageBuffer);
+                          if (!self->writeInProgress)
+                          {
+                              self->writeGameStatePacket();
+                          }
+
+                      }
         );
     }
+
+    void Session::writeGameStatePacket()
+    {
+        writeInProgress = true;
+
+        const auto gameStatePacketBuffer = outgoingGameStatePackets.front();
+        ws.async_write(
+            boost::asio::buffer(*gameStatePacketBuffer),
+            [self = shared_from_this(), gameStatePacketBuffer](beast::error_code ec, std::size_t bytesTransferred)
+            {
+                boost::ignore_unused(bytesTransferred);
+
+                if (ec)
+                {
+                    // TODO -> log!
+                    self->writeInProgress = false;
+                    return;
+                }
+
+                self->outgoingGameStatePackets.pop_front();
+
+                if (self->outgoingGameStatePackets.empty())
+                {
+                    self->writeInProgress = false;
+                }
+                else
+                {
+                    self->writeGameStatePacket();
+                }
+            }
+        );
+
+    }
+
 
     void Session::asyncRunHandler()
     {
@@ -123,11 +165,6 @@ namespace pacman
             // TODO -> log!
             return;
         }
-
-        // TODO -> here we would first run the intro cutscene but that can come after sound is confirmed working
-
-        // when we begin gameplay, we'll also want to have the ghosts spawn in the jail and come out in the proper order
-        // game->loopSound(SoundType::GHOST_ALARM, *this);
 
         listenToClient();
     }
@@ -201,11 +238,6 @@ namespace pacman
             // TODO -> log error!
             return;
         }
-
-        // clear gamestate buffer (does this need sync?)
-        gameStateFlatBuffer.consume(gameStateFlatBuffer.size());
-
-        // after we write game state, we can just drop the async call
     }
 
     void Session::handleTextMessage()
@@ -241,7 +273,8 @@ namespace pacman
         {
         case static_cast<int32_t>(IncomingPacketType::UserInputPress):
             {
-                game->lastBufferedInput = static_cast<Direction>(inputDirection);
+                if (game->currentGameMode == GameMode::ATTRACT || game->currentGameMode == GameMode::GAMEPLAY)
+                    game->lastBufferedInput = static_cast<Direction>(inputDirection);
 
                 if (game->player.targetCell && isOppositeDirection(game->lastBufferedInput, game->player.orientation))
                 {
@@ -265,4 +298,72 @@ namespace pacman
 
         incomingClientMessageBuffer.consume(incomingClientMessageBuffer.size());
     }
+
+    void Session::sendWpmPacket(WpmPacketType packetType, int32_t payload)
+    {
+        auto packet_message = WpmPacket();
+
+        packet_message.set_packettype(static_cast<int32_t>(packetType));
+        packet_message.set_payload(payload);
+
+        std::vector<uint8_t> packetData(packet_message.ByteSizeLong() + 1);
+        packetData[0] = static_cast<uint8_t>(OutgoingPacketType::WpmPacket);
+        if (const auto serializeSoundPacketResult = packet_message.SerializeToArray(
+            packetData.data() + 1, packet_message.ByteSizeLong()); !serializeSoundPacketResult)
+        {
+            // TODO -> log error
+            return;
+        }
+        auto packetBuffer = std::make_shared<std::vector<uint8_t>>(std::move(packetData));
+
+        // new: wpm packets have to use an outgoing packet queue or else we get soft_mutex throws from beast
+        ws.binary(true);
+        net::post(
+            ws.get_executor(),
+            [self = shared_from_this(), packetBuffer]
+            {
+                self->outgoingWpmPackets.emplace_back(std::move(packetBuffer));
+                if (!self->writeInProgress)
+                {
+                    self->writeWpmPacket();
+                }
+
+            }
+        );
+    }
+
+    void Session::writeWpmPacket()
+    {
+        writeInProgress = true;
+
+        const auto packetBuffer = outgoingWpmPackets.front();
+
+        ws.async_write(
+                    boost::asio::buffer(*packetBuffer),
+                    // capture the packet data shared pointer so lifetime is guaranteed to end after write finishes
+                    [self = shared_from_this(), packetBuffer](beast::error_code ec, std::size_t bytesTransferred)
+                    {
+                        boost::ignore_unused(bytesTransferred);
+                        if (ec)
+                        {
+                            // TODO -> log
+                            self->writeInProgress = false;
+                            return;
+                        }
+
+                        self->outgoingWpmPackets.pop_front();
+
+                        if (self->outgoingWpmPackets.empty())
+                        {
+                            self->writeInProgress = false;
+                        }
+                        else
+                        {
+                            self->writeWpmPacket();
+                        }
+                    }
+                );
+    }
+
+
 } // pacman

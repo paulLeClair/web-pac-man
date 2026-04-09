@@ -1,4 +1,4 @@
-import {type Component, createMemo, JSX} from 'solid-js';
+import {type Component, Show, createMemo, JSX} from 'solid-js';
 import './Board.css'
 import {SideOfBoardPadding, TopOfBoardPadding} from "../App";
 
@@ -94,10 +94,10 @@ const Item: Component<ItemProps> = (props) => {
 interface BoardProps {
     children?: JSX.Element;
     itemsAccessor: () => Map<number, number>;
+    hidden: boolean,
 }
 
 const Board: Component<BoardProps> = (props) => {
-
     const itemMemo = createMemo(() => {
         const i = props.itemsAccessor();
 
@@ -108,26 +108,27 @@ const Board: Component<BoardProps> = (props) => {
             result.push(<Item type={itemType} x={unpackedX} y={unpackedY}/>)
         }
         return result;
-
     })
 
     return (
-        <section
-            class="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col items-center justify-center px-6 py-10">
-            <div class="mt-8 flex items-center justify-center">
-                <div class="relative aspect-28/36 w-[min(90vw,calc(80vh*28/36))] max-w-[224px]">
-                    <div
-                        class="absolute inset-0 3xl bg-slate-900/70 ring-1 ring-slate-700 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.9)]"/>
-                    <img
-                        src={BOARD_IMG}
-                        alt="Pac-Man board"
-                        class="absolute inset-0 h-full w-full 3xl object-contain"
-                    />
-                    {itemMemo()}
-                    {props.children}
+        <Show when={!props.hidden}>
+            <section
+                class="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col items-center justify-center px-6 py-10">
+                <div class="mt-8 flex items-center justify-center">
+                    <div class="relative aspect-28/36 w-[min(90vw,calc(80vh*28/36))] max-w-[224px]">
+                        <div
+                            class="absolute inset-0 3xl bg-slate-900/70 ring-1 ring-slate-700 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.9)]"/>
+                        <img
+                            src={BOARD_IMG}
+                            alt="Pac-Man board"
+                            class="absolute inset-0 h-full w-full 3xl object-contain"
+                        />
+                        {itemMemo()}
+                        {props.children}
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </Show>
     );
 };
 
