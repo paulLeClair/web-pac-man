@@ -41,7 +41,7 @@ const Pacman: Component<PacmanProps> = (props) => {
 
   const pacmanClassesString = createMemo(() => {
     const s = props.pacmanStateAccessor();
-    if (s.isDead) return "pacman-dead";
+    if (s.isDead) return `pacman-dead pacman-disappear`;
     let cls = `pacman ${pacmanOrientation()}`;
     if (s.isChomping) cls += " pacman-chomp";
     return cls;

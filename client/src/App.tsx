@@ -163,7 +163,7 @@ const App: Component<AppProps> = (props) => {
         if (soundPath.length === 0 || wpmPacketType === WpmPacketType.UNKNOWN) return;
 
         const audio = new Audio(soundPath);
-        audio.volume = 0.3;
+        audio.volume = 0.2;
         switch (wpmPacketType) {
             case WpmPacketType.TRIGGER_SOUND:
                 audio.loop = false;

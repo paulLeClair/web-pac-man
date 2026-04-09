@@ -69,7 +69,8 @@ const Ghost: Component<GhostProps> = (props) => {
     const ghostClassesString = createMemo(() => {
         const s = props.ghostStateAccessor()
         // TODO -> wire in animations for being scattered and being dead
-        return `ghost ${isScattering().length ? isScattering() : ghostName()} ${isScattering() == "ghost-scattering-initial" ? "" : ghostOrientation()}`;
+        return `ghost ${isScattering().length ? isScattering() : ghostName()} 
+            ${isScattering() == "ghost-scattering-initial" ? "" : ghostOrientation()}`;
     })
 
   return (

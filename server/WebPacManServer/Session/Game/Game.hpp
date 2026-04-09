@@ -29,7 +29,7 @@ namespace pacman
                                                      clydeStartCell(maze->getCell(0, 28)),
                                                      blinkyStartCell(maze->getCell(0, 0))
         {
-            setupGameEntities();
+            startNextLevel();
             currentGameMode = GameMode::ATTRACT;
         }
         std::unique_ptr<MazeFile> maze;
@@ -137,51 +137,50 @@ namespace pacman
 
         // TODO -> move private function defs to cpp file
 
-        // temporary hacky "reset" function
-        void setupGameEntities()
+        void startNextLevel()
+        {
+            initializeItems();
+
+            preparePlayerForNextLevel();
+
+            prepareGhostForNextLevel(&blinky, blinkyStartCell);
+
+            prepareGhostForNextLevel(&inky, inkyStartCell);
+
+            prepareGhostForNextLevel(&pinky, pinkyStartCell);
+
+            prepareGhostForNextLevel(&clyde, clydeStartCell);
+            clyde.clydeScatterCell = clydeStartCell;
+        }
+
+        void prepareGhostForNextLevel(Ghost *ghost, MazeCell *startCell)
+        {
+            // TODO -> start ghosts in center and only allow them to leave after a set period of time
+            ghost->setNormalSpeed();
+            ghost->player = &player;
+            ghost->mazeFile = maze.get();
+            ghost->currentCell = startCell;
+            ghost->isDead = false;
+            ghost->isScattering = false;
+            ghost->hidden = false;
+            ghost->inJail = false;
+            ghost->targetCell = nullptr;
+        }
+
+        void preparePlayerForNextLevel()
         {
             static constexpr float DEFAULT_PLAYER_SPEED = 0.15;
-            static constexpr float DEFAULT_GHOST_SPEED = 0.15;
 
-            player.isChomping = false;
+            pacmanIsDead = false;
+            player.isChomping = true;
             player.currentCell = pacmanStartCell;
-            player.targetCell = nullptr;
             player.orientation = Direction::LEFT;
-            player.bufferedInput = Direction::NONE;
+            player.bufferedInput = Direction::LEFT;
             player.speed = DEFAULT_PLAYER_SPEED;
-
             player.mazeFile = maze.get();
+            player.hidden = false;
 
-            pinky.player = &player;
-            pinky.mazeFile = maze.get();
-            pinky.currentCell = pinkyStartCell;
-            pinky.targetCell = nullptr;
-            pinky.isDead = false;
-            player.speed = DEFAULT_GHOST_SPEED;
-
-            inky.player = &player;
-            inky.mazeFile = maze.get();
-            inky.currentCell = inkyStartCell;
-            inky.targetCell = nullptr;
-            inky.isDead = false;
-            inky.speed = DEFAULT_GHOST_SPEED;
-
-            blinky.player = &player;
-            blinky.mazeFile = maze.get();
-            blinky.currentCell = blinkyStartCell;
-            blinky.targetCell = nullptr;
-            blinky.isDead = false;
-            blinky.speed = DEFAULT_GHOST_SPEED;
-
-            clyde.player = &player;
-            clyde.mazeFile = maze.get();
-            clyde.currentCell = clydeStartCell;
-            clyde.clydeScatterCell = clydeStartCell;
-            clyde.targetCell = nullptr;
-            clyde.isDead = false;
-            clyde.speed = DEFAULT_GHOST_SPEED;
-
-            initializeItems();
+            player.targetCell = player.obtainNextTarget();
         }
 
         static bool gridCellIsBlacklisted(const MazeCell& mazeCell)
@@ -243,19 +242,15 @@ namespace pacman
                 {
                     if (!ghost.isDead)
                     {
-                        // TODO -> increase speed and set target cell as entrance to the ghost jail
                         ghost.isDead = true;
-                        ghost.speed *= 2;
+                        ghost.setFastSpeed();
                         ghost.inJail = false;
                     }
                 }
                 else
                 {
-                    // TODO -> overhaul how game over is handled/detected
-                    // setupGameEntities();
-                    // stopAllSounds(session);
-                    // testing:
-                    currentGameMode = GameMode::START;
+                    stopAllSounds(session);
+                    currentGameMode = GameMode::FAILURE;
                 }
             }
         }
@@ -263,6 +258,7 @@ namespace pacman
         // this should be moved to the ghost itself
         [[nodiscard]] bool ghostIsCollidingWithPacman(const Ghost& ghost) const
         {
+            if (ghost.isDead) return false;
             float currentPlayerPosX = player.currentCell->gridX;
             float currentPlayerPosY = player.currentCell->gridY;
             if (player.targetCell)
@@ -291,15 +287,18 @@ namespace pacman
         void stopScattering(Session& session);
         void startScattering(Session& session, const int& scatterTimeout);
 
-        void stopAllSounds(Session& session)
+        static void stopAllSounds(Session& session)
         {
-            //TODO
+            sendSoundPacket(SoundType::GHOST_ALARM, WpmPacketType::STOP_SOUND, session);
+            sendSoundPacket(SoundType::GHOSTS_SCATTERING, WpmPacketType::STOP_SOUND, session);
+            sendSoundPacket(SoundType::PACMAN_EATING, WpmPacketType::STOP_SOUND, session);
+            sendSoundPacket(SoundType::SPECIAL_ITEM_GET, WpmPacketType::STOP_SOUND, session);
         }
 
         static void sendSoundPacket(SoundType soundType, WpmPacketType soundControlType, Session& session);
         static void sendCutsceneTriggerPacket(int32_t cutsceneNumber, Session& session);
 
-        void hide_characters();
+        void hideCharacters();
         void showCharacters();
 
         void tickStart(Session& session);

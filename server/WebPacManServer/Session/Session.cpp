@@ -166,6 +166,8 @@ namespace pacman
             return;
         }
 
+        sendWpmPacket(WpmPacketType::LOOP_SOUND, static_cast<int32_t>(SoundType::GHOST_ALARM));
+
         listenToClient();
     }
 

@@ -36,7 +36,7 @@ namespace pacman
     // this should definitely get moved to session
 
 
-    void Game::hide_characters()
+    void Game::hideCharacters()
     {
         if (!player.hidden) player.hidden = true;
         if (!clyde.hidden) clyde.hidden = true;
@@ -59,18 +59,18 @@ namespace pacman
     {
         static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStartPoint = boost::none;
 
-        // hide characters if not already hidden
-        hide_characters();
 
         if (!countdownStartPoint.has_value())
         {
             // first we would trigger the sound
             triggerSound(SoundType::INTRO_THEME, session);
             countdownStartPoint = std::chrono::steady_clock::now();
+            // hide characters if not already hidden
+            hideCharacters();
+            // display ready message
+            displayReadyMessage = true;
         }
 
-        // display ready message
-        displayReadyMessage = true;
 
         if (const auto currentTime = std::chrono::steady_clock::now();
             countdownStartPoint.has_value() && currentTime - *countdownStartPoint >= 5s)
@@ -81,7 +81,7 @@ namespace pacman
             // we need to be jumping into the failure animation here and then either display "game over" or
             // subtract a life and respawn
             currentGameMode = GameMode::GAMEPLAY;
-            setupGameEntities();
+            startNextLevel();
             loopSound(SoundType::GHOST_ALARM, session);
 
             countdownStartPoint = boost::none;
@@ -93,17 +93,29 @@ namespace pacman
         scatterCountdown--;
         if (scatterCountdown == 0)
         {
-            blinky.isScattering = false;
-            blinky.setNormalSpeed();
+            if (!blinky.isDead)
+            {
+                blinky.isScattering = false;
+                blinky.setNormalSpeed();
+            }
 
-            pinky.isScattering = false;
-            pinky.setNormalSpeed();
+            if (!pinky.isDead)
+            {
+                pinky.isScattering = false;
+                pinky.setNormalSpeed();
+            }
 
-            inky.isScattering = false;
-            inky.setNormalSpeed();
+            if (!inky.isDead)
+            {
+                inky.isScattering = false;
+                inky.setNormalSpeed();
+            }
 
-            clyde.isScattering = false;
-            clyde.setNormalSpeed();
+            if (!clyde.isDead)
+            {
+                clyde.isScattering = false;
+                clyde.setNormalSpeed();
+            }
 
             ghostsAreScattering = false;
             stopSound(SoundType::GHOSTS_SCATTERING, session);
@@ -116,17 +128,29 @@ namespace pacman
         // activate scattering effect
         ghostsAreScattering = true;
 
-        blinky.isScattering = true;
-        blinky.setSlowSpeed();
+        if (!blinky.isDead)
+        {
+            blinky.isScattering = true;
+            blinky.setSlowSpeed();
+        }
 
-        pinky.isScattering = true;
-        pinky.setSlowSpeed();
+        if (!pinky.isDead)
+        {
+            pinky.isScattering = true;
+            pinky.setSlowSpeed();
+        }
 
-        inky.isScattering = true;
-        inky.setSlowSpeed();
+        if (!inky.isDead)
+        {
+            inky.isScattering = true;
+            inky.setSlowSpeed();
+        }
 
-        clyde.isScattering = true;
-        clyde.setSlowSpeed();
+        if (!clyde.isDead)
+        {
+            clyde.isScattering = true;
+            clyde.setSlowSpeed();
+        }
 
         scatterCountdown = scatterTimeout;
         stopSound(SoundType::GHOST_ALARM, session);
@@ -186,7 +210,8 @@ namespace pacman
         else
         {
             // stop looping the chomp sound
-            if (wakaWaka)
+            if (wakaWaka &&
+                (!player.targetCell || !items.contains(player.targetCell->gridX << 16 | player.targetCell->gridY)))
             {
                 wakaWaka = false;
                 stopSound(SoundType::PACMAN_EATING, session);
@@ -203,7 +228,7 @@ namespace pacman
     {
         static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
 
-        hide_characters();
+        hideCharacters();
 
         if (!countdownStart.has_value())
         {
@@ -243,19 +268,27 @@ namespace pacman
     {
         static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
 
-        // hide all items and freeze movement, trigger failure sound, (future: pacman dying animation)
-        player.hidden = false;
-        pacmanIsDead = true;
-
         if (!countdownStart.has_value())
         {
             stopAllSounds(session);
             triggerSound(SoundType::GAME_OVER, session);
             countdownStart = std::chrono::steady_clock::now();
+            // hide all items and freeze movement, trigger failure sound, trigger dying animation
+            hideCharacters();
+            player.hidden = false;
+            pacmanIsDead = true;
+            items.clear();
+            numberOfLives--;
         }
 
         if (const auto currentTime = std::chrono::steady_clock::now();
-            countdownStart.has_value() && currentTime - *countdownStart >= 3s)
+            countdownStart.has_value() && currentTime - *countdownStart >= 2s)
+        {
+            player.hidden = true;
+        }
+
+            if (const auto currentTime = std::chrono::steady_clock::now();
+            countdownStart.has_value() && currentTime - *countdownStart >= 3.75s)
         {
             countdownStart = boost::none;
 
@@ -263,6 +296,8 @@ namespace pacman
             if (numberOfLives)
             {
                 currentGameMode = GameMode::GAMEPLAY;
+                startNextLevel();
+                loopSound(SoundType::GHOST_ALARM, session);
             }
             else
             {
@@ -273,7 +308,8 @@ namespace pacman
 
     void Game::tickAttract()
     {
-        hide_characters();
+        hideCharacters();
+        items.clear();
         hideBoard = false;
 
         // todo -> probably just have a randomly-controlled player running the game loop with no sounds,
@@ -292,7 +328,7 @@ namespace pacman
     {
         static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
 
-        hide_characters();
+        hideCharacters();
         hideBoard = true;
 
         // TODO -> add toggle-able "GAME OVER" message and display it here
@@ -307,6 +343,7 @@ namespace pacman
             countdownStart.has_value() && currentTime - *countdownStart >= 3s)
         {
             countdownStart = boost::none;
+            lastBufferedInput = Direction::NONE;
             currentGameMode = GameMode::ATTRACT;
         }
     }

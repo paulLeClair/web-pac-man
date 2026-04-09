@@ -82,19 +82,19 @@ struct Ghost : Entity
 
     void setNormalSpeed()
     {
-        static constexpr float DEFAULT_NORMAL_SPEED = 0.14;
+        static constexpr float DEFAULT_NORMAL_SPEED = 0.13;
         speed = DEFAULT_NORMAL_SPEED;
     }
 
     void setSlowSpeed()
     {
-        static constexpr float DEFAULT_SLOW_SPEED = 0.10;
+        static constexpr float DEFAULT_SLOW_SPEED = 0.1;
         speed = DEFAULT_SLOW_SPEED;
     }
 
     void setFastSpeed()
     {
-        static constexpr float DEFAULT_FAST_SPEED = 0.16;
+        static constexpr float DEFAULT_FAST_SPEED = 0.4;
         speed = DEFAULT_FAST_SPEED;
     }
 protected:
@@ -215,6 +215,7 @@ protected:
         {
             isDead = false;
             inJail = false;
+            setNormalSpeed();
             return const_cast<MazeCell*>(mazeFile->getGhostJailEntryCell());
         }
 
@@ -242,7 +243,7 @@ protected:
         // here we would enter the jail
         jailTimer = 20;
         inJail = true;
-        setSlowSpeed();
+        // setSlowSpeed();
         return bounceInJailUntilRespawn();
     }
 };
