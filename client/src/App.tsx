@@ -8,6 +8,9 @@ import {GameStateMessage} from "./protobuf/gen/game_state";
 import {createKeyHold, useKeyDownEvent, KbdKey} from "@solid-primitives/keyboard";
 import {UserInputMessage} from "./protobuf/gen/user_inputs";
 import {WpmPacket} from './protobuf/gen/wpm_packet'
+import GameHud from "./hud/GameHud";
+import GameOverlay from "./hud/GameOverlay";
+import './App.css';
 
 // TODO -> move this to a defines file probably
 
@@ -70,14 +73,51 @@ const App: Component<AppProps> = (props) => {
     // TODO -> game modes once basic mechanics are in place
 
     // i guess state will be top-down, where the app holds onto the actual signals which we pass along via props
-    const [pacmanState, setPacmanState] = createSignal<PacmanState>({x: 0, y: 0, orientation: Direction.UP, isChomping: true, hidden: false, isDead: false})
+    const [pacmanState, setPacmanState] = createSignal<PacmanState>({
+        x: 0,
+        y: 0,
+        orientation: Direction.UP,
+        isChomping: true,
+        hidden: false,
+        isDead: false
+    })
     const [ghostsScattering, setGhostsScattering] = createSignal(false)
-    const [pinkyState, setPinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
-    const [inkyState, setInkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
-    const [blinkyState, setBlinkyState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
-    const [clydeState, setClydeState] = createSignal<GhostState>({x: 0, y: 0, orientation: Direction.UP, isDead: false, hidden: false})
+    const [pinkyState, setPinkyState] = createSignal<GhostState>({
+        x: 0,
+        y: 0,
+        orientation: Direction.UP,
+        isDead: false,
+        hidden: false
+    })
+    const [inkyState, setInkyState] = createSignal<GhostState>({
+        x: 0,
+        y: 0,
+        orientation: Direction.UP,
+        isDead: false,
+        hidden: false
+    })
+    const [blinkyState, setBlinkyState] = createSignal<GhostState>({
+        x: 0,
+        y: 0,
+        orientation: Direction.UP,
+        isDead: false,
+        hidden: false
+    })
+    const [clydeState, setClydeState] = createSignal<GhostState>({
+        x: 0,
+        y: 0,
+        orientation: Direction.UP,
+        isDead: false,
+        hidden: false
+    })
     const [itemsState, setItemsState] = createSignal<Map<number, number>>(new Map())
     const [cutsceneState, setCutsceneState] = createSignal<number>(0)
+    const [hideBoard, setHideBoard] = createSignal(false)
+    const [showReadyMessage, setShowReadyMessage] = createSignal(false)
+    const [showAttractMessage, setShowAttractMessage] = createSignal(false)
+    const [showGameOverMessage, setShowGameOverMessage] = createSignal(false)
+    const [score, setScore] = createSignal(0)
+    const [level, setLevel] = createSignal(0)
 
     const currentlyPlayingSounds = new Map<HTMLAudioElement, SoundType>
 
@@ -89,7 +129,7 @@ const App: Component<AppProps> = (props) => {
         // for now, we'll assume all incoming messsages are game state updates until it makes sense to add cutscenes
         if (event.data.byteLength === 0) return;
 
-        let msgBufferView= new Uint8Array(event.data);
+        let msgBufferView = new Uint8Array(event.data);
         // IMPORTANT: server will use first byte for packet type
         let packetType = msgBufferView[0];
         switch (packetType) {
@@ -102,7 +142,7 @@ const App: Component<AppProps> = (props) => {
         }
     }
 
-    function handleWpmPacket(messageBufferView : Uint8Array<ArrayBuffer>) {
+    function handleWpmPacket(messageBufferView: Uint8Array<ArrayBuffer>) {
         if (!(messageBufferView[0] === IncomingPacketType.WpmPacket)) return;
         const packet = WpmPacket.fromBinary(messageBufferView.slice(1));
 
@@ -117,7 +157,7 @@ const App: Component<AppProps> = (props) => {
         handleSoundControlPacket(packet)
     }
 
-    function handleCutsceneTriggerPacket(cutsceneTriggerPacket : WpmPacket) {
+    function handleCutsceneTriggerPacket(cutsceneTriggerPacket: WpmPacket) {
         // this one has to be done carefully; we want to basically just clear the game board area and
         // play the cutscene; we do this upon receiving the trigger and until the cutscene is done playing all
         // game state updates are effectively ignored.
@@ -127,11 +167,11 @@ const App: Component<AppProps> = (props) => {
         // upon finishing we unset our cutscene state and begin digesting game state updates again
     }
 
-    function handleSoundControlPacket(soundPacket : WpmPacket) {
+    function handleSoundControlPacket(soundPacket: WpmPacket) {
         const soundType = soundPacket.payload;
         switch (soundType) {
             case SoundType.INTRO_THEME:
-                executeSoundCommand(soundType,"/assets/sound/intro_theme.wav", soundPacket.packetType);
+                executeSoundCommand(soundType, "/assets/sound/intro_theme.wav", soundPacket.packetType);
                 break
             case SoundType.PACMAN_EATING:
                 executeSoundCommand(soundType, "/assets/sound/chomp.wav", soundPacket.packetType);
@@ -196,7 +236,8 @@ const App: Component<AppProps> = (props) => {
                 }
                 break
             // TODO -> just log that this isn't one of the expected sound packet designations
-            default: console.error("Unknown WPM packet type: " + wpmPacketType);
+            default:
+                console.error("Unknown WPM packet type: " + wpmPacketType);
         }
     }
 
@@ -251,6 +292,13 @@ const App: Component<AppProps> = (props) => {
                 hidden: gameState.clydeIsHidden
             })
 
+            setHideBoard(gameState.hideBoard)
+            setScore(gameState.score)
+            setLevel(gameState.level)
+            setShowReadyMessage(gameState.displayReadyMessage);
+            setShowAttractMessage(gameState.displayAttractMessage);
+            setShowGameOverMessage(gameState.displayGameOverMessage);
+
             const itemsMap = new Map<number, number>();
             for (const [packedCoords, type] of Object.entries(gameState.items ?? {})) {
                 itemsMap.set(Number(packedCoords), type)
@@ -266,8 +314,7 @@ const App: Component<AppProps> = (props) => {
     ws.addEventListener("message", (event) => {
         if (typeof event.data === "string") {
             handleStringMessage(event);
-        }
-        else {
+        } else {
             handleIncomingBinaryMessage(event);
         }
     })
@@ -290,10 +337,18 @@ const App: Component<AppProps> = (props) => {
         const e = keyDownEvent();
         if (e) {
             switch (e.key) {
-                case "ArrowUp": !upKeyHeld() ? sendUserInputPacket(Direction.UP, OutgoingPacketType.UserInputPress) : 0; break;
-                case "ArrowDown": !downKeyHeld() ? sendUserInputPacket(Direction.DOWN, OutgoingPacketType.UserInputPress) : 0; break;
-                case "ArrowLeft": !leftKeyHeld() ? sendUserInputPacket(Direction.LEFT, OutgoingPacketType.UserInputPress) : 0; break;
-                case "ArrowRight": !rightKeyHeld() ? sendUserInputPacket(Direction.RIGHT, OutgoingPacketType.UserInputPress) : 0; break;
+                case "ArrowUp":
+                    !upKeyHeld() ? sendUserInputPacket(Direction.UP, OutgoingPacketType.UserInputPress) : 0;
+                    break;
+                case "ArrowDown":
+                    !downKeyHeld() ? sendUserInputPacket(Direction.DOWN, OutgoingPacketType.UserInputPress) : 0;
+                    break;
+                case "ArrowLeft":
+                    !leftKeyHeld() ? sendUserInputPacket(Direction.LEFT, OutgoingPacketType.UserInputPress) : 0;
+                    break;
+                case "ArrowRight":
+                    !rightKeyHeld() ? sendUserInputPacket(Direction.RIGHT, OutgoingPacketType.UserInputPress) : 0;
+                    break;
             }
         }
 
@@ -301,16 +356,33 @@ const App: Component<AppProps> = (props) => {
     })
 
     return (
-        <div>
-            {/*  TODO -> scoreboard etc*/}
-            <Board itemsAccessor={itemsState} hidden={cutsceneState() != 0}>
-                <Ghost ghostName={GhostName.PINKY} ghostStateAccessor={pinkyState} isScatteringAccessor={ghostsScattering}/>
-                <Ghost ghostName={GhostName.INKY} ghostStateAccessor={inkyState} isScatteringAccessor={ghostsScattering}/>
-                <Ghost ghostName={GhostName.BLINKY} ghostStateAccessor={blinkyState} isScatteringAccessor={ghostsScattering}/>
-                <Ghost ghostName={GhostName.CLYDE} ghostStateAccessor={clydeState} isScatteringAccessor={ghostsScattering}/>
-                <Pacman pacmanStateAccessor={pacmanState} scaleFactor={1.0} />
-            </Board>
-            {/* TODO -> lives and what not */}
+        <div class="cabinet-screen">
+            <div class="cabinet-game">
+                <GameHud
+                    score={score()}
+                    level={level()}
+                />
+                <div class="cabinet-playfield">
+
+                    <Board itemsAccessor={itemsState} hidden={cutsceneState() != 0}>
+                        <Ghost ghostName={GhostName.PINKY} ghostStateAccessor={pinkyState}
+                               isScatteringAccessor={ghostsScattering}/>
+                        <Ghost ghostName={GhostName.INKY} ghostStateAccessor={inkyState}
+                               isScatteringAccessor={ghostsScattering}/>
+                        <Ghost ghostName={GhostName.BLINKY} ghostStateAccessor={blinkyState}
+                               isScatteringAccessor={ghostsScattering}/>
+                        <Ghost ghostName={GhostName.CLYDE} ghostStateAccessor={clydeState}
+                               isScatteringAccessor={ghostsScattering}/>
+                        <Pacman pacmanStateAccessor={pacmanState} scaleFactor={1.0}/>
+                    </Board>
+
+                    <GameOverlay
+                        showReadyMessage={showReadyMessage()}
+                        showAttractMessage={showAttractMessage()}
+                        showGameOverMessage={showGameOverMessage()}
+                    />
+                </div>
+            </div>
         </div>
     );
 };

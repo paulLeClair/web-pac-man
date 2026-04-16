@@ -34,6 +34,8 @@ namespace pacman
         // for now naive flat update of all state variables at once
         GameStateMessage gameState;
 
+        gameState.set_score(game->score);
+        gameState.set_level(game->level);
         gameState.set_ghostsarescattering(game->ghostsAreScattering);
 
         // player update
@@ -68,8 +70,10 @@ namespace pacman
         gameState.set_clydepositiony(game->clyde.pos.y);
         gameState.set_clydeishidden(game->clyde.hidden);
 
-        // new: set pacman dead/alive flag
         gameState.set_pacmanisdead(game->pacmanIsDead);
+        gameState.set_displayreadymessage(game->displayReadyMessage);
+        gameState.set_displayattractmessage(game->displayAttractMessage);
+        gameState.set_displaygameovermessage(game->displayGameOverMessage);
 
         gameState.clear_items();
         const auto itemsHandle = gameState.mutable_items();
@@ -209,42 +213,9 @@ namespace pacman
         listenToClient();
     }
 
-    /**
-     * This is the async callback for initial testing where we're just echoing back;
-     * not sure if this will really factor in to the core functionality of the session
-     * @param ec boost error code
-     * @param bytes_transferred
-     */
-    void Session::asyncTestEchoInputHandler(beast::error_code ec, std::size_t bytes_transferred)
-    {
-        boost::ignore_unused(bytes_transferred);
-
-        if (ec)
-        {
-            // TODO -> log error!
-            return;
-        }
-
-        // this clears the buffer;
-        incomingClientMessageBuffer.consume(incomingClientMessageBuffer.size());
-
-        listenToClient();
-    }
-
-    void Session::asyncWriteGameStateHandler(beast::error_code ec, std::size_t bytes_transferred)
-    {
-        boost::ignore_unused(bytes_transferred);
-
-        if (ec)
-        {
-            // TODO -> log error!
-            return;
-        }
-    }
-
     void Session::handleTextMessage()
     {
-        // these don't do much atow
+        // these don't do anything atow
         incomingClientMessageBuffer.consume(incomingClientMessageBuffer.size());
     }
 

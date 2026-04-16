@@ -285,7 +285,12 @@ class GameStateMessage final : public ::google::protobuf::Message
     kClydeIsHiddenFieldNumber = 27,
     kHideBoardFieldNumber = 29,
     kPacmanIsDeadFieldNumber = 30,
+    kDisplayReadyMessageFieldNumber = 31,
     kItemsFieldNumber = 28,
+    kDisplayGameOverMessageFieldNumber = 32,
+    kDisplayAttractMessageFieldNumber = 33,
+    kScoreFieldNumber = 34,
+    kLevelFieldNumber = 35,
   };
   // double pacmanPositionX = 2;
   void clear_pacmanpositionx() ;
@@ -577,6 +582,16 @@ class GameStateMessage final : public ::google::protobuf::Message
   void _internal_set_pacmanisdead(bool value);
 
   public:
+  // bool displayReadyMessage = 31;
+  void clear_displayreadymessage() ;
+  bool displayreadymessage() const;
+  void set_displayreadymessage(bool value);
+
+  private:
+  bool _internal_displayreadymessage() const;
+  void _internal_set_displayreadymessage(bool value);
+
+  public:
   // map<uint32, uint32> items = 28;
   int items_size() const;
   private:
@@ -592,13 +607,53 @@ class GameStateMessage final : public ::google::protobuf::Message
   ::google::protobuf::Map<::uint32_t, ::uint32_t>* PROTOBUF_NONNULL _internal_mutable_items();
 
   public:
+  // bool displayGameOverMessage = 32;
+  void clear_displaygameovermessage() ;
+  bool displaygameovermessage() const;
+  void set_displaygameovermessage(bool value);
+
+  private:
+  bool _internal_displaygameovermessage() const;
+  void _internal_set_displaygameovermessage(bool value);
+
+  public:
+  // bool displayAttractMessage = 33;
+  void clear_displayattractmessage() ;
+  bool displayattractmessage() const;
+  void set_displayattractmessage(bool value);
+
+  private:
+  bool _internal_displayattractmessage() const;
+  void _internal_set_displayattractmessage(bool value);
+
+  public:
+  // int32 score = 34;
+  void clear_score() ;
+  ::int32_t score() const;
+  void set_score(::int32_t value);
+
+  private:
+  ::int32_t _internal_score() const;
+  void _internal_set_score(::int32_t value);
+
+  public:
+  // int32 level = 35;
+  void clear_level() ;
+  ::int32_t level() const;
+  void set_level(::int32_t value);
+
+  private:
+  ::int32_t _internal_level() const;
+  void _internal_set_level(::int32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:GameStateMessage)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<5, 30,
+  static const ::google::protobuf::internal::TcParseTable<5, 35,
                                    1, 0,
-                                   2>
+                                   7>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -616,7 +671,7 @@ class GameStateMessage final : public ::google::protobuf::Message
         ::google::protobuf::internal::InternalVisibility visibility,
         ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
         const GameStateMessage& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::HasBits<2> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     double pacmanpositionx_;
     ::int32_t currentmode_;
@@ -647,10 +702,15 @@ class GameStateMessage final : public ::google::protobuf::Message
     bool clydeishidden_;
     bool hideboard_;
     bool pacmanisdead_;
+    bool displayreadymessage_;
     ::google::protobuf::internal::MapField<GameStateMessage_ItemsEntry_DoNotUse, ::uint32_t, ::uint32_t,
                       ::google::protobuf::internal::WireFormatLite::TYPE_UINT32,
                       ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>
         items_;
+    bool displaygameovermessage_;
+    bool displayattractmessage_;
+    ::int32_t score_;
+    ::int32_t level_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -1363,7 +1423,7 @@ inline void GameStateMessage::clear_items() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.items_.Clear();
   ClearHasBitForRepeated(_impl_._has_bits_[0],
-                  0x20000000U);
+                  0x40000000U);
 }
 inline const ::google::protobuf::Map<::uint32_t, ::uint32_t>& GameStateMessage::_internal_items() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
@@ -1379,7 +1439,7 @@ inline ::google::protobuf::Map<::uint32_t, ::uint32_t>* PROTOBUF_NONNULL GameSta
 }
 inline ::google::protobuf::Map<::uint32_t, ::uint32_t>* PROTOBUF_NONNULL GameStateMessage::mutable_items()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBitForRepeated(_impl_._has_bits_[0], 0x20000000U);
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x40000000U);
   // @@protoc_insertion_point(field_mutable_map:GameStateMessage.items)
   return _internal_mutable_items();
 }
@@ -1432,6 +1492,131 @@ inline bool GameStateMessage::_internal_pacmanisdead() const {
 inline void GameStateMessage::_internal_set_pacmanisdead(bool value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.pacmanisdead_ = value;
+}
+
+// bool displayReadyMessage = 31;
+inline void GameStateMessage::clear_displayreadymessage() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.displayreadymessage_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x20000000U);
+}
+inline bool GameStateMessage::displayreadymessage() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.displayReadyMessage)
+  return _internal_displayreadymessage();
+}
+inline void GameStateMessage::set_displayreadymessage(bool value) {
+  _internal_set_displayreadymessage(value);
+  SetHasBit(_impl_._has_bits_[0], 0x20000000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.displayReadyMessage)
+}
+inline bool GameStateMessage::_internal_displayreadymessage() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.displayreadymessage_;
+}
+inline void GameStateMessage::_internal_set_displayreadymessage(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.displayreadymessage_ = value;
+}
+
+// bool displayGameOverMessage = 32;
+inline void GameStateMessage::clear_displaygameovermessage() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.displaygameovermessage_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x80000000U);
+}
+inline bool GameStateMessage::displaygameovermessage() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.displayGameOverMessage)
+  return _internal_displaygameovermessage();
+}
+inline void GameStateMessage::set_displaygameovermessage(bool value) {
+  _internal_set_displaygameovermessage(value);
+  SetHasBit(_impl_._has_bits_[0], 0x80000000U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.displayGameOverMessage)
+}
+inline bool GameStateMessage::_internal_displaygameovermessage() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.displaygameovermessage_;
+}
+inline void GameStateMessage::_internal_set_displaygameovermessage(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.displaygameovermessage_ = value;
+}
+
+// bool displayAttractMessage = 33;
+inline void GameStateMessage::clear_displayattractmessage() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.displayattractmessage_ = false;
+  ClearHasBit(_impl_._has_bits_[1],
+                  0x00000001U);
+}
+inline bool GameStateMessage::displayattractmessage() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.displayAttractMessage)
+  return _internal_displayattractmessage();
+}
+inline void GameStateMessage::set_displayattractmessage(bool value) {
+  _internal_set_displayattractmessage(value);
+  SetHasBit(_impl_._has_bits_[1], 0x00000001U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.displayAttractMessage)
+}
+inline bool GameStateMessage::_internal_displayattractmessage() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.displayattractmessage_;
+}
+inline void GameStateMessage::_internal_set_displayattractmessage(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.displayattractmessage_ = value;
+}
+
+// int32 score = 34;
+inline void GameStateMessage::clear_score() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.score_ = 0;
+  ClearHasBit(_impl_._has_bits_[1],
+                  0x00000002U);
+}
+inline ::int32_t GameStateMessage::score() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.score)
+  return _internal_score();
+}
+inline void GameStateMessage::set_score(::int32_t value) {
+  _internal_set_score(value);
+  SetHasBit(_impl_._has_bits_[1], 0x00000002U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.score)
+}
+inline ::int32_t GameStateMessage::_internal_score() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.score_;
+}
+inline void GameStateMessage::_internal_set_score(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.score_ = value;
+}
+
+// int32 level = 35;
+inline void GameStateMessage::clear_level() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.level_ = 0;
+  ClearHasBit(_impl_._has_bits_[1],
+                  0x00000004U);
+}
+inline ::int32_t GameStateMessage::level() const {
+  // @@protoc_insertion_point(field_get:GameStateMessage.level)
+  return _internal_level();
+}
+inline void GameStateMessage::set_level(::int32_t value) {
+  _internal_set_level(value);
+  SetHasBit(_impl_._has_bits_[1], 0x00000004U);
+  // @@protoc_insertion_point(field_set:GameStateMessage.level)
+}
+inline ::int32_t GameStateMessage::_internal_level() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.level_;
+}
+inline void GameStateMessage::_internal_set_level(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.level_ = value;
 }
 
 #ifdef __GNUC__

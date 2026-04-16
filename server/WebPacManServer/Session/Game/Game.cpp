@@ -277,7 +277,6 @@ namespace pacman
             hideCharacters();
             player.hidden = false;
             pacmanIsDead = true;
-            items.clear();
             numberOfLives--;
         }
 
@@ -296,7 +295,7 @@ namespace pacman
             if (numberOfLives)
             {
                 currentGameMode = GameMode::GAMEPLAY;
-                startNextLevel();
+                startNextLevel(false);
                 loopSound(SoundType::GHOST_ALARM, session);
             }
             else
@@ -345,6 +344,8 @@ namespace pacman
             countdownStart = boost::none;
             lastBufferedInput = Direction::NONE;
             currentGameMode = GameMode::ATTRACT;
+            score = 0;
+            level = 1;
         }
     }
 

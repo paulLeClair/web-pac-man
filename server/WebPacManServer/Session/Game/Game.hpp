@@ -51,8 +51,9 @@ namespace pacman
         bool pacmanIsDead = false;
         bool hideBoard = false;
         bool displayReadyMessage = false;
+        bool displayAttractMessage = false;
+        bool displayGameOverMessage = false;
 
-        // NOTE: i'm fairly certain boost asio should sync this, but we may need a lock
         Direction lastBufferedInput = Direction::NONE;
 
         Blinky blinky;
@@ -137,9 +138,9 @@ namespace pacman
 
         // TODO -> move private function defs to cpp file
 
-        void startNextLevel()
+        void startNextLevel(const bool resetItems = true)
         {
-            initializeItems();
+            if (resetItems) initializeItems();
 
             preparePlayerForNextLevel();
 

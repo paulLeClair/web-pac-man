@@ -139,6 +139,26 @@ export interface GameStateMessage {
      * @generated from protobuf field: bool pacmanIsDead = 30
      */
     pacmanIsDead: boolean;
+    /**
+     * @generated from protobuf field: bool displayReadyMessage = 31
+     */
+    displayReadyMessage: boolean;
+    /**
+     * @generated from protobuf field: bool displayGameOverMessage = 32
+     */
+    displayGameOverMessage: boolean;
+    /**
+     * @generated from protobuf field: bool displayAttractMessage = 33
+     */
+    displayAttractMessage: boolean;
+    /**
+     * @generated from protobuf field: int32 score = 34
+     */
+    score: number;
+    /**
+     * @generated from protobuf field: int32 level = 35
+     */
+    level: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GameStateMessage$Type extends MessageType<GameStateMessage> {
@@ -173,7 +193,12 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
             { no: 27, name: "clydeIsHidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 28, name: "items", kind: "map", K: 13 /*ScalarType.UINT32*/, V: { kind: "scalar", T: 13 /*ScalarType.UINT32*/ } },
             { no: 29, name: "hideBoard", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 30, name: "pacmanIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 30, name: "pacmanIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 31, name: "displayReadyMessage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 32, name: "displayGameOverMessage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 33, name: "displayAttractMessage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 34, name: "score", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 35, name: "level", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<GameStateMessage>): GameStateMessage {
@@ -208,6 +233,11 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         message.items = {};
         message.hideBoard = false;
         message.pacmanIsDead = false;
+        message.displayReadyMessage = false;
+        message.displayGameOverMessage = false;
+        message.displayAttractMessage = false;
+        message.score = 0;
+        message.level = 0;
         if (value !== undefined)
             reflectionMergePartial<GameStateMessage>(this, message, value);
         return message;
@@ -306,6 +336,21 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
                     break;
                 case /* bool pacmanIsDead */ 30:
                     message.pacmanIsDead = reader.bool();
+                    break;
+                case /* bool displayReadyMessage */ 31:
+                    message.displayReadyMessage = reader.bool();
+                    break;
+                case /* bool displayGameOverMessage */ 32:
+                    message.displayGameOverMessage = reader.bool();
+                    break;
+                case /* bool displayAttractMessage */ 33:
+                    message.displayAttractMessage = reader.bool();
+                    break;
+                case /* int32 score */ 34:
+                    message.score = reader.int32();
+                    break;
+                case /* int32 level */ 35:
+                    message.level = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -425,6 +470,21 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         /* bool pacmanIsDead = 30; */
         if (message.pacmanIsDead !== false)
             writer.tag(30, WireType.Varint).bool(message.pacmanIsDead);
+        /* bool displayReadyMessage = 31; */
+        if (message.displayReadyMessage !== false)
+            writer.tag(31, WireType.Varint).bool(message.displayReadyMessage);
+        /* bool displayGameOverMessage = 32; */
+        if (message.displayGameOverMessage !== false)
+            writer.tag(32, WireType.Varint).bool(message.displayGameOverMessage);
+        /* bool displayAttractMessage = 33; */
+        if (message.displayAttractMessage !== false)
+            writer.tag(33, WireType.Varint).bool(message.displayAttractMessage);
+        /* int32 score = 34; */
+        if (message.score !== 0)
+            writer.tag(34, WireType.Varint).int32(message.score);
+        /* int32 level = 35; */
+        if (message.level !== 0)
+            writer.tag(35, WireType.Varint).int32(message.level);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

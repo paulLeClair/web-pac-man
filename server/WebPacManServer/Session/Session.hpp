@@ -48,8 +48,6 @@ namespace pacman
         void listenToClient();
         void asyncWebsocketAcceptHandler(beast::error_code ec);
         void asyncListenToClientHandler(beast::error_code ec, std::size_t bytes_transferred);
-        void asyncTestEchoInputHandler(beast::error_code ec, std::size_t bytes_transferred);
-        void asyncWriteGameStateHandler(beast::error_code ec, std::size_t bytes_transferred);
 
         void handleTextMessage();
         /**
@@ -63,6 +61,5 @@ namespace pacman
         void sendWpmPacket(WpmPacketType packetType, int32_t payload);
         void writeWpmPacket();
         void writeGameStatePacket();
-        void asyncWpmPacketWriteHandler(beast::error_code ec, std::size_t bytesTransferred);
     };
 } // pacman

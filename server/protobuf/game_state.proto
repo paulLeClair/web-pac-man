@@ -40,5 +40,10 @@ message GameStateMessage {
   map<uint32, uint32> items = 28;
   bool hideBoard = 29;
   bool pacmanIsDead = 30;
+  bool displayReadyMessage = 31;
+  bool displayGameOverMessage = 32;
+  bool displayAttractMessage = 33;
+  int32 score = 34;
+  int32 level = 35;
 
 }
