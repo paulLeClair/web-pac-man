@@ -38,7 +38,7 @@ namespace pacman
         {
         case TileType::INTERSECTION:
             {
-                if (param >= 0.4)
+                if (param >= 0.1)
                 {
                     break;
                 }

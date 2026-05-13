@@ -41,6 +41,7 @@ namespace pacman
         std::unordered_map<uint32_t, ItemType> items;
 
         uint8_t numberOfLives = 2;
+        uint32_t numberOfGhostsEaten = 0;
 
         bool ghostsAreScattering = false;
         uint32_t scatterCountdown = 0;
@@ -135,18 +136,14 @@ namespace pacman
 
         void startNextLevel(const bool resetItems = true)
         {
-            if (resetItems) initializeItems();
+           startLevelSessionless(resetItems);
+        }
 
-            preparePlayerForNextLevel();
+        void startNextLevel(Session &session, const bool resetItems = true)
+        {
+            if (ghostsAreScattering) stopScattering(session);
 
-            prepareGhostForNextLevel(&blinky);
-
-            prepareGhostForNextLevel(&pinky, true);
-
-            prepareGhostForNextLevel(&inky, true, 30);
-
-            prepareGhostForNextLevel(&clyde, true, 60);
-            clyde.clydeScatterCell = clydeScatterCell;
+            startLevelSessionless(resetItems);
         }
 
         // new: blinky is the only ghost initially, and needs to start at the jail entry cell;
@@ -169,7 +166,7 @@ namespace pacman
 
         void preparePlayerForNextLevel()
         {
-            static constexpr float DEFAULT_PLAYER_SPEED = 0.15;
+            static constexpr float DEFAULT_PLAYER_SPEED = 0.17;
 
             pacmanIsDead = false;
             player.isChomping = true;
@@ -233,6 +230,7 @@ namespace pacman
             }
         }
 
+
         void update_ghost_state(Ghost& ghost, Session& session)
         {
             ghost.update();
@@ -242,9 +240,11 @@ namespace pacman
                 {
                     if (!ghost.isDead)
                     {
+                        numberOfGhostsEaten++;
                         ghost.isDead = true;
                         ghost.setFastSpeed();
                         ghost.inJail = false;
+                        score += 200 * numberOfGhostsEaten;
                     }
                 }
                 else
@@ -330,6 +330,22 @@ namespace pacman
             displayAttractMessage = true;
             displayGameOverMessage = false;
             displayReadyMessage = false;
+        }
+
+        void startLevelSessionless(const bool resetItems = true)
+        {
+            if (resetItems) initializeItems();
+
+            preparePlayerForNextLevel();
+
+            prepareGhostForNextLevel(&blinky);
+
+            prepareGhostForNextLevel(&pinky, true);
+
+            prepareGhostForNextLevel(&inky, true, 30);
+
+            prepareGhostForNextLevel(&clyde, true, 60);
+            clyde.clydeScatterCell = clydeScatterCell;
         }
     };
 } // pacman

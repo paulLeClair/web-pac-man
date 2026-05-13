@@ -5,6 +5,9 @@
 #include "../Player/Player.hpp"
 
 #include <ranges>
+#include <boost/optional/optional.hpp>
+
+using namespace std::chrono_literals;
 
 enum class GhostName
 {
@@ -96,7 +99,7 @@ struct Ghost : Entity
 
     void setSlowSpeed()
     {
-        static constexpr float DEFAULT_SLOW_SPEED = 0.1;
+        static constexpr float DEFAULT_SLOW_SPEED = 0.07;
         speed = DEFAULT_SLOW_SPEED;
     }
 
@@ -111,6 +114,7 @@ struct Ghost : Entity
 
 protected:
     MazeCell* previousCell = nullptr;
+    boost::optional<std::chrono::time_point<std::chrono::steady_clock>> ghostJailBounceStart = boost::none;
 
     static float getCellToCellDistance(const MazeCell* cell1, const MazeCell* cell2)
     {
@@ -221,19 +225,35 @@ protected:
 
     MazeCell* bounceInJailUntilRespawn()
     {
+        static constexpr auto GHOST_JAIL_TIME = std::chrono::seconds(5);
+
         if (inSpawnJail)
         {
             if (!jailDotCount)
             {
                 inSpawnJail = false;
                 inJail = false;
+                isDead = false;
+                isScattering = false;
                 setNormalSpeed();
+                ghostJailBounceStart = boost::none;
                 return mazeFile->getGhostJailEntryCell();
             }
         }
 
+        if (!inSpawnJail && std::chrono::steady_clock::now() - *ghostJailBounceStart >= GHOST_JAIL_TIME)
+        {
+            inJail = false;
+            isDead = false;
+            isScattering = false;
+            setNormalSpeed();
+            ghostJailBounceStart = boost::none;
+            return mazeFile->getGhostJailEntryCell();
+        }
+
         if (*currentCell == *mazeFile->getGhostJailEntryCell())
         {
+            setJailSpeed();
             currentCell = &ghostJailBottomCell;
             return &ghostJailTopCell;
         }
@@ -259,10 +279,16 @@ protected:
         // here we would enter the jail
         inJail = true;
         setSlowSpeed();
+        ghostJailBounceStart = std::chrono::steady_clock::now();
         return bounceInJailUntilRespawn();
     }
 
 private:
+    void setJailSpeed()
+    {
+        speed = 0.05;
+    }
+
     void init_ghost_jail_bounce_cells(const MazeCell *ghostJailBounceCell)
     {
         if (!mazeFile || !ghostJailBounceCell)

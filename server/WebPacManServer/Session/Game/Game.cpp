@@ -50,6 +50,7 @@ namespace pacman
         blinky.hidden = false;
         pinky.hidden = false;
     }
+
     // this should play the intro theme with all entities hidden and display the "READY!" message; once the song is over,
     // transition straight into gameplay mode
     void Game::tickStart(Session& session)
@@ -76,7 +77,7 @@ namespace pacman
             displayReadyMessage = false;
             currentGameMode = GameMode::GAMEPLAY;
 
-            startNextLevel();
+            startNextLevel(session);
             loopSound(SoundType::GHOST_ALARM, session);
 
             countdownStartPoint = boost::none;
@@ -113,6 +114,7 @@ namespace pacman
             }
 
             ghostsAreScattering = false;
+            numberOfGhostsEaten = 0;
             stopSound(SoundType::GHOSTS_SCATTERING, session);
             loopSound(SoundType::GHOST_ALARM, session);
         }
@@ -154,7 +156,7 @@ namespace pacman
 
     void Game::tickGameplay(Session& session)
     {
-        static constexpr auto scatterTimeout = 180; // TODO -> tweak this to match original game
+        static constexpr auto SCATTER_TIMEOUT = 240; // TODO -> tweak this to match original game
         static bool wakaWaka = false;
 
         player.bufferedInput = lastBufferedInput;
@@ -176,7 +178,7 @@ namespace pacman
             {
             case ItemType::ENERGIZER:
                 {
-                    startScattering(session, scatterTimeout);
+                    startScattering(session, SCATTER_TIMEOUT);
                     break;
                 }
             case ItemType::DOT:
@@ -228,39 +230,43 @@ namespace pacman
     {
         static boost::optional<std::chrono::time_point<std::chrono::steady_clock>> countdownStart = boost::none;
 
-        hideCharacters();
-
         if (!countdownStart.has_value())
         {
+            hideCharacters();
             countdownStart = std::chrono::steady_clock::now();
             stopAllSounds(session);
             // probably also want to add a little "success!" message that can be toggled on and off
             // or play a little jingle to signal that the level was completed
+            enableReadyMessage();
+            level++;
         }
 
         if (const auto currentTime = std::chrono::steady_clock::now();
-            countdownStart.has_value() && currentTime - *countdownStart >= 4s)
+            countdownStart.has_value() && currentTime - *countdownStart >= 3s)
         {
             // here we need to increment the level and play any intermission animations that apply
-            level++;
             if (level == 2)
             {
-                currentGameMode = GameMode::INTERMISSION_1;
-                return;
+                // currentGameMode = GameMode::INTERMISSION_1;
+                // return;
             }
             if (level == 5)
             {
-                currentGameMode = GameMode::INTERMISSION_2;
-                return;
+                // currentGameMode = GameMode::INTERMISSION_2;
+                // return;
             }
             if (level == 9 || level % 4 == 0)
             {
-                currentGameMode = GameMode::INTERMISSION_3;
-                return;
+                // currentGameMode = GameMode::INTERMISSION_3;
+                // return;
             }
 
+            showCharacters();
+            countdownStart = boost::none;
             currentGameMode = GameMode::GAMEPLAY;
+            displayReadyMessage = false;
             loopSound(SoundType::GHOST_ALARM, session);
+            startNextLevel(session);
         }
     }
 
@@ -286,7 +292,7 @@ namespace pacman
             player.hidden = true;
         }
 
-            if (const auto currentTime = std::chrono::steady_clock::now();
+        if (const auto currentTime = std::chrono::steady_clock::now();
             countdownStart.has_value() && currentTime - *countdownStart >= 3.75s)
         {
             countdownStart = boost::none;
@@ -295,7 +301,7 @@ namespace pacman
             if (numberOfLives)
             {
                 currentGameMode = GameMode::GAMEPLAY;
-                startNextLevel(false);
+                startNextLevel(session, false);
                 loopSound(SoundType::GHOST_ALARM, session);
             }
             else
