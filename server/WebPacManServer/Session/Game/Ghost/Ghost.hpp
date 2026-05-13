@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-20.
-//
-
 #pragma once
 
 #include "../../Defines.hpp"
@@ -28,9 +24,12 @@ enum class GhostOrientation : int32_t
 
 struct Ghost : Entity
 {
-    explicit Ghost(MazeFile *mazeFile) : mazeFile(mazeFile) {}
+    explicit Ghost(MazeFile* mazeFile, MazeCell *ghostJailBounceCell) : mazeFile(mazeFile)
+    {
+        init_ghost_jail_bounce_cells(ghostJailBounceCell);
+    }
 
-    MazeFile *mazeFile = nullptr;
+    MazeFile* mazeFile = nullptr;
 
     GhostName ghostName = GhostName::CLYDE;
 
@@ -47,7 +46,12 @@ struct Ghost : Entity
     // signals whether the ghost is currently confined to the ghost jail
     bool inJail = false;
 
-    pacman::Pacman *player = nullptr;
+    // the number of pacdots that pacman must eat before this ghost can leave the spawn jail
+    int jailDotCount = 0;
+
+    // whether the ghost is in jail at initial spawn time
+    bool inSpawnJail = false;
+    pacman::Pacman* player = nullptr;
 
     void update() override
     {
@@ -64,17 +68,21 @@ struct Ghost : Entity
             targetCell = obtainNextTarget();
         }
 
-        const auto *preUpdateCurrentCell = currentCell;
+        const auto* preUpdateCurrentCell = currentCell;
         Entity::update();
         if (currentCell != preUpdateCurrentCell)
         {
             previousCell = currentCell;
         }
-
-
     }
 
-    MazeCell *obtainNextTarget() override
+    void decrementDotCount()
+    {
+        if (!inSpawnJail) return;
+        jailDotCount--;
+    }
+
+    MazeCell* obtainNextTarget() override
     {
         // base ghost impl: nothing
         return nullptr;
@@ -97,27 +105,30 @@ struct Ghost : Entity
         static constexpr float DEFAULT_FAST_SPEED = 0.4;
         speed = DEFAULT_FAST_SPEED;
     }
-protected:
-    MazeCell *previousCell = nullptr;
-    int jailTimer = 0;
 
-    static float getCellToCellDistance(const MazeCell *cell1, const MazeCell *cell2)
+    MazeCell ghostJailTopCell = MazeCell(-1, -1);
+    MazeCell ghostJailBottomCell = MazeCell(-1, -1);
+
+protected:
+    MazeCell* previousCell = nullptr;
+
+    static float getCellToCellDistance(const MazeCell* cell1, const MazeCell* cell2)
     {
         if (!cell1 || !cell2) return NAN;
-        return sqrt(pow( (cell2->gridX - cell1->gridX), 2)
+        return sqrt(pow((cell2->gridX - cell1->gridX), 2)
             + pow((cell2->gridY - cell1->gridY), 2));
     }
 
-    virtual MazeCell *getScatterCell() = 0;
+    virtual MazeCell* getScatterCell() = 0;
 
-    MazeCell *getClosestNeighborToTargetCell(const MazeCell *potentiallyUnwalkableTargetCell)
+    MazeCell* getClosestNeighborToTargetCell(const MazeCell* potentiallyUnwalkableTargetCell)
     {
         std::unordered_map<Direction, float> directionDistances;
 
-        const auto *rightNeighbor = mazeFile->getCell(currentCell->gridX + 1, currentCell->gridY);
-        const auto *leftNeighbor = mazeFile->getCell(currentCell->gridX - 1, currentCell->gridY);
-        const auto *upNeighbor = mazeFile->getCell(currentCell->gridX, currentCell->gridY - 1);
-        const auto *downNeighbor = mazeFile->getCell(currentCell->gridX, currentCell->gridY + 1);
+        const auto* rightNeighbor = mazeFile->getCell(currentCell->gridX + 1, currentCell->gridY);
+        const auto* leftNeighbor = mazeFile->getCell(currentCell->gridX - 1, currentCell->gridY);
+        const auto* upNeighbor = mazeFile->getCell(currentCell->gridX, currentCell->gridY - 1);
+        const auto* downNeighbor = mazeFile->getCell(currentCell->gridX, currentCell->gridY + 1);
 
         if (mazeFile->isWalkable(currentCell->gridX + 1, currentCell->gridY) && rightNeighbor != previousCell)
         {
@@ -157,39 +168,39 @@ protected:
         }
 
         auto minimumDirection = Direction::NONE;
-        for (auto &[dir, dist] : directionDistances)
+        for (auto& [dir, dist] : directionDistances)
         {
             if (dist == minTargetDistance) minimumDirection = dir;
         }
 
         switch (minimumDirection)
         {
-            case Direction::UP:
-                {
-                    orientation = Direction::UP;
-                    return mazeFile->getCell(currentCell->gridX, currentCell->gridY - 1);
-                }
-            case Direction::DOWN:
-                {
-                    orientation = Direction::DOWN;
-                    return mazeFile->getCell(currentCell->gridX, currentCell->gridY + 1);
-                }
-            case Direction::LEFT:
-                {
-                    orientation = Direction::LEFT;
-                    return mazeFile->getCell(currentCell->gridX - 1, currentCell->gridY);
-                }
-            case Direction::RIGHT:
-                {
-                    orientation = Direction::RIGHT;
-                    return mazeFile->getCell(currentCell->gridX + 1, currentCell->gridY);
-                }
-            default: return nullptr;
+        case Direction::UP:
+            {
+                orientation = Direction::UP;
+                return mazeFile->getCell(currentCell->gridX, currentCell->gridY - 1);
+            }
+        case Direction::DOWN:
+            {
+                orientation = Direction::DOWN;
+                return mazeFile->getCell(currentCell->gridX, currentCell->gridY + 1);
+            }
+        case Direction::LEFT:
+            {
+                orientation = Direction::LEFT;
+                return mazeFile->getCell(currentCell->gridX - 1, currentCell->gridY);
+            }
+        case Direction::RIGHT:
+            {
+                orientation = Direction::RIGHT;
+                return mazeFile->getCell(currentCell->gridX + 1, currentCell->gridY);
+            }
+        default: return nullptr;
         }
     }
 
 
-    MazeCell *scatterIfNecessary()
+    MazeCell* scatterIfNecessary()
     {
         if (!isScattering) return nullptr;
         return getScatterCell();
@@ -208,42 +219,73 @@ protected:
         return nullptr; // log
     }
 
-
     MazeCell* bounceInJailUntilRespawn()
     {
-        if (jailTimer == 0)
+        if (inSpawnJail)
         {
-            isDead = false;
-            inJail = false;
-            setNormalSpeed();
-            return const_cast<MazeCell*>(mazeFile->getGhostJailEntryCell());
+            if (!jailDotCount)
+            {
+                inSpawnJail = false;
+                inJail = false;
+                setNormalSpeed();
+                return mazeFile->getGhostJailEntryCell();
+            }
         }
 
-        // here we would just switch between 2 bounce points, probably also just coming from the maze itself
-        jailTimer--;
+        if (*currentCell == *mazeFile->getGhostJailEntryCell())
+        {
+            currentCell = &ghostJailBottomCell;
+            return &ghostJailTopCell;
+        }
 
-        if (currentCell == MazeFile::getGhostJailLeftBounceCell())
+        if (*currentCell == ghostJailTopCell)
         {
-            return const_cast<MazeCell*>(MazeFile::getGhostJailRightBounceCell());
+            return &ghostJailBottomCell;
         }
-        if (currentCell == MazeFile::getGhostJailRightBounceCell())
+        if (*currentCell == ghostJailBottomCell)
         {
-            return const_cast<MazeCell*>(MazeFile::getGhostJailLeftBounceCell());
+            return &ghostJailTopCell;
         }
-        return const_cast<MazeCell*>(MazeFile::getGhostJailLeftBounceCell());
+        return nullptr;
     }
 
-    MazeCell *goToJail()
+    MazeCell* goToJail()
     {
-        if (const auto jail_entry_cell = mazeFile->getGhostJailEntryCell(); currentCell != jail_entry_cell)
+        if (currentCell != mazeFile->getGhostJailEntryCell())
         {
-            return getClosestNeighborToTargetCell(jail_entry_cell);
+            return getClosestNeighborToTargetCell(mazeFile->getGhostJailEntryCell());
         }
 
         // here we would enter the jail
-        jailTimer = 20;
         inJail = true;
-        // setSlowSpeed();
+        setSlowSpeed();
         return bounceInJailUntilRespawn();
+    }
+
+private:
+    void init_ghost_jail_bounce_cells(const MazeCell *ghostJailBounceCell)
+    {
+        if (!mazeFile || !ghostJailBounceCell)
+        {
+            // TODO -> log properly lol
+            return;
+        }
+
+        ghostJailTopCell = MazeCell(
+            ghostJailBounceCell->gridX,
+            ghostJailBounceCell->gridY,
+            TileType::OPEN,
+            ghostJailBounceCell->gridX * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS,
+            ghostJailBounceCell->gridY * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS -
+            NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS / 4
+        );
+        ghostJailBottomCell = MazeCell(
+            ghostJailBounceCell->gridX,
+            ghostJailBounceCell->gridY,
+            TileType::OPEN,
+            ghostJailBounceCell->gridX * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS,
+            ghostJailBounceCell->gridY * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS +
+            NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS / 4
+        );
     }
 };

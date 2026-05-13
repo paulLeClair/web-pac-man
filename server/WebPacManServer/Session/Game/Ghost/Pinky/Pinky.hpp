@@ -12,8 +12,8 @@ struct Pinky final : Ghost {
     // note, this is most likely not good to plug in as the target cell; we should use it to choose a walkable cell
     MazeCell potentiallyUnwalkableTargetCell;
 
-    Pinky() : Ghost(nullptr) {}
-    explicit Pinky(MazeFile *file) : Ghost(file) {}
+    Pinky() : Ghost(nullptr, nullptr) {}
+    explicit Pinky(MazeFile *file, MazeCell *ghostJailBounceCell) : Ghost(file, ghostJailBounceCell) {}
 
     ~Pinky() override = default;
 

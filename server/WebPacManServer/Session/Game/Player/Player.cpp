@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-20.
-//
-
 #include "Player.hpp"
 
 namespace pacman
@@ -42,6 +38,10 @@ namespace pacman
         {
         case TileType::INTERSECTION:
             {
+                if (param >= 0.4)
+                {
+                    break;
+                }
                 switch (bufferedInput)
                 {
                 // todo -> factor out a little helper function to reduce the amount of code dupe here
@@ -84,13 +84,14 @@ namespace pacman
             {
                 return getNextWalkableCellByOrientation();
             }
-        default: return nullptr;
+        default:break;
         }
+        return nullptr;
     }
 
     void Pacman::update()
     {
-        // set the target cell if we're stationary at an intersection
+        // set the target cell if we're stationary or at an intersection
         if (!targetCell || mazeFile->getTileType(currentCell->gridX, currentCell->gridY) == TileType::INTERSECTION)
         {
             switch (bufferedInput)
@@ -147,8 +148,6 @@ namespace pacman
             default: break;
             }
         }
-
-        // TODO -> allow for inputs to instantly 180 pacman if its directed opposite his orientation (into a valid tile)
 
         this->Entity::update();
 

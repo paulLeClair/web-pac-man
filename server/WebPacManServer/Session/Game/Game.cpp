@@ -1,6 +1,3 @@
-//
-// Created by paull on 2026-03-06.
-//
 #include "Game.hpp"
 #include "../Session.hpp"
 
@@ -68,19 +65,17 @@ namespace pacman
             // hide characters if not already hidden
             hideCharacters();
             // display ready message
-            displayReadyMessage = true;
+            enableReadyMessage();
         }
 
 
         if (const auto currentTime = std::chrono::steady_clock::now();
             countdownStartPoint.has_value() && currentTime - *countdownStartPoint >= 5s)
         {
-            displayReadyMessage = false;
             showCharacters();
-
-            // we need to be jumping into the failure animation here and then either display "game over" or
-            // subtract a life and respawn
+            displayReadyMessage = false;
             currentGameMode = GameMode::GAMEPLAY;
+
             startNextLevel();
             loopSound(SoundType::GHOST_ALARM, session);
 
@@ -192,6 +187,11 @@ namespace pacman
                         wakaWaka = true;
                         loopSound(SoundType::PACMAN_EATING, session);
                     }
+
+                    blinky.decrementDotCount();
+                    pinky.decrementDotCount();
+                    inky.decrementDotCount();
+                    clyde.decrementDotCount();
                 }
             default: ;
             }
@@ -336,6 +336,7 @@ namespace pacman
         {
             countdownStart = std::chrono::steady_clock::now();
             stopAllSounds(session);
+            enableGameOverMessage();
         }
 
         if (const auto currentTime = std::chrono::steady_clock::now();
@@ -343,6 +344,7 @@ namespace pacman
         {
             countdownStart = boost::none;
             lastBufferedInput = Direction::NONE;
+            enableAttractMessage();
             currentGameMode = GameMode::ATTRACT;
             score = 0;
             level = 1;

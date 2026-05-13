@@ -10,11 +10,11 @@ namespace pacman
 {
     struct Clyde final : Ghost
     {
-        Clyde() : Ghost(nullptr)
+        Clyde() : Ghost(nullptr, nullptr)
         {
         }
 
-        explicit Clyde(MazeFile* maze) : Ghost(maze)
+        explicit Clyde(MazeFile* maze, MazeCell *ghostJailBounceCell) : Ghost(maze, ghostJailBounceCell)
         {
         }
 

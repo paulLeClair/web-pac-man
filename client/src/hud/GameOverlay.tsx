@@ -14,7 +14,7 @@ const GameOverlay: Component<GameOverlayProps> = (props) => {
             </Show>
 
             <Show when={!props.showReadyMessage && props.showAttractMessage}>
-                <div class="cabinet-message cabinet-message--attract">INSERT COIN</div>
+                <div class="cabinet-message cabinet-message--attract">PRESS ANY DIRECTION</div>
             </Show>
 
             <Show when={!props.showReadyMessage && !props.showAttractMessage && props.showGameOverMessage}>

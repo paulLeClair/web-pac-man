@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-12.
-//
-
 #include "WebPacManServer.hpp"
 
 #include "Session/Session.hpp"

@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-20.
-//
-
 #pragma once
 
 #include "../Ghost.hpp"
@@ -9,11 +5,11 @@
 namespace pacman {
 
 struct Blinky final : Ghost {
-    Blinky() : Ghost(nullptr)
+    Blinky() : Ghost(nullptr, nullptr)
     {
     }
 
-    explicit Blinky(MazeFile *mazeFile) : Ghost(mazeFile) {};
+    explicit Blinky(MazeFile *mazeFile, MazeCell *ghostJailBounceCell) : Ghost(mazeFile, ghostJailBounceCell) {};
 
     ~Blinky() override = default;
 

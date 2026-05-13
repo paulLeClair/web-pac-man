@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-15.
-//
-
 #pragma once
 
 #include "../WebPacManServer.hpp"

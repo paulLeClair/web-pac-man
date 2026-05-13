@@ -1,10 +1,5 @@
-//
-// Created by paull on 2026-01-20.
-//
-
 #pragma once
 
-#include <boost/beast/core/error.hpp>
 #include <boost/beast/core/flat_buffer.hpp>
 
 #include "../Defines.hpp"
@@ -23,15 +18,18 @@ namespace pacman
     {
     public:
         explicit Game(const std::string& fileName) : maze(std::make_unique<MazeFile>(fileName)),
+                                                     blinky(maze.get(),MazeFile::getBlinkyGhostJailCell()),
+                                                     pinky(maze.get(), MazeFile::getPinkyGhostJailCell()),
+                                                     inky(maze.get(), MazeFile::getInkyGhostJailCell()),
+                                                     clyde(maze.get(), MazeFile::getClydeGhostJailCell()),
                                                      pacmanStartCell(maze->getCell(13, 22)),
-                                                     pinkyStartCell(maze->getCell(25, 1)),
-                                                     inkyStartCell(maze->getCell(25, 28)),
-                                                     clydeStartCell(maze->getCell(0, 28)),
-                                                     blinkyStartCell(maze->getCell(0, 0))
+                                                     clydeScatterCell(maze->getCell(0, 28))
         {
             startNextLevel();
             currentGameMode = GameMode::ATTRACT;
+            enableAttractMessage();
         }
+
         std::unique_ptr<MazeFile> maze;
 
         uint32_t score = 0;
@@ -131,10 +129,7 @@ namespace pacman
 
     private:
         MazeCell* pacmanStartCell;
-        MazeCell* pinkyStartCell;
-        MazeCell* inkyStartCell;
-        MazeCell* clydeStartCell;
-        MazeCell* blinkyStartCell;
+        MazeCell* clydeScatterCell;
 
         // TODO -> move private function defs to cpp file
 
@@ -144,28 +139,32 @@ namespace pacman
 
             preparePlayerForNextLevel();
 
-            prepareGhostForNextLevel(&blinky, blinkyStartCell);
+            prepareGhostForNextLevel(&blinky);
 
-            prepareGhostForNextLevel(&inky, inkyStartCell);
+            prepareGhostForNextLevel(&pinky, true);
 
-            prepareGhostForNextLevel(&pinky, pinkyStartCell);
+            prepareGhostForNextLevel(&inky, true, 30);
 
-            prepareGhostForNextLevel(&clyde, clydeStartCell);
-            clyde.clydeScatterCell = clydeStartCell;
+            prepareGhostForNextLevel(&clyde, true, 60);
+            clyde.clydeScatterCell = clydeScatterCell;
         }
 
-        void prepareGhostForNextLevel(Ghost *ghost, MazeCell *startCell)
+        // new: blinky is the only ghost initially, and needs to start at the jail entry cell;
+        // we should also use timers to control the ghosts
+        void prepareGhostForNextLevel(Ghost* ghost, const bool inJail = false,
+                                      const int dotCount = 0)
         {
-            // TODO -> start ghosts in center and only allow them to leave after a set period of time
             ghost->setNormalSpeed();
             ghost->player = &player;
             ghost->mazeFile = maze.get();
-            ghost->currentCell = startCell;
+            ghost->currentCell = inJail ? &ghost->ghostJailBottomCell : maze->getGhostJailEntryCell();
             ghost->isDead = false;
             ghost->isScattering = false;
             ghost->hidden = false;
-            ghost->inJail = false;
+            ghost->inJail = inJail;
             ghost->targetCell = nullptr;
+            ghost->jailDotCount = dotCount;
+            ghost->inSpawnJail = inJail;
         }
 
         void preparePlayerForNextLevel()
@@ -311,5 +310,26 @@ namespace pacman
         void tickFailure(Session& session);
 
         void tickAttract();
+
+        void enableReadyMessage()
+        {
+            displayAttractMessage = false;
+            displayGameOverMessage = false;
+            displayReadyMessage = true;
+        }
+
+        void enableGameOverMessage()
+        {
+            displayAttractMessage = false;
+            displayGameOverMessage = true;
+            displayReadyMessage = false;
+        }
+
+        void enableAttractMessage()
+        {
+            displayAttractMessage = true;
+            displayGameOverMessage = false;
+            displayReadyMessage = false;
+        }
     };
 } // pacman

@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-16.
-//
-
 #pragma once
 #include "Game/Maze/Maze.hpp"
 
@@ -119,9 +115,17 @@ struct Entity
         if (!targetCell) return;
 
         param = std::min(param + speed, 1.0f);
-
-        const float pixelDeltaX = param * static_cast<float>(targetCell->gridX - currentCell->gridX) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
-        const float pixelDeltaY = param * static_cast<float>(targetCell->gridY - currentCell->gridY) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+        float pixelDeltaX, pixelDeltaY;
+        if (targetCell->pixelX > 0 && targetCell->pixelY > 0 && currentCell->pixelX > 0 && currentCell->pixelY > 0)
+        {
+            pixelDeltaX = (targetCell->pixelX - currentCell->pixelX) * param;
+            pixelDeltaY = (targetCell->pixelY - currentCell->pixelY) * param;
+        }
+        else
+        {
+            pixelDeltaX = param * static_cast<float>(targetCell->gridX - currentCell->gridX) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+            pixelDeltaY = param * static_cast<float>(targetCell->gridY - currentCell->gridY) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
+        }
 
         pos.x = static_cast<float>(currentCell->gridX) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS + pixelDeltaX;
         pos.y = static_cast<float>(currentCell->gridY) * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS + pixelDeltaY;

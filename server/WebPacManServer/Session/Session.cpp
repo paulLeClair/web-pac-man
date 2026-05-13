@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-15.
-//
-
 #include "Session.hpp"
 
 #include "../../protobuf/gen/game_state.pb.h"
@@ -18,7 +14,6 @@ namespace pacman
 
     /**
      * This is the thread kernel for a particular pacman game session
-     * @return An enum to describe whether the session exited with an error or was successful
      */
     void Session::run()
     {

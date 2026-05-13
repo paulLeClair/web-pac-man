@@ -10,6 +10,7 @@ body {
     background: var(--pacman-bg);
     color: var(--pacman-yellow);
     font-family: "VT323", monospace;
+    font-size: 21px
 }
 
 .cabinet-screen {

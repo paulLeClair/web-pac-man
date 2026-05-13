@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-02-08.
-//
-
 #pragma once
 #include <filesystem>
 #include <fstream>
@@ -20,6 +16,10 @@ struct MazeCell
 {
     int gridX = 0,gridY = 0;
     TileType type = TileType::UNKNOWN;
+
+    // these allow you to override the grid x and y and position a cell with a pixel position
+    float pixelX = -1,pixelY = -1;
+    bool operator==(const MazeCell& maze_cell) const = default;
 };
 
 static constexpr float NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS = 8;
@@ -80,22 +80,31 @@ public:
         return mazeCells;
     }
 
-    const MazeCell* getGhostJailEntryCell()
+    MazeCell* getGhostJailEntryCell()
     {
         // just hardcoding this for now
         return &mazeCells[cellIndices[12 << 16 | 10]];
     }
 
-    static const MazeCell *getGhostJailLeftBounceCell()
+    static MazeCell *getBlinkyGhostJailCell()
     {
         static auto jailLeftBounceCell = MazeCell(11, 13, TileType::INTERSECTION);
         return &jailLeftBounceCell;
     }
-
-    static const MazeCell *getGhostJailRightBounceCell()
+    static MazeCell *getInkyGhostJailCell()
     {
-        static auto jailRightBounceCell = MazeCell(14, 13, TileType::INTERSECTION);
-        return &jailRightBounceCell;
+        static auto jailLeftBounceCell = MazeCell(12, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
+    }
+    static MazeCell* getPinkyGhostJailCell()
+    {
+        static auto jailLeftBounceCell = MazeCell(13, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
+    }
+    static MazeCell *getClydeGhostJailCell()
+    {
+        static auto jailLeftBounceCell = MazeCell(14, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
     }
 
 private:

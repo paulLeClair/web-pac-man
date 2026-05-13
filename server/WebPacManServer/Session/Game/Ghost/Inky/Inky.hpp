@@ -11,8 +11,8 @@
 namespace pacman {
 
 struct Inky final : Ghost {
-    Inky() : Ghost(nullptr) {};
-    explicit Inky(MazeFile *maze) : Ghost(maze) {}
+    Inky() : Ghost(nullptr, nullptr) {};
+    explicit Inky(MazeFile *maze, MazeCell *ghostJailBounceCell) : Ghost(maze, ghostJailBounceCell) {};
     ~Inky() override = default;
 
     // note, this is most likely not good to plug in as the target cell; we should use it to choose a walkable cell

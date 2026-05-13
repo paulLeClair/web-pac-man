@@ -165,6 +165,8 @@ const App: Component<AppProps> = (props) => {
 
         // at this point we would want to trigger the particular cutscene based off our cutscene state;
         // upon finishing we unset our cutscene state and begin digesting game state updates again
+
+        // placeholder: COFFEE BREAK! text?
     }
 
     function handleSoundControlPacket(soundPacket: WpmPacket) {
@@ -203,7 +205,8 @@ const App: Component<AppProps> = (props) => {
         if (soundPath.length === 0 || wpmPacketType === WpmPacketType.UNKNOWN) return;
 
         const audio = new Audio(soundPath);
-        audio.volume = 0.2;
+        // audio.volume = 0.2;
+        audio.volume = 0;
         switch (wpmPacketType) {
             case WpmPacketType.TRIGGER_SOUND:
                 audio.loop = false;
