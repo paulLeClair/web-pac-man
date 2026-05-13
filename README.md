@@ -11,13 +11,4 @@ All original game assets, character designs, maze layouts, and sound effects are
 
 This project is an independent implementation created for educational purposes and is not affiliated with, endorsed by, or sponsored by Bandai Namco.
 
-## Server 
-
-- multithreaded C++ web server using boost::Beast, ASIO, and websockets to send Protobuf messages
-- establishes game sessions and feeds in received user inputs
-
-## Client
-
-- Typescript Solid application with Tailwind
-- sends user inputs, receives Protobuf game state messages and renders them reactively
-
+## Project Description
