@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-01-20.
-//
-
 #include "Player.hpp"
 
 namespace pacman
@@ -42,30 +38,39 @@ namespace pacman
         {
         case TileType::INTERSECTION:
             {
+                if (param >= 0.1)
+                {
+                    break;
+                }
                 switch (bufferedInput)
                 {
+                // todo -> factor out a little helper function to reduce the amount of code dupe here
                 case Direction::DOWN:
                     {
                         const auto result = getMazeCellIfWalkable(currentCell->gridX, currentCell->gridY + 1);
                         if (result != nullptr) orientation = Direction::DOWN;
+                        bufferedInput = Direction::NONE;
                         return result;
                     }
                 case Direction::UP:
                     {
                         const auto result = getMazeCellIfWalkable(currentCell->gridX, currentCell->gridY - 1);
                         if (result != nullptr) orientation = Direction::UP;
+                        bufferedInput = Direction::NONE;
                         return result;
                     }
                 case Direction::LEFT:
                     {
                         const auto result = getMazeCellIfWalkable(currentCell->gridX - 1, currentCell->gridY);
                         if (result != nullptr) orientation = Direction::LEFT;
+                        bufferedInput = Direction::NONE;
                         return result;
                     }
                 case Direction::RIGHT:
                     {
                         const auto result = getMazeCellIfWalkable(currentCell->gridX + 1, currentCell->gridY);
                         if (result != nullptr) orientation = Direction::RIGHT;
+                        bufferedInput = Direction::NONE;
                         return result;
                     }
                 case Direction::NONE:
@@ -79,17 +84,19 @@ namespace pacman
             {
                 return getNextWalkableCellByOrientation();
             }
-        default: return nullptr;
+        default:break;
         }
+        return nullptr;
     }
 
     void Pacman::update()
     {
-        // set the target cell if we're stationary at an intersection
-        if (!targetCell && mazeFile->getTileType(currentCell->gridX, currentCell->gridY) == TileType::INTERSECTION)
+        // set the target cell if we're stationary or at an intersection
+        if (!targetCell || mazeFile->getTileType(currentCell->gridX, currentCell->gridY) == TileType::INTERSECTION)
         {
             switch (bufferedInput)
             {
+            // todo -> factor out helper function here
             case Direction::DOWN:
                 {
                     targetCell = getMazeCellIfWalkable(currentCell->gridX, currentCell->gridY + 1);
@@ -98,6 +105,8 @@ namespace pacman
                         orientation = Direction::DOWN;
                         isChomping = true;
                     }
+
+                    bufferedInput = Direction::NONE;
                     break;
                 }
             case Direction::UP:
@@ -108,6 +117,8 @@ namespace pacman
                         orientation = Direction::UP;
                         isChomping = true;
                     }
+
+                    bufferedInput = Direction::NONE;
                     break;
                 }
             case Direction::LEFT:
@@ -118,6 +129,8 @@ namespace pacman
                         orientation = Direction::LEFT;
                         isChomping = true;
                     }
+
+                    bufferedInput = Direction::NONE;
                     break;
                 }
             case Direction::RIGHT:
@@ -128,13 +141,13 @@ namespace pacman
                         orientation = Direction::RIGHT;
                         isChomping = true;
                     }
+
+                    bufferedInput = Direction::NONE;
+                    break;
                 }
             default: break;
             }
-            bufferedInput = Direction::NONE;
         }
-
-        // TODO -> allow for inputs to instantly 180 pacman if its directed opposite his orientation (into a valid tile)
 
         this->Entity::update();
 

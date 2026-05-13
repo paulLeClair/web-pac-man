@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+    --pacman-yellow: #f7d400;
+    --pacman-bg: #000000;
+}
+
+body {
+    margin: 0;
+    background: var(--pacman-bg);
+    color: var(--pacman-yellow);
+    font-family: "VT323", monospace;
+    font-size: 21px
+}
+
+.cabinet-screen {
+    min-height: 100vh;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cabinet-game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.cabinet-playfield {
+    position: relative;
+    display: inline-block;
+}
+
+.cabinet-hud {
+    width: min(100%, 224px);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+.cabinet-hud__left {
+    justify-self: start;
+}
+
+.cabinet-hud__center {
+    justify-self: center;
+}
+
+.cabinet-hud__right {
+    justify-self: end;
+}
+.cabinet-message-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.cabinet-message {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Press Start 2P", monospace;
+    font-size: 16px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    color: var(--pacman-yellow);
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+}
+
+.cabinet-message--ready,
+.cabinet-message--attract,
+.cabinet-message--gameover {
+    top: 43%;
+}

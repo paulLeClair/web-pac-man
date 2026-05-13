@@ -5,24 +5,26 @@
     margin: 0;
     z-index: auto;
 
-    /*these have to be 12 to line up with our sprite sheet, but they
-    should be dynamically scaled based off the board image size */
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
 }
 
-.scattering {
-    background-position-y: 76px;
+.ghost-scattering-initial {
+    background-position-y: -76px;
+}
+
+.ghost-scattering-warn {
+    background-position-y: -76px;
+    background-position-x: 36px;
 }
 
 .dead {
-    background-position-y: 76px;
+
 }
 
 /* these classes should set the overall offsets into the sprite sheet */
 .pinky {
     background-position-y: -19px;
-
 }
 
 .inky {
@@ -31,11 +33,30 @@
 
 .clyde {
     background-position-y: -57px;
-
 }
 
 .blinky {
-    background-position-y: 0;
+    background-position-y: -1px;
+}
+
+.dead-orientation-up {
+   background-position-y: -76px;
+    background-position-x: -106px;
+}
+
+.dead-orientation-down {
+    background-position-y: -76px;
+    background-position-x: -121px;
+}
+
+.dead-orientation-left {
+    background-position-y: -76px;
+    background-position-x: -90px;
+}
+
+.dead-orientation-right {
+    background-position-y: -76px;
+    background-position-x: -72px;
 }
 
 /* ghost-specific orientations are not about rotation like pacman but instead we use a different sprite animation */

@@ -12,6 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
  * simple flat data structure for communicating game state
+ * (This is duplicated from clientside; obviously this would be better broken off and shared b/w them)
  *
  * @generated from protobuf message GameStateMessage
  */
@@ -37,73 +38,127 @@ export interface GameStateMessage {
      */
     pacmanIsChomping: boolean;
     /**
-     * @generated from protobuf field: bool ghostsAreScattering = 6
+     * @generated from protobuf field: bool pacmanIsHidden = 6
+     */
+    pacmanIsHidden: boolean;
+    /**
+     * @generated from protobuf field: bool ghostsAreScattering = 7
      */
     ghostsAreScattering: boolean;
     /**
-     * @generated from protobuf field: double pinkyPositionX = 7
+     * @generated from protobuf field: double pinkyPositionX = 8
      */
     pinkyPositionX: number;
     /**
-     * @generated from protobuf field: double pinkyPositionY = 8
+     * @generated from protobuf field: double pinkyPositionY = 9
      */
     pinkyPositionY: number;
     /**
-     * @generated from protobuf field: int32 pinkyOrientation = 9
+     * @generated from protobuf field: int32 pinkyOrientation = 10
      */
     pinkyOrientation: number;
     /**
-     * @generated from protobuf field: bool pinkyIsDead = 10
+     * @generated from protobuf field: bool pinkyIsDead = 11
      */
     pinkyIsDead: boolean;
     /**
-     * @generated from protobuf field: double inkyPositionX = 11
+     * @generated from protobuf field: bool pinkyIsHidden = 12
+     */
+    pinkyIsHidden: boolean;
+    /**
+     * @generated from protobuf field: double inkyPositionX = 13
      */
     inkyPositionX: number;
     /**
-     * @generated from protobuf field: double inkyPositionY = 12
+     * @generated from protobuf field: double inkyPositionY = 14
      */
     inkyPositionY: number;
     /**
-     * @generated from protobuf field: int32 inkyOrientation = 13
+     * @generated from protobuf field: int32 inkyOrientation = 15
      */
     inkyOrientation: number;
     /**
-     * @generated from protobuf field: bool inkyIsDead = 14
+     * @generated from protobuf field: bool inkyIsDead = 16
      */
     inkyIsDead: boolean;
     /**
-     * @generated from protobuf field: double blinkyPositionX = 15
+     * @generated from protobuf field: bool inkyIsHidden = 17
+     */
+    inkyIsHidden: boolean;
+    /**
+     * @generated from protobuf field: double blinkyPositionX = 18
      */
     blinkyPositionX: number;
     /**
-     * @generated from protobuf field: double blinkyPositionY = 16
+     * @generated from protobuf field: double blinkyPositionY = 19
      */
     blinkyPositionY: number;
     /**
-     * @generated from protobuf field: int32 blinkyOrientation = 17
+     * @generated from protobuf field: int32 blinkyOrientation = 20
      */
     blinkyOrientation: number;
     /**
-     * @generated from protobuf field: bool blinkyIsDead = 18
+     * @generated from protobuf field: bool blinkyIsDead = 21
      */
     blinkyIsDead: boolean;
     /**
-     * @generated from protobuf field: double clydePositionX = 19
+     * @generated from protobuf field: bool blinkyIsHidden = 22
+     */
+    blinkyIsHidden: boolean;
+    /**
+     * @generated from protobuf field: double clydePositionX = 23
      */
     clydePositionX: number;
     /**
-     * @generated from protobuf field: double clydePositionY = 20
+     * @generated from protobuf field: double clydePositionY = 24
      */
     clydePositionY: number;
     /**
-     * @generated from protobuf field: int32 clydeOrientation = 21
+     * @generated from protobuf field: int32 clydeOrientation = 25
      */
     clydeOrientation: number;
     /**
-     * @generated from protobuf field: bool clydeIsDead = 22
+     * @generated from protobuf field: bool clydeIsDead = 26
      */
     clydeIsDead: boolean;
+    /**
+     * @generated from protobuf field: bool clydeIsHidden = 27
+     */
+    clydeIsHidden: boolean;
+    /**
+     * @generated from protobuf field: map<uint32, uint32> items = 28
+     */
+    items: {
+        [key: number]: number;
+    };
+    /**
+     * @generated from protobuf field: bool hideBoard = 29
+     */
+    hideBoard: boolean;
+    /**
+     * @generated from protobuf field: bool pacmanIsDead = 30
+     */
+    pacmanIsDead: boolean;
+    /**
+     * @generated from protobuf field: bool displayReadyMessage = 31
+     */
+    displayReadyMessage: boolean;
+    /**
+     * @generated from protobuf field: bool displayGameOverMessage = 32
+     */
+    displayGameOverMessage: boolean;
+    /**
+     * @generated from protobuf field: bool displayAttractMessage = 33
+     */
+    displayAttractMessage: boolean;
+    /**
+     * @generated from protobuf field: int32 score = 34
+     */
+    score: number;
+    /**
+     * @generated from protobuf field: int32 level = 35
+     */
+    level: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GameStateMessage$Type extends MessageType<GameStateMessage> {
@@ -114,23 +169,36 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
             { no: 3, name: "pacmanPositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 4, name: "pacmanOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "pacmanIsChomping", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "ghostsAreScattering", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "pinkyPositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 8, name: "pinkyPositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 9, name: "pinkyOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "pinkyIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 11, name: "inkyPositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 12, name: "inkyPositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 13, name: "inkyOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 14, name: "inkyIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 15, name: "blinkyPositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 16, name: "blinkyPositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 17, name: "blinkyOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 18, name: "blinkyIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 19, name: "clydePositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 20, name: "clydePositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 21, name: "clydeOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 22, name: "clydeIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 6, name: "pacmanIsHidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "ghostsAreScattering", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "pinkyPositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 9, name: "pinkyPositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 10, name: "pinkyOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "pinkyIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 12, name: "pinkyIsHidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "inkyPositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 14, name: "inkyPositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 15, name: "inkyOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 16, name: "inkyIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 17, name: "inkyIsHidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 18, name: "blinkyPositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 19, name: "blinkyPositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 20, name: "blinkyOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 21, name: "blinkyIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 22, name: "blinkyIsHidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 23, name: "clydePositionX", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 24, name: "clydePositionY", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 25, name: "clydeOrientation", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 26, name: "clydeIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 27, name: "clydeIsHidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 28, name: "items", kind: "map", K: 13 /*ScalarType.UINT32*/, V: { kind: "scalar", T: 13 /*ScalarType.UINT32*/ } },
+            { no: 29, name: "hideBoard", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 30, name: "pacmanIsDead", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 31, name: "displayReadyMessage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 32, name: "displayGameOverMessage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 33, name: "displayAttractMessage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 34, name: "score", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 35, name: "level", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<GameStateMessage>): GameStateMessage {
@@ -140,23 +208,36 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         message.pacmanPositionY = 0;
         message.pacmanOrientation = 0;
         message.pacmanIsChomping = false;
+        message.pacmanIsHidden = false;
         message.ghostsAreScattering = false;
         message.pinkyPositionX = 0;
         message.pinkyPositionY = 0;
         message.pinkyOrientation = 0;
         message.pinkyIsDead = false;
+        message.pinkyIsHidden = false;
         message.inkyPositionX = 0;
         message.inkyPositionY = 0;
         message.inkyOrientation = 0;
         message.inkyIsDead = false;
+        message.inkyIsHidden = false;
         message.blinkyPositionX = 0;
         message.blinkyPositionY = 0;
         message.blinkyOrientation = 0;
         message.blinkyIsDead = false;
+        message.blinkyIsHidden = false;
         message.clydePositionX = 0;
         message.clydePositionY = 0;
         message.clydeOrientation = 0;
         message.clydeIsDead = false;
+        message.clydeIsHidden = false;
+        message.items = {};
+        message.hideBoard = false;
+        message.pacmanIsDead = false;
+        message.displayReadyMessage = false;
+        message.displayGameOverMessage = false;
+        message.displayAttractMessage = false;
+        message.score = 0;
+        message.level = 0;
         if (value !== undefined)
             reflectionMergePartial<GameStateMessage>(this, message, value);
         return message;
@@ -181,56 +262,95 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
                 case /* bool pacmanIsChomping */ 5:
                     message.pacmanIsChomping = reader.bool();
                     break;
-                case /* bool ghostsAreScattering */ 6:
+                case /* bool pacmanIsHidden */ 6:
+                    message.pacmanIsHidden = reader.bool();
+                    break;
+                case /* bool ghostsAreScattering */ 7:
                     message.ghostsAreScattering = reader.bool();
                     break;
-                case /* double pinkyPositionX */ 7:
+                case /* double pinkyPositionX */ 8:
                     message.pinkyPositionX = reader.double();
                     break;
-                case /* double pinkyPositionY */ 8:
+                case /* double pinkyPositionY */ 9:
                     message.pinkyPositionY = reader.double();
                     break;
-                case /* int32 pinkyOrientation */ 9:
+                case /* int32 pinkyOrientation */ 10:
                     message.pinkyOrientation = reader.int32();
                     break;
-                case /* bool pinkyIsDead */ 10:
+                case /* bool pinkyIsDead */ 11:
                     message.pinkyIsDead = reader.bool();
                     break;
-                case /* double inkyPositionX */ 11:
+                case /* bool pinkyIsHidden */ 12:
+                    message.pinkyIsHidden = reader.bool();
+                    break;
+                case /* double inkyPositionX */ 13:
                     message.inkyPositionX = reader.double();
                     break;
-                case /* double inkyPositionY */ 12:
+                case /* double inkyPositionY */ 14:
                     message.inkyPositionY = reader.double();
                     break;
-                case /* int32 inkyOrientation */ 13:
+                case /* int32 inkyOrientation */ 15:
                     message.inkyOrientation = reader.int32();
                     break;
-                case /* bool inkyIsDead */ 14:
+                case /* bool inkyIsDead */ 16:
                     message.inkyIsDead = reader.bool();
                     break;
-                case /* double blinkyPositionX */ 15:
+                case /* bool inkyIsHidden */ 17:
+                    message.inkyIsHidden = reader.bool();
+                    break;
+                case /* double blinkyPositionX */ 18:
                     message.blinkyPositionX = reader.double();
                     break;
-                case /* double blinkyPositionY */ 16:
+                case /* double blinkyPositionY */ 19:
                     message.blinkyPositionY = reader.double();
                     break;
-                case /* int32 blinkyOrientation */ 17:
+                case /* int32 blinkyOrientation */ 20:
                     message.blinkyOrientation = reader.int32();
                     break;
-                case /* bool blinkyIsDead */ 18:
+                case /* bool blinkyIsDead */ 21:
                     message.blinkyIsDead = reader.bool();
                     break;
-                case /* double clydePositionX */ 19:
+                case /* bool blinkyIsHidden */ 22:
+                    message.blinkyIsHidden = reader.bool();
+                    break;
+                case /* double clydePositionX */ 23:
                     message.clydePositionX = reader.double();
                     break;
-                case /* double clydePositionY */ 20:
+                case /* double clydePositionY */ 24:
                     message.clydePositionY = reader.double();
                     break;
-                case /* int32 clydeOrientation */ 21:
+                case /* int32 clydeOrientation */ 25:
                     message.clydeOrientation = reader.int32();
                     break;
-                case /* bool clydeIsDead */ 22:
+                case /* bool clydeIsDead */ 26:
                     message.clydeIsDead = reader.bool();
+                    break;
+                case /* bool clydeIsHidden */ 27:
+                    message.clydeIsHidden = reader.bool();
+                    break;
+                case /* map<uint32, uint32> items */ 28:
+                    this.binaryReadMap28(message.items, reader, options);
+                    break;
+                case /* bool hideBoard */ 29:
+                    message.hideBoard = reader.bool();
+                    break;
+                case /* bool pacmanIsDead */ 30:
+                    message.pacmanIsDead = reader.bool();
+                    break;
+                case /* bool displayReadyMessage */ 31:
+                    message.displayReadyMessage = reader.bool();
+                    break;
+                case /* bool displayGameOverMessage */ 32:
+                    message.displayGameOverMessage = reader.bool();
+                    break;
+                case /* bool displayAttractMessage */ 33:
+                    message.displayAttractMessage = reader.bool();
+                    break;
+                case /* int32 score */ 34:
+                    message.score = reader.int32();
+                    break;
+                case /* int32 level */ 35:
+                    message.level = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -242,6 +362,22 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
             }
         }
         return message;
+    }
+    private binaryReadMap28(map: GameStateMessage["items"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof GameStateMessage["items"] | undefined, val: GameStateMessage["items"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.uint32();
+                    break;
+                case 2:
+                    val = reader.uint32();
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for GameStateMessage.items");
+            }
+        }
+        map[key ?? 0] = val ?? 0;
     }
     internalBinaryWrite(message: GameStateMessage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 currentMode = 1; */
@@ -259,57 +395,96 @@ class GameStateMessage$Type extends MessageType<GameStateMessage> {
         /* bool pacmanIsChomping = 5; */
         if (message.pacmanIsChomping !== false)
             writer.tag(5, WireType.Varint).bool(message.pacmanIsChomping);
-        /* bool ghostsAreScattering = 6; */
+        /* bool pacmanIsHidden = 6; */
+        if (message.pacmanIsHidden !== false)
+            writer.tag(6, WireType.Varint).bool(message.pacmanIsHidden);
+        /* bool ghostsAreScattering = 7; */
         if (message.ghostsAreScattering !== false)
-            writer.tag(6, WireType.Varint).bool(message.ghostsAreScattering);
-        /* double pinkyPositionX = 7; */
+            writer.tag(7, WireType.Varint).bool(message.ghostsAreScattering);
+        /* double pinkyPositionX = 8; */
         if (message.pinkyPositionX !== 0)
-            writer.tag(7, WireType.Bit64).double(message.pinkyPositionX);
-        /* double pinkyPositionY = 8; */
+            writer.tag(8, WireType.Bit64).double(message.pinkyPositionX);
+        /* double pinkyPositionY = 9; */
         if (message.pinkyPositionY !== 0)
-            writer.tag(8, WireType.Bit64).double(message.pinkyPositionY);
-        /* int32 pinkyOrientation = 9; */
+            writer.tag(9, WireType.Bit64).double(message.pinkyPositionY);
+        /* int32 pinkyOrientation = 10; */
         if (message.pinkyOrientation !== 0)
-            writer.tag(9, WireType.Varint).int32(message.pinkyOrientation);
-        /* bool pinkyIsDead = 10; */
+            writer.tag(10, WireType.Varint).int32(message.pinkyOrientation);
+        /* bool pinkyIsDead = 11; */
         if (message.pinkyIsDead !== false)
-            writer.tag(10, WireType.Varint).bool(message.pinkyIsDead);
-        /* double inkyPositionX = 11; */
+            writer.tag(11, WireType.Varint).bool(message.pinkyIsDead);
+        /* bool pinkyIsHidden = 12; */
+        if (message.pinkyIsHidden !== false)
+            writer.tag(12, WireType.Varint).bool(message.pinkyIsHidden);
+        /* double inkyPositionX = 13; */
         if (message.inkyPositionX !== 0)
-            writer.tag(11, WireType.Bit64).double(message.inkyPositionX);
-        /* double inkyPositionY = 12; */
+            writer.tag(13, WireType.Bit64).double(message.inkyPositionX);
+        /* double inkyPositionY = 14; */
         if (message.inkyPositionY !== 0)
-            writer.tag(12, WireType.Bit64).double(message.inkyPositionY);
-        /* int32 inkyOrientation = 13; */
+            writer.tag(14, WireType.Bit64).double(message.inkyPositionY);
+        /* int32 inkyOrientation = 15; */
         if (message.inkyOrientation !== 0)
-            writer.tag(13, WireType.Varint).int32(message.inkyOrientation);
-        /* bool inkyIsDead = 14; */
+            writer.tag(15, WireType.Varint).int32(message.inkyOrientation);
+        /* bool inkyIsDead = 16; */
         if (message.inkyIsDead !== false)
-            writer.tag(14, WireType.Varint).bool(message.inkyIsDead);
-        /* double blinkyPositionX = 15; */
+            writer.tag(16, WireType.Varint).bool(message.inkyIsDead);
+        /* bool inkyIsHidden = 17; */
+        if (message.inkyIsHidden !== false)
+            writer.tag(17, WireType.Varint).bool(message.inkyIsHidden);
+        /* double blinkyPositionX = 18; */
         if (message.blinkyPositionX !== 0)
-            writer.tag(15, WireType.Bit64).double(message.blinkyPositionX);
-        /* double blinkyPositionY = 16; */
+            writer.tag(18, WireType.Bit64).double(message.blinkyPositionX);
+        /* double blinkyPositionY = 19; */
         if (message.blinkyPositionY !== 0)
-            writer.tag(16, WireType.Bit64).double(message.blinkyPositionY);
-        /* int32 blinkyOrientation = 17; */
+            writer.tag(19, WireType.Bit64).double(message.blinkyPositionY);
+        /* int32 blinkyOrientation = 20; */
         if (message.blinkyOrientation !== 0)
-            writer.tag(17, WireType.Varint).int32(message.blinkyOrientation);
-        /* bool blinkyIsDead = 18; */
+            writer.tag(20, WireType.Varint).int32(message.blinkyOrientation);
+        /* bool blinkyIsDead = 21; */
         if (message.blinkyIsDead !== false)
-            writer.tag(18, WireType.Varint).bool(message.blinkyIsDead);
-        /* double clydePositionX = 19; */
+            writer.tag(21, WireType.Varint).bool(message.blinkyIsDead);
+        /* bool blinkyIsHidden = 22; */
+        if (message.blinkyIsHidden !== false)
+            writer.tag(22, WireType.Varint).bool(message.blinkyIsHidden);
+        /* double clydePositionX = 23; */
         if (message.clydePositionX !== 0)
-            writer.tag(19, WireType.Bit64).double(message.clydePositionX);
-        /* double clydePositionY = 20; */
+            writer.tag(23, WireType.Bit64).double(message.clydePositionX);
+        /* double clydePositionY = 24; */
         if (message.clydePositionY !== 0)
-            writer.tag(20, WireType.Bit64).double(message.clydePositionY);
-        /* int32 clydeOrientation = 21; */
+            writer.tag(24, WireType.Bit64).double(message.clydePositionY);
+        /* int32 clydeOrientation = 25; */
         if (message.clydeOrientation !== 0)
-            writer.tag(21, WireType.Varint).int32(message.clydeOrientation);
-        /* bool clydeIsDead = 22; */
+            writer.tag(25, WireType.Varint).int32(message.clydeOrientation);
+        /* bool clydeIsDead = 26; */
         if (message.clydeIsDead !== false)
-            writer.tag(22, WireType.Varint).bool(message.clydeIsDead);
+            writer.tag(26, WireType.Varint).bool(message.clydeIsDead);
+        /* bool clydeIsHidden = 27; */
+        if (message.clydeIsHidden !== false)
+            writer.tag(27, WireType.Varint).bool(message.clydeIsHidden);
+        /* map<uint32, uint32> items = 28; */
+        for (let k of globalThis.Object.keys(message.items))
+            writer.tag(28, WireType.LengthDelimited).fork().tag(1, WireType.Varint).uint32(parseInt(k)).tag(2, WireType.Varint).uint32(message.items[k as any]).join();
+        /* bool hideBoard = 29; */
+        if (message.hideBoard !== false)
+            writer.tag(29, WireType.Varint).bool(message.hideBoard);
+        /* bool pacmanIsDead = 30; */
+        if (message.pacmanIsDead !== false)
+            writer.tag(30, WireType.Varint).bool(message.pacmanIsDead);
+        /* bool displayReadyMessage = 31; */
+        if (message.displayReadyMessage !== false)
+            writer.tag(31, WireType.Varint).bool(message.displayReadyMessage);
+        /* bool displayGameOverMessage = 32; */
+        if (message.displayGameOverMessage !== false)
+            writer.tag(32, WireType.Varint).bool(message.displayGameOverMessage);
+        /* bool displayAttractMessage = 33; */
+        if (message.displayAttractMessage !== false)
+            writer.tag(33, WireType.Varint).bool(message.displayAttractMessage);
+        /* int32 score = 34; */
+        if (message.score !== 0)
+            writer.tag(34, WireType.Varint).int32(message.score);
+        /* int32 level = 35; */
+        if (message.level !== 0)
+            writer.tag(35, WireType.Varint).int32(message.level);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

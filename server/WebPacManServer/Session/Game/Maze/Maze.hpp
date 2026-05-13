@@ -1,7 +1,3 @@
-//
-// Created by paull on 2026-02-08.
-//
-
 #pragma once
 #include <filesystem>
 #include <fstream>
@@ -18,10 +14,15 @@ enum class TileType : unsigned char {
 
 struct MazeCell
 {
-    int gridX,gridY;
-    TileType type;
-    float pixelX, pixelY;
+    int gridX = 0,gridY = 0;
+    TileType type = TileType::UNKNOWN;
+
+    // these allow you to override the grid x and y and position a cell with a pixel position
+    float pixelX = -1,pixelY = -1;
+    bool operator==(const MazeCell& maze_cell) const = default;
 };
+
+static constexpr float NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS = 8;
 
 class MazeFile
 {
@@ -49,9 +50,7 @@ public:
                 validTileCoordinates.insert(packedCoordinates);
                 tileTypes[packedCoordinates] = tileType;
 
-                const float pixelPositionX = x * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
-                const float pixelPositionY = y * NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS;
-                mazeCells.emplace_back(x, y, tileType, pixelPositionX, pixelPositionY);
+                mazeCells.emplace_back(x, y, tileType);
                 cellIndices[packedCoordinates] = mazeCells.size() - 1;
             }
         }
@@ -76,8 +75,39 @@ public:
         return &mazeCells[cellIndices[x << 16 | y]];
     }
 
+    [[nodiscard]] const std::vector<MazeCell> &getAllValidCells() const
+    {
+        return mazeCells;
+    }
+
+    MazeCell* getGhostJailEntryCell()
+    {
+        // just hardcoding this for now
+        return &mazeCells[cellIndices[12 << 16 | 10]];
+    }
+
+    static MazeCell *getBlinkyGhostJailCell()
+    {
+        static auto jailLeftBounceCell = MazeCell(11, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
+    }
+    static MazeCell *getInkyGhostJailCell()
+    {
+        static auto jailLeftBounceCell = MazeCell(12, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
+    }
+    static MazeCell* getPinkyGhostJailCell()
+    {
+        static auto jailLeftBounceCell = MazeCell(13, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
+    }
+    static MazeCell *getClydeGhostJailCell()
+    {
+        static auto jailLeftBounceCell = MazeCell(14, 13, TileType::INTERSECTION);
+        return &jailLeftBounceCell;
+    }
+
 private:
-    static constexpr uint32_t NATIVE_RESOLUTION_TILE_GRID_SIZE_IN_PIXELS = 8;
 
     std::vector<MazeCell> mazeCells = {};
 

@@ -1,23 +1,22 @@
-//
-// Created by paull on 2026-01-12.
-//
-
 #include "WebPacManServer.hpp"
 
 #include "Session/Session.hpp"
 
 #include <boost/asio/strand.hpp>
 
-namespace pacman {
-    WebPacManServer::WebPacManServer(const std::string &ip, const int port,const std::string &mazeFilePath,const int threadCount)
-    : gameLogicThreadPool(threadCount / 2), // i guess default for now is 50% of threads go to game logic
-    mazeFilePath(mazeFilePath),
-    ipAddress(boost::asio::ip::address::from_string(ip)),
-    port(port),
-    io_context(threadCount / 2),
-    endpoint(ipAddress,
-            static_cast<const uint8_t>(static_cast<uint8_t>(port))),
-    acceptor(io_context) {
+namespace pacman
+{
+    WebPacManServer::WebPacManServer(const std::string& ip, const int port, const std::string& mazeFilePath,
+                                     const int threadCount)
+        : mazeFilePath(mazeFilePath), // i guess default for now is 50% of threads go to game logic
+          ioThreadCount(threadCount),
+          io_context(threadCount),
+          acceptor(io_context),
+          ipAddress(boost::asio::ip::address::from_string(ip)),
+          port(port),
+          endpoint(ipAddress,
+                   static_cast<const uint8_t>(static_cast<uint8_t>(port)))
+    {
     }
 
     WebPacManServer::~WebPacManServer()
@@ -32,12 +31,9 @@ namespace pacman {
 
     bool WebPacManServer::run()
     {
-
-
         acceptSessions();
 
         std::vector<std::thread> serverThreads = {};
-        size_t ioThreadCount = gameLogicThreadPool.get_thread_count() - 1;
         serverThreads.reserve(ioThreadCount);
         for (uint32_t i = 0; i < ioThreadCount; i++)
         {
@@ -47,13 +43,20 @@ namespace pacman {
             });
         }
 
-        const auto &gameTickerFunction = [&](const std::stop_token& stoken)
+        const auto& gameTickerFunction = [&](const std::stop_token& stoken)
         {
             gameTickerThreadKernel(stoken);
         };
         gameTickerThread = std::jthread(gameTickerFunction);
 
-        io_context.run();
+        try
+        {
+            io_context.run(); // bug: weird exception throws here but doesn't seem to block anything happening
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << e.what() << std::endl;
+        }
 
         gameTickerThread.join();
         return true;
@@ -141,10 +144,10 @@ namespace pacman {
 
     void WebPacManServer::gameTickerThreadKernel(std::stop_token stoken) //NOLINT
     {
-        static constexpr int DEFAULT_TICK_INTERVAL_IN_MS = 30;
+        static constexpr int DEFAULT_TICK_INTERVAL_IN_MS = 20;
         while (!stoken.stop_requested())
         {
-            for (const auto &session : sessions)
+            for (const auto& session : sessions)
             {
                 session->gameTick();
             }

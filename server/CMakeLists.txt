@@ -16,22 +16,21 @@ set(server_code
         WebPacManServer/Session/Session.hpp
         WebPacManServer/Session/Defines.hpp
         WebPacManServer/Session/Game/Game.hpp
+        WebPacManServer/Session/Game/Game.cpp
         WebPacManServer/Session/Game/Player/Player.cpp
         WebPacManServer/Session/Game/Player/Player.hpp
         WebPacManServer/Session/Game/Ghost/Ghost.hpp
-        WebPacManServer/Session/Game/Ghost/Blinky/Blinky.cpp
         WebPacManServer/Session/Game/Ghost/Blinky/Blinky.hpp
-        WebPacManServer/Session/Game/Ghost/Clyde/Clyde.cpp
         WebPacManServer/Session/Game/Ghost/Clyde/Clyde.hpp
-        WebPacManServer/Session/Game/Ghost/Inky/Inky.cpp
         WebPacManServer/Session/Game/Ghost/Inky/Inky.hpp
-        WebPacManServer/Session/Game/Ghost/Pinky/Pinky.cpp
         WebPacManServer/Session/Game/Ghost/Pinky/Pinky.hpp
+        WebPacManServer/Session/Game/Maze/Maze.hpp
         protobuf/gen/game_state.pb.h
         protobuf/gen/game_state.pb.cc
         protobuf/gen/user_inputs.pb.h
         protobuf/gen/user_inputs.pb.cc
-        WebPacManServer/Session/Game/Maze/Maze.hpp
+        protobuf/gen/wpm_packet.pb.h
+        protobuf/gen/wpm_packet.pb.cc
 )
 
 
@@ -53,6 +52,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 if(MSVC)
     set(protobuf_MSVC_STATIC_RUNTIME OFF CACHE BOOL "Link Protobuf dynamically" FORCE)
+    target_compile_options(pacman_server PRIVATE /bigobj)
 endif()
 
 set(protobuf_VERSION "v33.5") # Ensure this matches the protoc version used
